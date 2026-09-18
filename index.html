@@ -254,97 +254,82 @@ const orbitCopy=document.getElementById("orbitCopy");
 const loaded=new Set([0,1]);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const j=document.querySelector(".journey");
-const ORBIT_END=0.22, DIVE_END=0.3;
-let yawOff=20, drag=null, frame=0, phase="orbit";
-function shortest(a){const n=((a+180)%360+(a+180<0?360:0))-180;return n}
-function paint(){
-  const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;
-  const t=Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)));
-  if(t<ORBIT_END){
-    phase="orbit";
-    const yaw=(((t/ORBIT_END)*360+yawOff)%360+360)%360;
-    faces.forEach((el,i)=>{
-      const d=Math.abs(shortest(yaw-i*90));
-      const op=Math.max(0,1-d/78);
-      el.style.opacity=op;
-      el.style.transform=`translate3d(0,0,${(1-op)*-240}px) rotateY(${shortest(yaw-i*90)*0.35}deg) scale(${1.04-(1-op)*0.08})`;
-    });
-    if(dive){dive.pause();dive.currentTime=0;dive.style.opacity=0}
-    els.forEach(el=>el.style.opacity=0);
-    copies.forEach(el=>el.style.opacity=0);
-    orbitCopy.style.opacity=1;
-    document.getElementById("orbitEye").textContent=`Облёт — ${Math.round(yaw)}°`;
-    document.getElementById("orbitTitle").textContent="Весь дом";
-    document.getElementById("intoWindow").style.display="inline-block";
-    dots.forEach((d,n)=>d.classList.toggle("on",n===0));
-    return;
-  }
-  if(t<DIVE_END){
-    phase="dive";
-    const u=(t-ORBIT_END)/(DIVE_END-ORBIT_END);
-    faces.forEach((el,i)=>{
-      const court=i===3?1:0.15;
-      el.style.opacity=Math.max(0,(1-u*1.1)*court);
-      el.style.transform=`translate3d(0,0,${u*520}px) scale(${1+u*1.8})`;
-    });
-    if(dive){
-      dive.style.opacity=Math.min(1,u*1.6);
-      const dur=dive.duration||6;
-      const next=Math.min(dur-0.05,u*dur);
-      if(Math.abs(dive.currentTime-next)>0.08) dive.currentTime=next;
-    }
-    els.forEach((el,i)=>{
-      el.style.opacity=i===0?Math.max(0,(u-0.62)/0.38):0;
-      el.style.transform=`translate3d(0,0,${(1-u)*-400}px) scale(${1.08-u*0.08})`;
-    });
-    copies.forEach(el=>el.style.opacity=0);
-    orbitCopy.style.opacity=1;
-    document.getElementById("orbitEye").textContent="Залёт";
-    document.getElementById("orbitTitle").textContent="Внутрь";
-    document.getElementById("intoWindow").style.display="none";
-    return;
-  }
-  phase="inside";
-  if(dive){dive.style.opacity=0;dive.pause()}
-  faces.forEach(el=>el.style.opacity=0);
-  orbitCopy.style.opacity=0;
-  const p=((t-DIVE_END)/(1-DIVE_END))*(rooms.length-0.001);
-  const active=Math.min(rooms.length-1,Math.floor(p));
-  rooms.forEach((r,i)=>{
-    const d=p-i;
-    if(Math.abs(d)<1.6 && !loaded.has(i)){loaded.add(i);vis[i].style.backgroundImage=`url(${r.img})`;}
-    if(reduce){
-      els[i].style.transform="none";
-      els[i].style.opacity=i===active?"1":"0";
-      els[i].style.filter="none";
-      els[i].style.clipPath="none";
-      copies[i].style.opacity=i===active?"1":"0";
-    }else{
-      const z=d*1680;
-      const scale=1+Math.max(-0.28,Math.min(0.22,d*0.28));
-      let op=0,dim=1,clip="inset(0)";
-      if(d<0){
-        const ahead=-d;op=ahead>1.12?0:1;dim=0.62+Math.max(0,1-ahead)*0.38;
-        if(ahead>0.38) clip="inset(10% 18% 8% 18%)";
-        else{const k=ahead/0.38;clip=`inset(${10*k}% ${18*k}% ${8*k}% ${18*k}%)`;}
-      }else{op=Math.max(0,1-d*1.05);dim=Math.max(0.4,1-d*0.5);}
-      els[i].style.transform=`translate3d(0,0,${z}px) scale(${scale})`;
-      els[i].style.opacity=op;
-      els[i].style.clipPath=clip;
-      els[i].style.filter=`brightness(${dim})`;
-      copies[i].style.opacity=(d>-0.18&&d<0.42)?"1":"0";
-    }
-    titles[i].classList.toggle("live",i===active);
-    lines[i].classList.toggle("live",i===active);
-    dots[i+1]?.classList.toggle("on",i===active);
+const ORBIT_END=0.18, DIVE_END=0.38;
+let yawOff=18, drag=null, phase="orbit";
+const cam={t:0,yaw:18,p:0,seek:0};
+function clamp01(n){return Math.min(1,Math.max(0,n))}
+function shortest(a){return ((a+180)%360+360)%360-180}
+function wrap360(a){return (a%360+360)%360}
+function damp(cur,tgt,lam,dt){return cur+(tgt-cur)*(1-Math.exp(-lam*dt))}
+function dampAngle(cur,tgt,lam,dt){return cur+shortest(tgt-cur)*(1-Math.exp(-lam*dt))}
+function smootherstep(n){const x=clamp01(n);return x*x*x*(x*(x*6-15)+10)}
+function readT(){const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;return Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)))}
+function draw(t,yaw,p,dt){
+  const orbitMix=1-smootherstep((t-(ORBIT_END-0.04))/0.1);
+  const diveMix=smootherstep((t-(ORBIT_END-0.02))/0.08)*(1-smootherstep((t-(DIVE_END-0.06))/0.1));
+  const insideMix=smootherstep((t-(DIVE_END-0.08))/0.12);
+  const u=smootherstep((t-ORBIT_END)/(DIVE_END-ORBIT_END||1));
+  phase=insideMix>0.55?"inside":diveMix>0.4?"dive":"orbit";
+  faces.forEach((el,i)=>{
+    const d=Math.abs(shortest(yaw-i*90));
+    const face=Math.max(0,Math.pow(Math.cos((Math.min(90,d)*Math.PI)/180),1.35));
+    const twist=shortest(yaw-i*90)*0.22;
+    const push=(1-face)*-180+u*420*(i===3?1:0.2);
+    const scale=1.03+face*0.02+u*(i===3?1.35:0.15);
+    el.style.opacity=orbitMix*face;
+    el.style.transform=`translate3d(0,0,${push}px) rotateY(${twist}deg) scale(${scale})`;
   });
-  dots[0].classList.toggle("on",false);
+  if(dive){
+    dive.style.opacity=diveMix;
+    const dur=dive.duration||6;
+    const want=Math.min(dur-0.04,u*dur);
+    cam.seek=damp(cam.seek,want,5.5,dt);
+    if(diveMix>0.08){if(dive.paused) dive.play(); if(Math.abs(dive.currentTime-cam.seek)>0.18) dive.currentTime=cam.seek;}
+    else if(!dive.paused) dive.pause();
+  }
+  rooms.forEach((r,i)=>{
+    const dlt=p-i;
+    if(Math.abs(dlt)<1.6 && !loaded.has(i)){loaded.add(i);vis[i].style.backgroundImage=`url(${r.img})`;}
+    const z=dlt*1480;
+    const scale=1+Math.max(-0.22,Math.min(0.16,dlt*0.22));
+    let op=0,dim=1,clip="inset(0)";
+    if(dlt<0){const ahead=-dlt;const k=smootherstep(ahead/0.55);op=ahead>1.2?0:1;dim=0.7+Math.max(0,1-ahead)*0.3;clip=`inset(${8*k}% ${16*k}% ${7*k}% ${16*k}%)`;}
+    else{op=Math.max(0,1-dlt*0.92);dim=Math.max(0.5,1-dlt*0.38);}
+    els[i].style.transform=`translate3d(0,0,${z}px) scale(${scale})`;
+    els[i].style.opacity=op*insideMix;
+    els[i].style.clipPath=clip;
+    els[i].style.filter=`brightness(${dim})`;
+    copies[i].style.opacity=(insideMix>0.55&&dlt>-0.2&&dlt<0.45)?"1":"0";
+    titles[i].classList.toggle("live",phase==="inside"&&Math.floor(p)===i);
+    lines[i].classList.toggle("live",phase==="inside"&&Math.floor(p)===i);
+    dots[i+1]?.classList.toggle("on",phase==="inside"&&Math.floor(p)===i);
+  });
+  dots[0].classList.toggle("on",phase!=="inside");
+  orbitCopy.style.opacity=Math.max(orbitMix,diveMix*0.85)*(1-insideMix);
+  document.getElementById("intoWindow").style.opacity=orbitMix;
+  document.getElementById("intoWindow").style.pointerEvents=orbitMix>0.4?"auto":"none";
+  document.getElementById("orbitEye").textContent=diveMix>0.45?"Залёт":`Облёт — ${Math.round(yaw)}°`;
+  document.getElementById("orbitTitle").textContent=diveMix>0.45?"Внутрь":"Весь дом";
 }
+let last=performance.now();
+function tick(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  const target=readT();
+  cam.t=reduce?target:damp(cam.t,target,7.2,dt);
+  const spin=wrap360((Math.min(cam.t,ORBIT_END)/ORBIT_END)*340+yawOff);
+  cam.yaw=reduce?spin:wrap360(dampAngle(cam.yaw,spin,drag?14:6.4,dt));
+  const roomT=Math.max(0,(cam.t-DIVE_END)/(1-DIVE_END));
+  const targetP=roomT*(rooms.length-0.001);
+  cam.p=reduce?targetP:damp(cam.p,targetP,6.2,dt);
+  draw(cam.t,cam.yaw,cam.p,dt);
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
 function goTo(t){
   const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;
   scrollTo({top:s+t*(e-s),behavior:"smooth"});
 }
-document.getElementById("intoWindow").onclick=()=>goTo(ORBIT_END+0.01);
+document.getElementById("intoWindow").onclick=()=>goTo(ORBIT_END+0.02);
 hold.onpointerdown=e=>{
   if(e.target.closest("button,a")) return;
   if(phase!=="orbit") return;
@@ -352,12 +337,9 @@ hold.onpointerdown=e=>{
 };
 addEventListener("pointermove",e=>{
   if(!drag||phase!=="orbit") return;
-  yawOff=drag.yaw+(e.clientX-drag.x)*0.28;
-  paint();
+  yawOff=drag.yaw+(e.clientX-drag.x)*0.24;
 });
 addEventListener("pointerup",()=>{drag=null});
-addEventListener("scroll",()=>{if(frame)return;frame=requestAnimationFrame(()=>{frame=0;paint();});},{passive:true});
-paint();
 const intro=document.getElementById("intro");
 intro.onclick=()=>intro.classList.add("done");
 addEventListener("load",()=>setTimeout(()=>intro.classList.add("done"),9800));
