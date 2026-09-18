@@ -7,7 +7,7 @@
 <meta name="description" content="SHERWOOD — дома под ключ, капитальный ремонт и все коммуникации. Скролл — пролёт через дом. Кнопка — 3D-тур."/>
 <meta name="theme-color" content="#0B0B0C"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-<link rel="preload" as="image" href="images/hero.webp"/>
+<link rel="preload" as="image" href="images/house.webp"/>
 <link rel="prefetch" as="image" href="images/yard.webp"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -21,10 +21,24 @@ a{color:var(--accent);text-decoration:none}
 button,a[role=button]{cursor:pointer}
 h1,h2,h3{text-wrap:balance;font-weight:400}
 .eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px}
-.intro{position:fixed;inset:0;z-index:50;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;width:100%;color:var(--fg);perspective:var(--persp);transition:opacity .9s cubic-bezier(.22,1,.36,1),visibility .9s}
+.intro{position:fixed;inset:0;z-index:50;overflow:hidden;background:#000;border:0;width:100%;padding:0;color:var(--fg);cursor:pointer;transition:opacity .9s cubic-bezier(.22,1,.36,1),visibility .9s}
 .intro.done{opacity:0;visibility:hidden;pointer-events:none}
-.intro h1{font-family:var(--serif);letter-spacing:.28em;font-size:clamp(40px,8vw,86px);margin-top:18px;animation:name-fly 1.15s cubic-bezier(.22,1,.36,1) both}
-@keyframes name-fly{from{opacity:0;transform:translateZ(-440px) scale(1.7);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+.intro:before,.intro:after{content:"";position:absolute;left:0;right:0;z-index:4;height:7vh;background:#000}
+.intro:before{top:0}.intro:after{bottom:0}
+.intro-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:house-emerge 1.9s cubic-bezier(.22,1,.36,1) both}
+@keyframes house-emerge{from{clip-path:inset(100% 0 0 0);filter:brightness(2.4) saturate(.35)}to{clip-path:inset(0);filter:none}}
+.intro-scan{position:absolute;left:0;right:0;z-index:3;height:2px;background:var(--accent);box-shadow:0 0 28px var(--accent);animation:intro-scan 1.9s cubic-bezier(.22,1,.36,1) both}
+@keyframes intro-scan{from{top:0;opacity:0}12%{opacity:1}to{top:100%;opacity:0}}
+.intro-grid{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:linear-gradient(rgb(196 165 116 / 18%) 1px,transparent 1px),linear-gradient(90deg,rgb(196 165 116 / 18%) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(to bottom,black,transparent 80%);animation:grid-fade 2.6s ease-out both}
+@keyframes grid-fade{0%{opacity:.55}70%{opacity:.18}100%{opacity:0}}
+.intro-grain{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.09;mix-blend-mode:overlay;background-image:radial-gradient(rgb(244 239 230 / 35%) .6px,transparent .7px);background-size:3px 3px}
+.intro-brand{position:relative;z-index:5;display:flex;height:100%;flex-direction:column;align-items:center;justify-content:center}
+.intro-kicker{animation:brand-in .7s 2.15s cubic-bezier(.22,1,.36,1) both}
+.intro h1{font-family:var(--serif);letter-spacing:.28em;font-size:clamp(44px,8vw,88px);margin-top:18px;font-weight:400;animation:name-emerge 1.1s 2.45s cubic-bezier(.22,1,.36,1) both}
+.intro-rule{display:block;height:1px;width:0;margin-top:22px;background:var(--accent);animation:rule-draw .7s 3.2s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes brand-in{from{opacity:0;transform:translateY(12px);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+@keyframes name-emerge{from{opacity:0;letter-spacing:.62em;filter:blur(12px);transform:translateY(14px)}to{opacity:1;letter-spacing:.28em;filter:none;transform:none}}
+@keyframes rule-draw{to{width:120px}}
 .nav{position:fixed;inset:0 0 auto;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:22px var(--gutter);pointer-events:none}
 .nav a{pointer-events:auto;min-height:44px;display:inline-flex;align-items:center}
 .logo{color:var(--fg);letter-spacing:.28em;font-family:var(--serif)}
@@ -74,11 +88,23 @@ footer{padding:28px var(--gutter) 50px;border-top:1px solid var(--line);display:
 footer .logo{color:var(--fg)}
 #thanks{display:none;max-width:440px;color:var(--muted);line-height:1.7}
 @media(max-width:700px){.nav-links a:not(.tour){display:none}.journey{height:880vh}.dots{display:none}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro,.intro.done{opacity:0;visibility:hidden;transition:none}.hero-bg,.intro h1{animation:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro,.intro.done{opacity:0;visibility:hidden;transition:none}.hero-bg,.intro-film,.intro-scan,.intro-grid,.intro-kicker,.intro h1,.intro-rule{animation:none}}
 </style>
 </head>
 <body>
-<button class="intro" id="intro" type="button"><span class="eyebrow">Luxury houses</span><h1>SHERWOOD</h1></button>
+<button class="intro" id="intro" type="button">
+  <video class="intro-film" poster="images/house.webp" muted playsinline autoplay>
+    <source src="videos/intro.mp4" type="video/mp4"/>
+  </video>
+  <span class="intro-scan"></span>
+  <span class="intro-grid"></span>
+  <span class="intro-grain"></span>
+  <div class="intro-brand">
+    <p class="eyebrow intro-kicker">Luxury houses</p>
+    <h1>SHERWOOD</h1>
+    <span class="intro-rule"></span>
+  </div>
+</button>
 <header class="nav">
   <a class="logo" href="#top">SHERWOOD</a>
   <nav class="nav-links">
@@ -231,7 +257,7 @@ addEventListener("scroll",()=>{if(frame)return;frame=requestAnimationFrame(()=>{
 paint();
 const intro=document.getElementById("intro");
 intro.onclick=()=>intro.classList.add("done");
-addEventListener("load",()=>setTimeout(()=>intro.classList.add("done"),1400));
+addEventListener("load",()=>setTimeout(()=>intro.classList.add("done"),7400));
 document.getElementById("lead").onsubmit=e=>{
   e.preventDefault();
   const f=new FormData(e.currentTarget);
