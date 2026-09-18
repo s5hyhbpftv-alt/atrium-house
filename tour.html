@@ -172,14 +172,38 @@ const CA={yawOrbit:0.34,yawDrag:0.045,yawDive:0.12,yawInside:0.22,maxYaw:86,panO
 const I={duration:52,resumeMs:GT.resumeMs,endHoldMs:GT.stop*1000,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:GT.windowAt,insideStart:GT.insideStart};
 function roomPlayhead(i,n){if(n<=1)return I.insideStart; return I.insideStart+(i/Math.max(1,n-1))*(1-I.insideStart)*0.92}
 function sm01(t){const x=Math.min(1,Math.max(0,t));return x*x*x*(x*(x*6-15)+10)}
-const stops=[{id:"start",t:0,stop:0.4,pan:0},{id:"orbit",t:0.18,stop:1.4,pan:22},{id:"window",t:0.22,stop:1.1,pan:0},{id:"dive",t:0.32,stop:1.5,pan:0}].concat(rooms.map((r,i)=>({id:r.p,t:roomPlayhead(i,rooms.length),stop:GT.stop,pan:GT.panAngle})));
-function travelSec(a,b){return (a<0.19&&b<=0.22)?GT.orbit:GT.walk}
-const guide={gi:0,mode:"walk",fromT:0,walkFor:0.05,elapsed:0,panDir:1,primed:false};
-function primeWalk(i,from){
-  guide.gi=Math.max(0,Math.min(stops.length-1,i));
-  guide.mode="walk"; guide.fromT=from;
-  guide.walkFor=Math.max(0.08,travelSec(from,stops[guide.gi].t));
-  guide.elapsed=0;
+function ease(name,x){x=Math.min(1,Math.max(0,x)); return name==="linear"?x:sm01(x)}
+const script=[
+  {id:"start",to:0,walk:0.35,hold:0.4,pan:0,ease:"linear"},
+  {id:"orbit",to:0.18,walk:GT.orbit,hold:1.4,pan:22,ease:"linear"},
+  {id:"window",to:0.22,walk:1.2,hold:1.1,pan:0,ease:"smooth"},
+  {id:"dive",to:0.32,walk:1.9,hold:1.5,pan:0,ease:"smooth"}
+].concat(rooms.map((r,i)=>({id:r.p,to:roomPlayhead(i,rooms.length),walk:GT.walk,hold:GT.stop,pan:GT.panAngle,ease:"smooth"})));
+const play={i:0,phase:"walk",elapsed:0,from:0,panDir:1,primed:false};
+function cue(i,from){play.i=Math.max(0,Math.min(script.length-1,i)); play.phase="walk"; play.from=from; play.elapsed=0; play.primed=true}
+function clipAfter(t){const i=script.findIndex(c=>c.to>t+0.012); return i<0?script.length-1:i}
+function stepScript(dt,tNow){
+  if(!play.primed) cue(0,tNow);
+  const clip=script[play.i];
+  play.elapsed+=dt;
+  if(play.phase==="walk"){
+    const u=ease(clip.ease,play.elapsed/Math.max(0.08,clip.walk));
+    const t=play.from+(clip.to-play.from)*u;
+    if(play.elapsed>=clip.walk){ play.phase="hold"; play.elapsed=0; return {t:clip.to,pan:0,done:false} }
+    return {t,pan:0,done:false};
+  }
+  let pan=0;
+  if(GT.panOn && clip.pan){
+    const left=clip.hold-play.elapsed; let u=1;
+    if(play.elapsed<GT.panSec) u=ease("smooth",play.elapsed/GT.panSec);
+    else if(left<CA.panOut) u=ease("smooth",left/CA.panOut);
+    pan=play.panDir*clip.pan*u;
+  }
+  if(play.elapsed>=clip.hold){
+    if(play.i>=script.length-1) return {t:1,pan:0,done:true};
+    play.panDir*=-1; cue(play.i+1, clip.to);
+  }
+  return {t:clip.to,pan,done:false};
 }
 function axisOf(dx,dy){
   const ax=Math.abs(dx), ay=Math.abs(dy);
@@ -282,7 +306,7 @@ function draw(t,yaw){
     if(v>0.04&&!loaded.has(i)){loaded.add(i);vis[i].src=r.img}
     els[i].style.opacity=v;
     const dir=i%2? -1:1;
-    const br=v>0.65&&guide.mode==="stop"?1+CA.breathe*sm01(Math.min(1,guide.elapsed/3.2)):1;
+    const br=v>0.65&&play.phase==="hold"?1+CA.breathe*sm01(Math.min(1,play.elapsed/3.2)):1;
     els[i].style.transform=`scale(${(1.03+v*0.05)*br}) translateX(${dir*(1-v)*2.4}%)`;
     copies[i].style.opacity=v>0.55?"1":"0";
     dots[i+1].classList.toggle("on",phase==="inside"&&((shot.roomMix>0.5?shot.room+1:shot.room)===i));
@@ -305,35 +329,16 @@ function tick(now){
     if(Math.abs(flickYaw)>0.05){ yawOff+=flickYaw*dt; flickYaw*=decay; } else flickYaw=0;
     if(!paused && !auto && now>resumeAt){
       auto=true;
-      const nx=stops.findIndex(h=>h.t>cam.t+0.012);
-      primeWalk(nx<0?stops.length-1:nx, cam.t);
+      cue(clipAfter(cam.t), cam.t);
     }
     if(auto && !paused){
-      if(!guide.primed){ guide.primed=true; primeWalk(0, cam.t); }
-      const h=stops[guide.gi];
-      guide.elapsed+=dt;
-      if(guide.mode==="walk"){
-        const x=Math.min(1,guide.elapsed/guide.walkFor);
-        const orbitLeg=guide.fromT<0.19 && h.t<=0.22;
-        const u=orbitLeg?x:sm01(x);
-        cam.t=guide.fromT+(h.t-guide.fromT)*u;
-        if(guide.elapsed>=guide.walkFor){ cam.t=h.t; guide.mode="stop"; guide.elapsed=0; }
-      } else {
-        if(GT.panOn && h.pan){
-          const left=h.stop-guide.elapsed; let pu=1;
-          if(guide.elapsed<GT.panSec) pu=sm01(guide.elapsed/GT.panSec);
-          else if(left<CA.panOut) pu=sm01(left/CA.panOut);
-          yawOff=guide.panDir*h.pan*pu;
-        }
-        if(guide.elapsed>=h.stop){
-          if(guide.gi>=stops.length-1){ cam.t=1; auto=false; paused=true; playBtn.textContent="Ещё раз"; }
-          else { guide.panDir*=-1; primeWalk(guide.gi+1, cam.t); }
-        }
-      }
+      const out=stepScript(dt, cam.t);
+      cam.t=out.t; yawOff=out.pan;
+      if(out.done){ cam.t=1; auto=false; paused=true; playBtn.textContent="Ещё раз"; }
     }
   }
   const shot=sampleTour(cam.t,rooms.length);
-  if(!drag && guide.mode==="walk") yawOff*=0.88;
+  if(!drag && play.phase==="walk") yawOff*=0.88;
   const look=(shot.layer<0.4||shot.label==="inside")?yawOff:0;
   const spin=wrap360(shot.yaw+look);
   const yawT=drag?CA.yawDrag:shot.label==="dive"?CA.yawDive:shot.label==="inside"?CA.yawInside:CA.yawOrbit;
@@ -349,7 +354,7 @@ hots.innerHTML=`<button type="button" data-t="0"><img src="images/orbit-0.webp" 
 hots.onclick=e=>{const b=e.target.closest("button"); if(b) goTo(+b.dataset.t)};
 const playBtn=document.getElementById("playBtn");
 playBtn.onclick=()=>{
-  if(paused && cam.t>=0.99){ cam.t=0; guide.primed=false; }
+  if(paused && cam.t>=0.99){ cam.t=0; play.primed=false; play.i=0; play.phase="walk"; play.elapsed=0; }
   paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза";
 };
 document.getElementById("scrubHit").onpointerdown=e=>{
