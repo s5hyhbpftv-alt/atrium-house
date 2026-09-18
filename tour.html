@@ -165,9 +165,20 @@ const track=document.getElementById("track");
 function sizeTrack(){track.style.height=innerHeight+"px"}
 sizeTrack(); addEventListener("resize",sizeTrack);
 const loaded=new Set([0,1]);
-let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,holdUntil=0,paused=false,flickT=0,flickYaw=0;
-const I={duration:48,resumeMs:5000,endHoldMs:3500,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:0.26,insideStart:0.42,panAngle:28,panMs:5200};
+let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,paused=false,flickT=0,flickYaw=0;
+const GT={walk:1.85,orbit:8.6,stop:3.5,loop:false,panOn:true,panAngle:32,panSec:2.8,resumeMs:5000,windowAt:0.26,insideStart:0.42};
+const I={duration:52,resumeMs:GT.resumeMs,endHoldMs:GT.stop*1000,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:GT.windowAt,insideStart:GT.insideStart};
 function roomPlayhead(i,n){if(n<=1)return I.insideStart; return I.insideStart+(i/Math.max(1,n-1))*(1-I.insideStart)*0.92}
+function sm01(t){const x=Math.min(1,Math.max(0,t));return x*x*x*(x*(x*6-15)+10)}
+const stops=[{id:"start",t:0,stop:0.4,pan:0},{id:"orbit",t:0.18,stop:1.4,pan:22},{id:"window",t:0.22,stop:1.1,pan:0},{id:"dive",t:0.32,stop:1.5,pan:0}].concat(rooms.map((r,i)=>({id:r.p,t:roomPlayhead(i,rooms.length),stop:GT.stop,pan:GT.panAngle})));
+function travelSec(a,b){return (a<0.19&&b<=0.22)?GT.orbit:GT.walk}
+const guide={gi:0,mode:"walk",fromT:0,walkFor:0.05,elapsed:0,panDir:1,primed:false};
+function primeWalk(i,from){
+  guide.gi=Math.max(0,Math.min(stops.length-1,i));
+  guide.mode="walk"; guide.fromT=from;
+  guide.walkFor=Math.max(0.08,travelSec(from,stops[guide.gi].t));
+  guide.elapsed=0;
+}
 function axisOf(dx,dy){
   const ax=Math.abs(dx), ay=Math.abs(dy);
   if(ax<I.deadzone&&ay<I.deadzone) return "none";
@@ -289,24 +300,31 @@ function tick(now){
     const decay=Math.exp(-dt*I.inertia);
     if(Math.abs(flickT)>0.0002){ cam.t=Math.min(1,Math.max(0,cam.t+flickT*dt)); flickT*=decay; } else flickT=0;
     if(Math.abs(flickYaw)>0.05){ yawOff+=flickYaw*dt; flickYaw*=decay; } else flickYaw=0;
-    if(!paused && !auto && now>resumeAt) auto=true;
+    if(!paused && !auto && now>resumeAt){
+      auto=true;
+      const nx=stops.findIndex(h=>h.t>cam.t+0.012);
+      primeWalk(nx<0?stops.length-1:nx, cam.t);
+    }
     if(auto && !paused){
-      if(cam.t>=0.995){
-        if(!holdUntil) holdUntil=now+I.endHoldMs;
-        if(now>holdUntil){
-          if(I.loop){cam.t=0; holdUntil=0}
-          else {cam.t=1; auto=false; paused=true; playBtn.textContent="Ещё раз"}
-        }
+      if(!guide.primed){ guide.primed=true; primeWalk(0, cam.t); }
+      const h=stops[guide.gi];
+      guide.elapsed+=dt;
+      if(guide.mode==="walk"){
+        const u=sm01(guide.elapsed/guide.walkFor);
+        cam.t=guide.fromT+(h.t-guide.fromT)*u;
+        if(guide.elapsed>=guide.walkFor){ cam.t=h.t; guide.mode="stop"; guide.elapsed=0; }
       } else {
-        holdUntil=0;
-        cam.t=Math.min(1,cam.t+dt/I.duration);
+        if(GT.panOn && h.pan) yawOff=guide.panDir*h.pan*sm01(guide.elapsed/GT.panSec);
+        if(guide.elapsed>=h.stop){
+          if(guide.gi>=stops.length-1){ cam.t=1; auto=false; paused=true; playBtn.textContent="Ещё раз"; }
+          else { guide.panDir*=-1; primeWalk(guide.gi+1, cam.t); }
+        }
       }
     }
   }
   const shot=sampleTour(cam.t,rooms.length);
-  if(!drag && shot.layer>0.2 && shot.label!=="inside") yawOff*=0.92;
-  let look=shot.layer<0.35?yawOff:0;
-  if(!drag && shot.label==="inside" && auto) look=Math.sin(now/I.panMs)*I.panAngle;
+  if(!drag && guide.mode==="walk") yawOff*=0.88;
+  const look=(shot.layer<0.4||shot.label==="inside")?yawOff:0;
   const spin=wrap360(shot.yaw+look);
   cam.yaw=smoothDampAngle(cam.yaw,spin,"yaw",drag?0.04:0.2,dt);
   draw(cam.t,cam.yaw);
@@ -320,7 +338,7 @@ hots.innerHTML=`<button type="button" data-t="0"><img src="images/orbit-0.webp" 
 hots.onclick=e=>{const b=e.target.closest("button"); if(b) goTo(+b.dataset.t)};
 const playBtn=document.getElementById("playBtn");
 playBtn.onclick=()=>{
-  if(paused && cam.t>=0.995) cam.t=0;
+  if(paused && cam.t>=0.99){ cam.t=0; guide.primed=false; }
   paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза";
 };
 document.getElementById("scrubHit").onpointerdown=e=>{
