@@ -18,6 +18,7 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
 .track{height:1800vh}
 .stage{position:sticky;top:0;height:100dvh;overflow:hidden;perspective:var(--persp);perspective-origin:50% 46%}
+.cam-rig{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 46%}
 .stage:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,rgba(11,11,12,.55) 100%)}
 .orbit-face,.room .vis,.dive-film{position:absolute;inset:0;background-size:cover;background-position:center}
 .orbit-face{z-index:2;transform-origin:50% 46%}
@@ -57,9 +58,11 @@ h3{font-size:clamp(32px,5vw,60px);margin-top:8px}
         <a href="index.html">На сайт</a>
       </div>
     </div>
+    <div class="cam-rig" id="rig">
     <div id="orbit"></div>
     <video class="dive-film" id="dive" muted playsinline preload="auto"><source src="videos/window.mp4" type="video/mp4"/></video>
     <div id="rooms"></div>
+    </div>
     <div class="orbit-copy" id="orbitCopy">
       <span class="eyebrow" id="orbitEye">Облёт</span>
       <h3 id="orbitTitle">Весь дом</h3>
@@ -113,7 +116,13 @@ const orbitCopy=document.getElementById("orbitCopy");
 const track=document.getElementById("track");
 const loaded=new Set([0,1]);
 let yawOff=18,drag=null,phase="orbit",floor="0",activeId="";
-const cam={t:0,yaw:18,p:0,seek:0};
+function cineEase(t){return smootherstep(smootherstep(t))}
+function dwellProgress(t,n,rest){if(n<=1)return 0;const x=clamp01(t)*n;const i=Math.min(n-1,Math.floor(x));const f=x-i;if(i>=n-1)return n-0.001;if(f<rest)return i;return i+cineEase((f-rest)/(1-rest))}
+function orbitBeats(yaw,s){const beat=Math.round(yaw/90)*90;return yaw+shortest(beat-yaw)*s}
+function cinePose(u,om,dm,im,p){const glass=Math.sin(Math.PI*clamp01((u-0.28)/0.44));return{pitch:7.2*om+(7.2-7.8*cineEase(u))*dm+1.4*im,roll:glass*dm*0.7,fov:1760-420*glass*dm+70*im,y:1.6*om+3.4*cineEase(u)*dm-0.5*im,x:Math.sin(p*0.9)*0.55*im,blur:glass*dm*5.2}}
+const cam={t:0,yaw:18,p:0,seek:0,pitch:7,roll:0,fov:1760,x:0,y:1.6,blur:0};
+const rig=document.getElementById("rig");
+const stage=document.getElementById("stage");
 function clamp01(n){return Math.min(1,Math.max(0,n))}
 function shortest(a){return ((a+180)%360+360)%360-180}
 function wrap360(a){return (a%360+360)%360}
@@ -125,7 +134,12 @@ function draw(t,yaw,p,dt){
   const orbitMix=1-smootherstep((t-(ORBIT_END-0.04))/0.1);
   const diveMix=smootherstep((t-(ORBIT_END-0.02))/0.08)*(1-smootherstep((t-(DIVE_END-0.06))/0.1));
   const insideMix=smootherstep((t-(DIVE_END-0.08))/0.12);
-  const u=smootherstep((t-ORBIT_END)/(DIVE_END-ORBIT_END||1));
+  const u=cineEase((t-ORBIT_END)/(DIVE_END-ORBIT_END||1));
+  const pose=cinePose(u,orbitMix,diveMix,insideMix,p);
+  cam.pitch=damp(cam.pitch,pose.pitch,5.4,dt);cam.roll=damp(cam.roll,pose.roll,6.8,dt);cam.fov=damp(cam.fov,pose.fov,4.8,dt);
+  cam.x=damp(cam.x,pose.x,4.2,dt);cam.y=damp(cam.y,pose.y,5.1,dt);cam.blur=damp(cam.blur,pose.blur,8.5,dt);
+  if(stage){stage.style.perspective=cam.fov+"px";stage.style.perspectiveOrigin=`${50+cam.x*4}% ${44+cam.y*0.6}%`}
+  if(rig){rig.style.transform=`rotateX(${cam.pitch}deg) rotateZ(${cam.roll}deg) translate3d(${cam.x}%,${cam.y}%,0)`;rig.style.filter=cam.blur>0.08?`blur(${cam.blur}px)`:"none"}
   phase=insideMix>0.55?"inside":diveMix>0.4?"dive":"orbit";
   faces.forEach((el,i)=>{
     const d=Math.abs(shortest(yaw-i*90));
@@ -167,11 +181,11 @@ function tick(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   const s=track.offsetTop,e=s+track.offsetHeight-innerHeight;
   const target=Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)));
-  cam.t=damp(cam.t,target,7.2,dt);
-  const spin=wrap360((Math.min(cam.t,ORBIT_END)/ORBIT_END)*340+yawOff);
-  cam.yaw=wrap360(dampAngle(cam.yaw,spin,drag?14:6.4,dt));
+  cam.t=damp(cam.t,target,4.6,dt);
+  const spin=wrap360(orbitBeats((Math.min(cam.t,ORBIT_END)/ORBIT_END)*340+yawOff, drag?0.04:0.2));
+  cam.yaw=wrap360(dampAngle(cam.yaw,spin,drag?11:4.8,dt));
   const roomT=Math.max(0,(cam.t-DIVE_END)/(1-DIVE_END));
-  cam.p=damp(cam.p,roomT*(rooms.length-0.001),6.2,dt);
+  cam.p=damp(cam.p,dwellProgress(roomT,rooms.length,0.44),4.4,dt);
   draw(cam.t,cam.yaw,cam.p,dt);
   requestAnimationFrame(tick);
 }
