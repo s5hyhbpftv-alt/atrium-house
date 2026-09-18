@@ -56,17 +56,17 @@ h1,h2,h3{text-wrap:balance;font-weight:400}
 .btn{border:1px solid var(--accent);padding:12px 18px;letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--fg);min-height:44px;display:inline-flex;align-items:center}
 .btn:hover{background:var(--accent);color:var(--ink)}
 .journey{height:1800vh}
-.sticky{position:sticky;top:0;height:100dvh;overflow:hidden}
+.sticky{position:sticky;top:0;height:100dvh;overflow:hidden;perspective:1600px;perspective-origin:50% 46%}
 .sticky:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,rgba(11,11,12,.55) 100%)}
 .room{position:absolute;inset:0;z-index:5;opacity:0;transform-origin:50% 48%;will-change:transform,opacity}
-.orbit-stage{position:absolute;inset:0;z-index:2}
-.orbit-face{position:absolute;inset:0;opacity:0}
-.orbit-face.on{opacity:1}
+.orbit-stage{position:absolute;inset:0;z-index:2;transform-style:preserve-3d}
+.orbit-rig{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 46%}
+.orbit-face{position:absolute;inset:0;backface-visibility:hidden}
 .orbit-face img,.room .vis{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center}
 .orbit-face{position:absolute;inset:0;background-size:cover;background-position:center;transform-origin:50% 46%;will-change:transform,opacity,filter}
 .dive-film{position:absolute;inset:0;z-index:4;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
-.window-hit{margin-top:18px;min-height:44px;border:1px solid var(--accent);background:var(--accent);color:var(--ink);padding:10px 16px;letter-spacing:.14em;text-transform:uppercase;font-size:11px;cursor:pointer;font-family:var(--sans)}
-.orbit-copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:12;max-width:32rem}
+.window-hit{margin-top:18px;min-height:44px;border:1px solid var(--accent);background:var(--accent);color:var(--ink);padding:10px 16px;letter-spacing:.14em;text-transform:uppercase;font-size:11px;cursor:pointer;font-family:var(--sans);pointer-events:auto}
+.orbit-copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:12;max-width:32rem;pointer-events:none}
 .doorway{position:absolute;left:50%;top:50%;z-index:7;width:min(32vw,280px);height:min(76vh,640px);transform:translate3d(-50%,-54%,-420px);transform-style:preserve-3d;opacity:0;pointer-events:none}
 .door-frame{position:absolute;inset:-11px -12px -6px -12px;border:11px solid #2a1c12;box-shadow:inset 0 0 0 3px #5a4030,0 18px 40px rgba(0,0,0,.55)}
 .door-leaf{position:absolute;inset:0;transform-origin:left center;transform:rotateY(0);background:url("images/door-leaf.webp") center/cover;box-shadow:12px 0 28px rgba(0,0,0,.45);backface-visibility:hidden}
@@ -244,7 +244,7 @@ const rooms=[
   {i:"10",p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной. Дверь глухая, вентиляция тихая, свет мягкий. Гости не ищут его по дому — он на своём месте.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
 ];
 const hold=document.getElementById("rooms");
-hold.innerHTML=`<div class="orbit-stage" id="orbit">${facades.map((f,i)=>`<div class="orbit-face${i===0?" on":""}"><img src="${f.img}" alt="" width="1600" height="900"/></div>`).join("")}</div><video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/house-court.webp"><source src="videos/window.mp4" type="video/mp4"/></video>`+rooms.map((r,n)=>`<article class="room" data-i="${n}"><div class="vis" style="background-image:url(${n===0?r.img:r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c.split(" ").map((w,i)=>`<span style="--i:${i}">${w} </span>`).join("")}</p></div></article>`).join("")+`<div class="orbit-copy" id="orbitCopy"><span class="eyebrow" id="orbitEye">Облёт дома</span><h3 id="orbitTitle">Весь дом</h3><p>Тяните или скролльте — дом можно обойти со всех сторон. Дальше — залёт в окно.</p><button class="window-hit" type="button" id="intoWindow">Залететь в окно</button></div><div class="dots"><i class="on"></i>${rooms.map(()=>`<i></i>`).join("")}</div>`;
+hold.innerHTML=`<div class="orbit-stage" id="orbit"><div class="orbit-rig" id="rig">${facades.map((f)=>`<div class="orbit-face"><img src="${f.img}" alt="" width="1600" height="900"/></div>`).join("")}</div></div><video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/house-court.webp"><source src="videos/window.mp4" type="video/mp4"/></video>`+rooms.map((r,n)=>`<article class="room" data-i="${n}"><div class="vis" style="background-image:url(${n===0?r.img:r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c.split(" ").map((w,i)=>`<span style="--i:${i}">${w} </span>`).join("")}</p></div></article>`).join("")+`<div class="orbit-copy" id="orbitCopy"><span class="eyebrow" id="orbitEye">Облёт дома</span><h3 id="orbitTitle">Весь дом</h3><p>Тяните в сторону — дом крутится вокруг. Скролл ведёт к окну.</p><button class="window-hit" type="button" id="intoWindow">Залететь в окно</button></div><div class="dots"><i class="on"></i>${rooms.map(()=>`<i></i>`).join("")}</div>`;
 const els=[...hold.querySelectorAll(".room")];
 const copies=[...hold.querySelectorAll(".room .copy")];
 const titles=[...hold.querySelectorAll(".room .copy h3")];
@@ -252,12 +252,13 @@ const lines=[...hold.querySelectorAll(".room .copy p")];
 const vis=[...hold.querySelectorAll(".vis")];
 const dots=[...hold.querySelectorAll(".dots i")];
 const faces=[...hold.querySelectorAll(".orbit-face")];
+const rig=document.getElementById("rig");
 const dive=document.getElementById("dive");
 const orbitCopy=document.getElementById("orbitCopy");
 const loaded=new Set([0,1]);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const j=document.querySelector(".journey");
-const DIVE_IN=0.24, DIVE_FULL=0.3, DIVE_OUT_START=0.4, DIVE_OUT=0.48, INSIDE_IN=0.4;
+const DIVE_IN=0.34, DIVE_FULL=0.4, DIVE_OUT_START=0.48, DIVE_OUT=0.56, INSIDE_IN=0.48, WINDOW_YAW=270;
 let yawOff=0, drag=null, phase="orbit";
 const cam={t:0,yaw:0,p:0,playing:false};
 const vel={t:0,yaw:0,p:0};
@@ -285,14 +286,18 @@ function shotPair(progress,count,hold){
 }
 function readT(){const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;return Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)))}
 function draw(t,yaw,p){
-  const orbitMix=envelope(t,-0.02,0,0.22,0.3);
+  const orbitMix=envelope(t,-0.02,0,0.32,0.42);
   const diveMix=envelope(t,DIVE_IN,DIVE_FULL,DIVE_OUT_START,DIVE_OUT);
   const insideMix=envelope(t,INSIDE_IN,DIVE_OUT,1.05,1.2);
   phase=insideMix>0.5?"inside":diveMix>0.35?"dive":"orbit";
-  const facesPair=shotPair(wrap360(yaw)/360,facades.length,0.7);
+  const radius=Math.min(innerWidth,innerHeight)*0.46;
+  const dolly=diveMix*radius*0.85;
+  document.getElementById("orbit").style.opacity=orbitMix;
+  if(rig) rig.style.transform=`translateZ(${-radius+dolly}px) rotateY(${-yaw}deg)`;
   faces.forEach((el,i)=>{
-    let v=0; if(i===facesPair.a)v=1-facesPair.mix; if(i===facesPair.b)v=Math.max(v,facesPair.mix);
-    el.style.opacity=orbitMix*v; el.style.transform=`scale(${1.02+(1-v)*0.03})`;
+    el.style.transform=`rotateY(${i*90}deg) translateZ(${radius}px)`;
+    const facing=Math.cos(((yaw-i*90)*Math.PI)/180);
+    el.style.opacity=0.2+0.8*Math.max(0,facing);
   });
   if(dive){
     dive.style.opacity=diveMix;
@@ -326,8 +331,9 @@ function tick(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   const target=readT();
   cam.t=reduce?target:smoothDamp(cam.t,target,"t",0.22,dt);
-  const spin=wrap360(Math.min(1,cam.t/0.22)*330+yawOff);
-  cam.yaw=reduce?spin:smoothDampAngle(cam.yaw,spin,"yaw",drag?0.08:0.28,dt);
+  const orbitSpin=Math.min(1,cam.t/0.32)*270+yawOff;
+  const spin=wrap360(cam.t>DIVE_IN?WINDOW_YAW:orbitSpin);
+  cam.yaw=reduce?spin:smoothDampAngle(cam.yaw,spin,"yaw",drag?0.07:0.32,dt);
   const roomT=Math.max(0,(cam.t-INSIDE_IN)/(1-INSIDE_IN));
   cam.p=reduce?roomT*(rooms.length-1):smoothDamp(cam.p,roomT*(rooms.length-1),"p",0.28,dt);
   draw(cam.t,cam.yaw,cam.p);
