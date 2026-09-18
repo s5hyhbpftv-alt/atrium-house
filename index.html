@@ -223,10 +223,14 @@ footer .logo{color:var(--fg)}
 </footer>
 <script>
 const facades=[
-  {img:"images/house-front.webp"},
-  {img:"images/orbit-0.webp"},
-  {img:"images/house-side.webp"},
-  {img:"images/house-court.webp"}
+  {img:"images/house.webp"},
+  {img:"images/land-1.webp"},
+  {img:"images/land-2.webp"},
+  {img:"images/land-3.webp"},
+  {img:"images/land-4.webp"},
+  {img:"images/land-5.webp"},
+  {img:"images/land-6.webp"},
+  {img:"images/land-7.webp"}
 ];
 const rooms=[
   {i:"02",p:"Гостиная",t:"Очаг",c:"Вечером огонь и лес за стеклом — будто сидите на опушке, только тепло. Голоса не гуляют эхом, диван не смотрит в телевизор, он смотрит в кроны.",img:"images/living.webp",lq:"images/living.lq.webp"},
@@ -240,7 +244,7 @@ const rooms=[
   {i:"10",p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной. Дверь глухая, вентиляция тихая, свет мягкий. Гости не ищут его по дому — он на своём месте.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
 ];
 const hold=document.getElementById("rooms");
-hold.innerHTML=`<div class="orbit-stage" id="orbit"><div class="orbit-rig" id="rig">${facades.map((f)=>`<div class="orbit-face"><img src="${f.img}" alt="" width="1600" height="900"/><div class="wall-shader"><span class="wall-fresnel"></span><span class="wall-spec"></span><span class="wall-rim"></span><span class="wall-glass"></span><span class="wall-cad"></span></div></div>`).join("")}</div></div><video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/house-court.webp"><source src="videos/window.mp4" type="video/mp4"/></video>`+rooms.map((r,n)=>`<article class="room" data-i="${n}"><div class="vis" style="background-image:url(${n===0?r.img:r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c.split(" ").map((w,i)=>`<span style="--i:${i}">${w} </span>`).join("")}</p></div></article>`).join("")+`<div class="orbit-copy" id="orbitCopy"><span class="eyebrow" id="orbitEye">Облёт дома</span><h3 id="orbitTitle">Весь дом</h3><p>Тяните в сторону — дом крутится вокруг. Скролл ведёт к окну.</p><button class="window-hit" type="button" id="intoWindow">Залететь в окно</button></div><div class="dots"><i class="on"></i>${rooms.map(()=>`<i></i>`).join("")}</div>`;
+hold.innerHTML=`<div class="orbit-stage" id="orbit"><div class="orbit-rig" id="rig">${facades.map((f)=>`<div class="orbit-face"><img src="${f.img}" alt="" width="1600" height="900"/><div class="wall-shader"><span class="wall-fresnel"></span><span class="wall-spec"></span><span class="wall-rim"></span><span class="wall-glass"></span><span class="wall-cad"></span></div></div>`).join("")}</div></div><video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/house-court.webp"><source src="videos/home-window.mp4" type="video/mp4"/></video>`+rooms.map((r,n)=>`<article class="room" data-i="${n}"><div class="vis" style="background-image:url(${n===0?r.img:r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c.split(" ").map((w,i)=>`<span style="--i:${i}">${w} </span>`).join("")}</p></div></article>`).join("")+`<div class="orbit-copy" id="orbitCopy"><span class="eyebrow" id="orbitEye">Облёт дома</span><h3 id="orbitTitle">Весь дом</h3><p>Тяните в сторону — дом крутится вокруг. Скролл ведёт к окну.</p><button class="window-hit" type="button" id="intoWindow">Залететь в окно</button></div><div class="dots"><i class="on"></i>${rooms.map(()=>`<i></i>`).join("")}</div>`;
 const els=[...hold.querySelectorAll(".room")];
 const copies=[...hold.querySelectorAll(".room .copy")];
 const titles=[...hold.querySelectorAll(".room .copy h3")];
