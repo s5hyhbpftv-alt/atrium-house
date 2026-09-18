@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0B0B0C"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="preload" as="image" href="images/orbit-0.webp"/>
-<link rel="preload" as="image" href="images/orbit-6.webp"/>
+<link rel="preload" as="image" href="images/orbit-3.webp"/>
 <link rel="preload" as="video" href="videos/window.mp4"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -57,7 +57,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
       </div>
     </div>
     <div class="orbit-stage" id="orbit"></div>
-    <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/orbit-6.webp"><source src="videos/window.mp4" type="video/mp4"/></video>
+    <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/orbit-3.webp"><source src="videos/window.mp4" type="video/mp4"/></video>
     <div id="rooms"></div>
     <div class="orbit-copy" id="orbitCopy">
       <span class="eyebrow" id="orbitEye">Облёт дома</span>
@@ -78,7 +78,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
   </div>
 </section>
 <script>
-const facades=[0,1,2,3,4,5,6,7].map(i=>({img:`images/orbit-${i}.webp`}));
+const facades=[0,1,2,3].map(i=>({img:`images/orbit-${i}.webp`}));
 const rooms=[
   {p:"Гостиная",t:"Очаг",c:"Вечером огонь и лес за стеклом — будто сидите на опушке, только тепло.",img:"images/living.webp",lq:"images/living.lq.webp"},
   {p:"Кухня",t:"Ритм утра",c:"Камень острова холодный на ладонь. Завтрак — и уже виден двор.",img:"images/kitchen.webp",lq:"images/kitchen.lq.webp"},
@@ -129,7 +129,7 @@ function orbitWeights(yaw,count){
   const step=360/count;
   const raw=Array.from({length:count},(_,i)=>{
     const rel=(shortest(yaw-i*step)*Math.PI)/180;
-    return Math.pow(Math.max(0,Math.cos(rel)),8);
+    return Math.pow(Math.max(0,Math.cos(rel)),12);
   });
   const sum=raw.reduce((a,b)=>a+b,0)||1;
   return raw.map(w=>w/sum);
@@ -180,8 +180,8 @@ function draw(t,yaw){
   const w=orbitWeights(yaw,faces.length);
   faces.forEach((el,i)=>{
     const a=w[i]||0;
-    el.style.opacity=a<0.05?0:a;
-    el.style.visibility=a<0.05?"hidden":"visible";
+    el.style.opacity=a<0.12?0:a;
+    el.style.visibility=a<0.12?"hidden":"visible";
   });
   if(dive){
     dive.style.opacity=shot.dive;
