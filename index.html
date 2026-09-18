@@ -1,141 +1,126 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sherwood</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Manrope:wght@400;500&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sherwood — luxury homes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0b0b0c;--ink:#f4efe6;--muted:#a39a8c;--gold:#c4a574;--line:rgba(244,239,230,.12);--serif:"Cormorant Garamond",Georgia,serif;--sans:"Manrope",system-ui,sans-serif}
+:root{--bg:#0b0b0c;--ink:#f4efe6;--muted:#a39a8c;--gold:#c4a574;--line:rgba(244,239,230,.12);--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-.intro{position:fixed;inset:0;z-index:200;background:#050506;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .9s,visibility .9s}
+a{color:var(--gold);text-decoration:none}
+.intro{position:fixed;inset:0;z-index:80;background:#050506;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.9s}
 .intro.done{opacity:0;visibility:hidden;pointer-events:none}
-.intro-mark{letter-spacing:.42em;text-transform:uppercase;font-size:13px;color:var(--gold);font-family:var(--serif)}
-.intro-word{margin-top:24px;display:flex;gap:8px;font-family:var(--serif);font-size:clamp(40px,8vw,88px);letter-spacing:.16em}
-.intro-word span{opacity:0;transform:translateY(16px);animation:rise .65s ease forwards}
-.intro-word span:nth-child(1){animation-delay:.1s}.intro-word span:nth-child(2){animation-delay:.18s}.intro-word span:nth-child(3){animation-delay:.26s}.intro-word span:nth-child(4){animation-delay:.34s}.intro-word span:nth-child(5){animation-delay:.42s}.intro-word span:nth-child(6){animation-delay:.5s}.intro-word span:nth-child(7){animation-delay:.58s}.intro-word span:nth-child(8){animation-delay:.66s}
-.intro-bar{width:110px;height:1px;background:var(--gold);margin-top:28px;transform:scaleX(0);animation:bar 1.1s .4s ease forwards}
-.intro-sub{margin-top:16px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);opacity:0;animation:fade 1s 1s forwards}
-@keyframes rise{to{opacity:1;transform:none}}@keyframes bar{to{transform:scaleX(1)}}@keyframes fade{to{opacity:1}}
-.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:20px 36px}
-.logo{font-family:var(--serif);letter-spacing:.28em}
-.cta{border:1px solid var(--gold);color:var(--gold);padding:8px 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.intro b{font-family:var(--serif);letter-spacing:.4em;font-weight:400;font-size:14px;color:var(--gold)}
+.intro h1{font-family:var(--serif);font-weight:400;letter-spacing:.2em;font-size:clamp(40px,8vw,86px);margin:18px 0}
+.nav{position:fixed;inset:0 0 auto;z-index:40;display:flex;justify-content:space-between;padding:22px 36px}
+.logo{color:var(--ink);letter-spacing:.28em;font-family:var(--serif)}
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 8vw 80px;position:relative}
-.hero-bg{position:absolute;inset:-8%;background:linear-gradient(to top,#0b0b0c 0%,rgba(11,11,12,.4) 45%,transparent 70%),url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80") center/cover}
-.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(46px,8vw,104px);line-height:.92;position:relative;max-width:14ch}
-.hero h1 em{font-style:italic;color:#e8dcc8}
-.eyebrow{color:var(--gold);letter-spacing:.24em;text-transform:uppercase;font-size:11px;margin-bottom:18px;position:relative}
-.lede{max-width:46ch;color:var(--muted);margin:22px 0;line-height:1.7;position:relative}
-.journey{height:800vh}.journey-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
-.room{position:absolute;inset:0;opacity:0;transition:opacity .6s}.room.active{opacity:1}
-.room-visual{position:absolute;inset:0;background-size:cover;background-position:center}
-.room-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,#0b0b0c 8%,transparent 48%)}
-.approach{background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=80")}
-.threshold{background-image:url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=80")}
-.foyer{background-image:url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=80")}
-.living{background-image:url("https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&w=1800&q=80")}
-.kitchen{background-image:url("https://images.unsplash.com/photo-1556912173-46c336c7fd55?auto=format&fit=crop&w=1800&q=80")}
-.bedroom{background-image:url("https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1800&q=80")}
-.bath{background-image:url("https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1800&q=80")}
-.systems{background-image:url("https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=80")}
-.room-copy{position:absolute;left:8vw;bottom:12vh;z-index:2;max-width:34ch}
-.room-copy span{display:block;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-size:11px;margin-bottom:10px}
-.room-copy h2{font-family:var(--serif);font-size:clamp(32px,5vw,62px);font-weight:400}
-section{padding:110px 8vw}section h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,64px)}
-.svc-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
-.svc-wrap article{border:1px solid var(--line);padding:28px}
-.svc-wrap em{color:var(--gold);font-style:normal;font-size:12px;letter-spacing:.18em}
-.svc-wrap h3{font-family:var(--serif);font-size:26px;margin:12px 0 14px;font-weight:500}
-.svc-wrap li{list-style:none;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
-.works-rail{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-top:36px}
-.fig{height:320px;background-size:cover;background-position:center;margin-bottom:12px}
-.pine{background-image:url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80")}
-.lake{background-image:url("https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80")}
-.barn{background-image:url("https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1200&q=80")}
-.city{background-image:url("https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80")}
-figcaption strong{display:block;font-family:var(--serif);font-size:22px;font-weight:500}
-form{display:grid;gap:10px;max-width:420px;margin-top:24px}
+.hero-bg{position:absolute;inset:-8%;background:linear-gradient(to top,#0b0b0c,rgba(11,11,12,.35) 40%,transparent),url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80") center/cover}
+.hero h2{font-family:var(--serif);font-weight:400;font-size:clamp(48px,8vw,108px);line-height:.92;position:relative;max-width:13ch}
+.hero h2 em{font-style:italic;color:#e8dcc8}
+.eyebrow{color:var(--gold);letter-spacing:.22em;text-transform:uppercase;font-size:11px;margin-bottom:16px;position:relative}
+.lede{max-width:52ch;color:var(--muted);margin:22px 0 28px;line-height:1.75;position:relative}
+.btns{position:relative;display:flex;gap:14px;flex-wrap:wrap}
+.btn{border:1px solid var(--gold);padding:12px 18px;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.journey{height:800vh}.sticky{position:sticky;top:0;height:100vh;overflow:hidden}
+.room{position:absolute;inset:0;opacity:0;transition:opacity .6s}.room.on{opacity:1}
+.vis{position:absolute;inset:0;background-size:cover;background-position:center}
+.vis:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,#0b0b0c 10%,transparent 50%)}
+.a{background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=80")}
+.b{background-image:url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=80")}
+.c{background-image:url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1800&q=80")}
+.d{background-image:url("https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&w=1800&q=80")}
+.e{background-image:url("https://images.unsplash.com/photo-1556912173-46c336c7fd55?auto=format&fit=crop&w=1800&q=80")}
+.f{background-image:url("https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1800&q=80")}
+.g{background-image:url("https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1800&q=80")}
+.h{background-image:url("https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=80")}
+.copy{position:absolute;left:8vw;bottom:12vh;z-index:2;max-width:38ch}
+.copy span{display:block;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-size:11px;margin-bottom:10px}
+.copy h3{font-family:var(--serif);font-size:clamp(30px,5vw,60px);font-weight:400}
+.copy p{color:var(--muted);margin-top:12px;line-height:1.7}
+section{padding:120px 8vw}section>h2{font-family:var(--serif);font-weight:400;font-size:clamp(36px,5vw,68px);margin:10px 0 36px}
+.svc{display:grid;gap:28px}
+.svc article{border-top:1px solid var(--line);padding-top:28px;display:grid;grid-template-columns:160px 1fr 1.2fr;gap:24px}
+.svc em{color:var(--gold);font-style:normal;letter-spacing:.18em;font-size:12px}
+.svc h3{font-family:var(--serif);font-size:32px;font-weight:500}
+.svc p,.svc li{color:var(--muted);line-height:1.75;font-size:15px}
+.svc ul{list-style:none}.svc li{padding:4px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{min-height:220px;border:1px solid var(--line);padding:24px}
+.card h3{font-family:var(--serif);font-size:26px;margin:8px 0 10px;font-weight:500}
+.card p{color:var(--muted);line-height:1.65;font-size:14px}
+form{display:grid;gap:10px;max-width:440px}
 input,select,button{font:inherit;padding:14px 16px;border:1px solid var(--line);background:transparent;color:var(--ink)}
 button{background:var(--ink);color:var(--bg);border:none;letter-spacing:.12em;text-transform:uppercase;font-size:12px}
-footer{padding:30px 8vw 50px;border-top:1px solid var(--line);color:var(--muted);display:flex;justify-content:space-between}
-@media(max-width:900px){.svc-wrap,.works-rail{grid-template-columns:1fr}.journey{height:600vh}}
-</style>
-</head>
+footer{padding:28px 8vw 50px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted)}
+@media(max-width:900px){.svc article,.grid3{grid-template-columns:1fr}.journey{height:620vh}}
+</style></head>
 <body>
-<div class="intro" id="intro">
-  <div class="intro-mark">Sherwood</div>
-  <div class="intro-word"><span>S</span><span>H</span><span>E</span><span>R</span><span>W</span><span>O</span><span>O</span><span>D</span></div>
-  <div class="intro-bar"></div>
-  <div class="intro-sub">Дом · Ремонт · Коммуникации</div>
-</div>
-<nav class="nav"><a class="logo" href="#top">Sherwood</a><a class="cta" href="#consult">Консультация</a></nav>
+<div class="intro" id="intro"><b>LUXURY HOUSES</b><h1>SHERWOOD</h1></div>
+<nav class="nav"><a class="logo" href="#top">Sherwood</a><a href="tour.html">3D-тур</a></nav>
 <main id="top">
 <section class="hero">
-  <div class="hero-bg" id="heroBg"></div>
-  <p class="eyebrow">Дом под ключ · ремонт · все коммуникации</p>
-  <h1>Дом в лесу<br /><em>и вся жизнь внутри</em></h1>
-  <p class="lede">Скролл — проход по дому. Строим под ключ, ремонтируем и проводим все сети.</p>
+<div class="hero-bg"></div>
+<p class="eyebrow">Дом под ключ · ремонт · все коммуникации</p>
+<h2>Дом, который<br/><em>не спорит с лесом</em></h2>
+<p class="lede">Sherwood ведёт объект от первого эскиза до ключей: архитектура, коробка, вся инженерия, чистовая отделка и сервис. Скролл — кинопроход. Кнопка — живой 3D-тур.</p>
+<div class="btns"><a class="btn" href="tour.html">Открыть 3D-тур</a><a class="btn" href="#services">Услуги</a></div>
 </section>
-<section class="journey" id="journey">
-  <div class="journey-sticky">
-    <article class="room active"><div class="room-visual approach"></div><div class="room-copy"><span>01 — Двор</span><h2>Участок и фасад</h2></div></article>
-    <article class="room"><div class="room-visual threshold"></div><div class="room-copy"><span>02 — Порог</span><h2>Дверь открывается</h2></div></article>
-    <article class="room"><div class="room-visual foyer"></div><div class="room-copy"><span>03 — Холл</span><h2>Свет сверху</h2></div></article>
-    <article class="room"><div class="room-visual living"></div><div class="room-copy"><span>04 — Гостиная</span><h2>Очаг</h2></div></article>
-    <article class="room"><div class="room-visual kitchen"></div><div class="room-copy"><span>05 — Кухня</span><h2>Ритм дома</h2></div></article>
-    <article class="room"><div class="room-visual bedroom"></div><div class="room-copy"><span>06 — Спальня</span><h2>Тишина</h2></div></article>
-    <article class="room"><div class="room-visual bath"></div><div class="room-copy"><span>07 — Спа</span><h2>Вода и камень</h2></div></article>
-    <article class="room"><div class="room-visual systems"></div><div class="room-copy"><span>08 — Сети</span><h2>Все коммуникации</h2></div></article>
-  </div>
+<section class="journey" id="walk">
+<div class="sticky">
+<article class="room on"><div class="vis a"></div><div class="copy"><span>01 — Двор</span><h3>Подъезд к дому</h3><p>Дренаж, отмостка, тёплый свет д дорожки, фасад из дерева и камня.</p></div></article>
+<article class="room"><div class="vis b"></div><div class="copy"><span>02 — Порог</span><h3>Вход</h3><p>Поворотная дубовая дверь, скрытые петли, тёплый воздух из холла.</p></div></article>
+<article class="room"><div class="vis c"></div><div class="copy"><span>03 — Холл</span><h3>Ось дома</h3><p>Двойная высота, свет сверху, лестница как скульптура.</p></div></article>
+<article class="room"><div class="vis d"></div><div class="copy"><span>04 — Гостиная</span><h3>Очаг</h3><p>Камин, акустика без эха, лес за стеклом в полную высоту.</p></div></article>
+<article class="room"><div class="vis e"></div><div class="copy"><span>05 — Кухня</span><h3>Ритм</h3><p>Остров из камня. Вода, газ, вытяжка и свет — внутри каркаса, не на стенах.</p></div></article>
+<article class="room"><div class="vis f"></div><div class="copy"><span>06 — Спальня</span><h3>Тишина</h3><p>Звукоизоляция, точный климат, шторы в сценариях умного дома.</p></div></article>
+<article class="room"><div class="vis g"></div><div class="copy"><span>07 — Спа</span><h3>Вода</h3><p>Гидроизоляция, тёплый пол, рекуперация воздуха, сауна.</p></div></article>
+<article class="room"><div class="vis h"></div><div class="copy"><span>08 — Сети</span><h3>Инженерия</h3><p>Электрика, вода, тепло, воздух и слаботочка — одна схема, один договор.</p></div></article>
+</div></section>
+<section id="services">
+<p class="eyebrow">Услуги</p>
+<h2>Всё, что нужно дому.</h2>
+<div class="svc">
+<article><em>01</em><div><h3>Дом под ключ</h3><p>От участка до ключей. Один генподрядчик, фиксированные этапы, гарантия 10 лет на конструктив.</p></div><ul><li>Архитектурный и конструктивный проект</li><li>Геология, фундамент, гидроизоляция</li><li>Коробка, перекрытия, кровля</li><li>Фасад, окна, входная группа</li><li>Чистовая отделка и столярка</li><li>Благоустройство: дренаж, террасы, свет участка</li><li>Сдача с инструкцией по системам</li></ul></article>
+<article><em>02</em><div><h3>Весь цикл ремонта</h3><p>Капитальный ремонт и реконструкция без хаоса подрядчиков. Сначала инженерия, потом чистовая.</p></div><ul><li>Капитальный ремонт дома и таунхауса</li><li>Реконструкция планировок, проёмов, усиление</li><li>Черновая и чистовая отделка</li><li>Мокрые зоны, сауна, спа</li><li>Кухни, гардеробные, встроенная мебель</li><li>Косметический ремонт без остановки жизни в доме</li></ul></article>
+<article><em>03</em><div><h3>Все коммуникации</h3><p>Прокладываем сети так, чтобы их не было видно. Щит, котельная и узлы — в отдельных помещениях, не в гостиной.</p></div><ul><li>Электрика: ввод, щиты, группы, свет, резерв</li><li>Водоснабжение: скважина или ввод, фильтры, коллекторы</li><li>Канализация и ливнёвка</li><li>Отопление: тёплые полы, радиаторы, котёл или тепловой насос</li><li>Газ и дымоудаление</li><li>Вентиляция и рекуперация</li><li>Слаботочка: интернет, ТВ, домофон, камеры</li><li>Умный дом: свет, климат, шторы, сценарии</li></ul></article>
+</div>
 </section>
 <section>
-  <p class="eyebrow">Услуги</p><h2>Полный цикл</h2>
-  <div class="svc-wrap">
-    <article><em>01</em><h3>Дом под ключ</h3><ul><li>Проект</li><li>Фундамент и коробка</li><li>Фасад и отделка</li><li>Благоустройство</li></ul></article>
-    <article><em>02</em><h3>Весь ремонт</h3><ul><li>Капитальный ремонт</li><li>Реконструкция</li><li>Отделка</li><li>Сауна и спа</li></ul></article>
-    <article><em>03</em><h3>Все коммуникации</h3><ul><li>Электрика</li><li>Вода и канализация</li><li>Отопление и газ</li><li>Вентиляция и умный дом</li></ul></article>
-  </div>
-</section>
-<section>
-  <p class="eyebrow">Объекты</p><h2>Дома Sherwood</h2>
-  <div class="works-rail">
-    <figure><div class="fig pine"></div><figcaption><strong>Сосны</strong></figcaption></figure>
-    <figure><div class="fig lake"></div><figcaption><strong>Дом у воды</strong></figcaption></figure>
-    <figure><div class="fig barn"></div><figcaption><strong>Поляна</strong></figcaption></figure>
-    <figure><div class="fig city"></div><figcaption><strong>Реконструкция</strong></figcaption></figure>
-  </div>
+<p class="eyebrow">Как работаем</p>
+<h2>Шесть шагов до ключей</h2>
+<div class="grid3">
+<div class="card"><em style="color:#c4a574">01</em><h3>Участок</h3><p>Выезд, рельеф, вводы, ограничения. Фиксируем бюджет до котлована.</p></div>
+<div class="card"><em style="color:#c4a574">02</em><h3>Проект</h3><p>Архитектура и инженерия вместе, чтобы сети не ломали интерьер.</p></div>
+<div class="card"><em style="color:#c4a574">03</em><h3>Коробка</h3><p>Фундамент, стены, кровля, контур тепла.</p></div>
+<div class="card"><em style="color:#c4a574">04</em><h3>Сети</h3><p>Электрика, вода, тепло, воздух, слаботочка — до отделки.</p></div>
+<div class="card"><em style="color:#c4a574">05</em><h3>Отделка</h3><p>Материалы, свет, столярка, мокрые зоны.</p></div>
+<div class="card"><em style="color:#c4a574">06</em><h3>Сервис</h3><p>Пуск, настройка сценариев, гарантия и сезонное обслуживание.</p></div>
+</div>
 </section>
 <section id="consult">
-  <p class="eyebrow">Заявка</p><h2>Расскажите про участок</h2>
-  <form onsubmit="event.preventDefault();this.querySelector('button').textContent='Заявка принята';">
-    <input name="name" placeholder="Имя" required />
-    <input name="phone" placeholder="Телефон" required />
-    <select><option>Дом под ключ</option><option>Ремонт</option><option>Коммуникации</option></select>
-    <button type="submit">Отправить</button>
-  </form>
+<p class="eyebrow">Консультация</p>
+<h2>Расскажите про участок</h2>
+<form onsubmit="event.preventDefault();this.querySelector('button').textContent='Заявка принята';">
+<input placeholder="Имя" required/>
+<input placeholder="Телефон" required/>
+<select><option>Дом под ключ</option><option>Капитальный ремонт</option><option>Реконструкция</option><option>Все коммуникации</option><option>Только сети</option></select>
+<button>Отправить</button>
+</form>
 </section>
 </main>
-<footer><strong style="color:#f4efe6;letter-spacing:.2em">Sherwood</strong><span>© 2026</span></footer>
+<footer><span style="color:#f4efe6;letter-spacing:.2em">Sherwood</span><a href="tour.html">3D-тур</a></footer>
 <script>
-const rooms=[...document.querySelectorAll(".room")];
-const journey=document.querySelector(".journey");
-const heroBg=document.getElementById("heroBg");
-let current=0;
-function onScroll(){
-  const y=window.scrollY;
-  if(heroBg) heroBg.style.transform=`translateY(${y*0.12}px) scale(1.06)`;
-  if(!journey) return;
-  const start=journey.offsetTop;
-  const end=start+journey.offsetHeight-innerHeight;
-  const t=Math.min(1,Math.max(0,(y-start)/(end-start||1)));
-  const i=Math.min(rooms.length-1,Math.floor(t*rooms.length));
-  if(i!==current){rooms.forEach((r,idx)=>r.classList.toggle("active",idx===i));current=i;}
-}
-addEventListener("scroll",onScroll,{passive:true});
-addEventListener("load",()=>setTimeout(()=>document.getElementById("intro").classList.add("done"),2200));
-onScroll();
+const rooms=[...document.querySelectorAll('.room')];
+const j=document.querySelector('.journey');
+addEventListener('scroll',()=>{
+ const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;
+ const t=Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)));
+ const i=Math.min(rooms.length-1,Math.floor(t*rooms.length));
+ rooms.forEach((r,n)=>r.classList.toggle('on',n===i));
+},{passive:true});
+addEventListener('load',()=>setTimeout(()=>intro.classList.add('done'),1800));
 </script>
-</body>
-</html>
+</body></html>
