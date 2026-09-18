@@ -6,8 +6,8 @@
 <title>SHERWOOD · 3D-тур</title>
 <meta name="theme-color" content="#0B0B0C"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-<link rel="preload" as="image" href="images/house-front.webp"/>
-<link rel="preload" as="image" href="images/house.webp"/>
+<link rel="preload" as="image" href="images/orbit-0.webp"/>
+<link rel="preload" as="image" href="images/orbit-6.webp"/>
 <link rel="preload" as="video" href="videos/window.mp4"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -57,7 +57,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
       </div>
     </div>
     <div class="orbit-stage" id="orbit"></div>
-    <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/house-court.webp"><source src="videos/window.mp4" type="video/mp4"/></video>
+    <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/orbit-6.webp"><source src="videos/window.mp4" type="video/mp4"/></video>
     <div id="rooms"></div>
     <div class="orbit-copy" id="orbitCopy">
       <span class="eyebrow" id="orbitEye">Облёт дома</span>
@@ -78,12 +78,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
   </div>
 </section>
 <script>
-const facades=[
-  {img:"images/house-front.webp"},
-  {img:"images/house.webp"},
-  {img:"images/house-side.webp"},
-  {img:"images/house-court.webp"}
-];
+const facades=[0,1,2,3,4,5,6,7].map(i=>({img:`images/orbit-${i}.webp`}));
 const rooms=[
   {p:"Гостиная",t:"Очаг",c:"Вечером огонь и лес за стеклом — будто сидите на опушке, только тепло.",img:"images/living.webp",lq:"images/living.lq.webp"},
   {p:"Кухня",t:"Ритм утра",c:"Камень острова холодный на ладонь. Завтрак — и уже виден двор.",img:"images/kitchen.webp",lq:"images/kitchen.lq.webp"},
