@@ -274,16 +274,17 @@ function dampAngle(cur,tgt,lam,dt){return cur+shortest(tgt-cur)*(1-Math.exp(-lam
 function smootherstep(n){const x=clamp01(n);return x*x*x*(x*(x*6-15)+10)}
 function readT(){const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;return Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)))}
 function draw(t,yaw,p,dt){
-  const orbitMix=1-smootherstep((t-(ORBIT_END-0.04))/0.1);
-  const diveMix=smootherstep((t-(ORBIT_END-0.02))/0.08)*(1-smootherstep((t-(DIVE_END-0.06))/0.1));
+  const diveMix=smootherstep((t-(ORBIT_END-0.05))/0.14)*(1-smootherstep((t-(DIVE_END-0.05))/0.1));
   const insideMix=smootherstep((t-(DIVE_END-0.08))/0.12);
+  const orbitMix=(1-diveMix*0.92)*(1-insideMix);
   const u=cineEase((t-ORBIT_END)/(DIVE_END-ORBIT_END||1));
   phase=insideMix>0.55?"inside":diveMix>0.4?"dive":"orbit";
   faces.forEach((el,i)=>{
     const d=Math.abs(shortest(yaw-i*90));
     const face=Math.max(0,Math.pow(Math.cos((Math.min(95,d)*Math.PI)/180),1.2));
-    el.style.opacity=Math.max(orbitMix*face, i===0&&orbitMix>0.7?0.2:0);
-    el.style.transform=`scale(${1.04+cineEase(u)*(i===3?0.22:0.08)})`;
+    el.style.opacity=Math.max(orbitMix*face, i===0&&orbitMix>0.75?0.15:0);
+    el.style.transform=`scale(${1.04+cineEase(u)*(i===3?0.18:0.06)})`;
+    el.style.zIndex=Math.round(face*8);
   });
   if(dive){
     dive.style.opacity=diveMix;
@@ -306,6 +307,7 @@ function draw(t,yaw,p,dt){
     els[i].style.opacity=op*insideMix;
     els[i].style.clipPath=clip;
     els[i].style.filter=`brightness(${dim})`;
+    els[i].style.zIndex=Math.round(12-Math.abs(dlt)*8);
     copies[i].style.opacity=(insideMix>0.55&&dlt>-0.2&&dlt<0.45)?"1":"0";
     titles[i].classList.toggle("live",phase==="inside"&&Math.floor(p)===i);
     lines[i].classList.toggle("live",phase==="inside"&&Math.floor(p)===i);
@@ -313,8 +315,8 @@ function draw(t,yaw,p,dt){
   });
   dots[0].classList.toggle("on",phase!=="inside");
   orbitCopy.style.opacity=Math.max(orbitMix,diveMix*0.85)*(1-insideMix);
-  document.getElementById("intoWindow").style.opacity=orbitMix;
-  document.getElementById("intoWindow").style.pointerEvents=orbitMix>0.4?"auto":"none";
+  document.getElementById("intoWindow").style.opacity=(orbitMix>0.55&&diveMix<0.2)?orbitMix:0;
+  document.getElementById("intoWindow").style.pointerEvents=(orbitMix>0.55&&diveMix<0.2)?"auto":"none";
   document.getElementById("orbitEye").textContent=diveMix>0.45?"Залёт":`Облёт — ${Math.round(yaw)}°`;
   document.getElementById("orbitTitle").textContent=diveMix>0.45?"Внутрь":"Весь дом";
 }
