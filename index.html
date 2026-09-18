@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw;--persp:1400px;--depth:1100px}
+:root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw;--persp:1680px;--depth:1680px}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);overflow-x:hidden}
@@ -57,9 +57,10 @@ h1,h2,h3{text-wrap:balance;font-weight:400}
 .btns{position:relative;display:flex;gap:14px;flex-wrap:wrap}
 .btn{border:1px solid var(--accent);padding:12px 18px;letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--fg);min-height:44px;display:inline-flex;align-items:center}
 .btn:hover{background:var(--accent);color:var(--ink)}
-.journey{height:1400vh}
+.journey{height:1600vh}
 .sticky{position:sticky;top:0;height:100dvh;overflow:hidden;perspective:var(--persp);perspective-origin:50% 46%}
-.room{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform,opacity;backface-visibility:hidden}
+.sticky:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,rgba(11,11,12,.55) 100%)}
+.room{position:absolute;inset:0;transform-origin:50% 48%;will-change:transform,opacity,filter,clip-path;backface-visibility:hidden}
 .vis{position:absolute;inset:0;background-size:cover;background-position:center}
 .vis:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.9),transparent 50%)}
 .copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:2;max-width:42ch}
@@ -96,7 +97,7 @@ button.send{background:var(--fg);color:var(--ink);border:none;letter-spacing:.12
 footer{padding:28px var(--gutter) 50px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
 footer .logo{color:var(--fg)}
 #thanks{display:none;max-width:440px;color:var(--muted);line-height:1.7}
-@media(max-width:700px){.nav-links a:not(.tour){display:none}.journey{height:1100vh}.dots{display:none}}
+@media(max-width:700px){.nav-links a:not(.tour){display:none}.journey{height:1280vh}.dots{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro,.intro.done{opacity:0;visibility:hidden;transition:none}.hero-frame,.intro-film,.intro-scan,.intro-grid,.intro-kicker,.intro h1,.intro-rule,.intro-slogan,.copy h3.live,.copy p.live span{animation:none;opacity:1;filter:none;transform:none}}
 </style>
 </head>
@@ -129,7 +130,7 @@ footer .logo{color:var(--fg)}
   <div class="hero-shade"></div>
   <p class="eyebrow">Дом под ключ · ремонт · все коммуникации</p>
   <h2>Дом, который<br/><em>не спорит с лесом</em></h2>
-  <p class="lede">Весь дом в кадре. Дальше — пролёт: гостиная, кухня, спальня, детская, кабинет, гардеробная, ванная, спа и туалет. Скролл ведёт внутрь.</p>
+  <p class="lede">Здесь утро пахнет деревом, а не ремонтом. Стены держат тишину, инженерия не торчит из углов, лес остаётся за стеклом. Так живут в доме, который собирали как для себя.</p>
   <div class="btns">
     <a class="btn" href="#walk">Пролёт по комнатам</a>
     <a class="btn" href="tour.html">Открыть 3D-тур</a>
@@ -253,16 +254,20 @@ function paint(){
     if(reduce){
       els[i].style.transform="none";
       els[i].style.opacity=i===active?"1":"0";
+      els[i].style.filter="none";
+      els[i].style.clipPath="none";
       copies[i].style.opacity=i===active?"1":"0";
     }else{
-      const z=d*1100;
-      const scale=1+Math.max(-0.08,Math.min(0.22,d*0.12));
-      let op=0;
-      if(d<0){const ahead=-d;op=ahead>1.05?0:1-ahead*0.12;}
-      else op=Math.max(0,1-d*1.35);
+      const z=d*1680;
+      const scale=1+Math.max(-0.38,Math.min(0.28,d*0.34));
+      let op=0,inset=0,dim=1;
+      if(d<0){const ahead=-d;op=ahead>1.12?0:1;inset=Math.min(30,ahead*28);dim=0.52+Math.max(0,1-ahead)*0.48;}
+      else{op=Math.max(0,1-d*1.08);dim=Math.max(0.35,1-d*0.55);}
       els[i].style.transform=`translate3d(0,0,${z}px) scale(${scale})`;
       els[i].style.opacity=op;
-      copies[i].style.opacity=(d>-0.28&&d<0.62)?"1":"0";
+      els[i].style.clipPath=inset>0.4?`inset(${inset}% ${inset*1.2}% ${inset}% ${inset*1.2}%)`:"inset(0)";
+      els[i].style.filter=`brightness(${dim})`;
+      copies[i].style.opacity=(d>-0.22&&d<0.55)?"1":"0";
     }
     titles[i].classList.toggle("live",i===active);
     lines[i].classList.toggle("live",i===active);
