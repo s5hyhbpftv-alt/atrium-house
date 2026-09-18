@@ -19,7 +19,9 @@ html{scroll-behavior:auto}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
 .track{height:100dvh}
 .stage{touch-action:none;overscroll-behavior:none}
-.tour-scrub{position:absolute;left:0;right:0;bottom:0;z-index:22;height:2px;background:rgba(244,239,230,.1);pointer-events:none}
+.tour-scrub{height:14px;padding-top:12px;cursor:ew-resize;background:linear-gradient(to top,rgba(11,11,12,.45),transparent)}
+.tour-scrub i{display:block;height:2px;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
+.tour-play{position:absolute;right:var(--gutter);bottom:1.6rem;z-index:24;min-height:44px;padding:0 14px;border:0;background:none;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;font-size:11px;cursor:pointer}
 .tour-scrub i{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
 .stage{position:sticky;top:0;height:100dvh;width:100%;overflow:hidden;background:#0b0b0c;cursor:grab}
 .stage.is-grabbing{cursor:grabbing}
@@ -77,14 +79,8 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
       <button class="window-hit" type="button" id="intoWindow">Залететь в окно</button>
     </div>
     <p class="tour-hint" id="hint">Идёт само · тяните, чтобы вести</p>
-    <div id="rooms"></div>
-    <div class="orbit-copy" id="orbitCopy">
-      <span class="eyebrow" id="orbitEye">Облёт дома</span>
-      <h3 id="orbitTitle">Весь дом</h3>
-      <p>Тяните в сторону — дом крутится вокруг. Скролл ведёт к окну.</p>
-      <button class="window-hit" type="button" id="intoWindow">Залететь в окно</button>
-    </div>
-    <div class="tour-scrub" aria-hidden><i id="scrub"></i></div>
+    <button class="tour-play" type="button" id="playBtn">Пауза</button>
+    <div class="tour-scrub" id="scrubHit"><i id="scrub"></i></div>
     <div class="dots" id="dots"></div>
   </div>
 </section>
@@ -163,7 +159,15 @@ const track=document.getElementById("track");
 function sizeTrack(){track.style.height=innerHeight+"px"}
 sizeTrack(); addEventListener("resize",sizeTrack);
 const loaded=new Set([0,1]);
-let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,holdUntil=0;
+let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,holdUntil=0,paused=false,flickT=0,flickYaw=0;
+const I={duration:32,resumeMs:4200,endHoldMs:2000,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2};
+function axisOf(dx,dy){
+  const ax=Math.abs(dx), ay=Math.abs(dy);
+  if(ax<I.deadzone&&ay<I.deadzone) return "none";
+  if(ax>ay+I.axisLock) return "yaw";
+  if(ay>ax+I.axisLock) return "scrub";
+  return ax>ay?"yaw":"scrub";
+}
 const wallMats=[
   {roughness:0.58,metallic:0.02,f0:0.04},
   {roughness:0.64,metallic:0,f0:0.04},
@@ -203,7 +207,8 @@ function wallLight(rel,mat,sunOffset){
 }
 function goTo(t){
   cam.t=Math.min(1,Math.max(0,t));
-  auto=false; resumeAt=performance.now()+2600;
+  auto=false; paused=true; resumeAt=performance.now()+I.resumeMs;
+  const b=document.getElementById("playBtn"); if(b) b.textContent="Смотреть";
 }
 const scrub=document.getElementById("scrub");
 const hint=document.getElementById("hint");
@@ -270,19 +275,21 @@ function draw(t,yaw){
   document.getElementById("orbitTitle").textContent=shot.label==="dive"?"Внутрь":"Весь дом";
 }
 let last=performance.now();
-const DURATION=34;
-function bump(){auto=false; resumeAt=performance.now()+2800}
+function bump(){ if(paused) return; auto=false; resumeAt=performance.now()+I.resumeMs; }
 function tick(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if(!drag){
-    if(!auto && now>resumeAt) auto=true;
-    if(auto){
+    const decay=Math.exp(-dt*I.inertia);
+    if(Math.abs(flickT)>0.0002){ cam.t=Math.min(1,Math.max(0,cam.t+flickT*dt)); flickT*=decay; } else flickT=0;
+    if(Math.abs(flickYaw)>0.05){ yawOff+=flickYaw*dt; flickYaw*=decay; } else flickYaw=0;
+    if(!paused && !auto && now>resumeAt) auto=true;
+    if(auto && !paused){
       if(cam.t>=0.995){
-        if(!holdUntil) holdUntil=now+1800;
+        if(!holdUntil) holdUntil=now+I.endHoldMs;
         if(now>holdUntil){cam.t=0; holdUntil=0}
       } else {
         holdUntil=0;
-        cam.t=Math.min(1,cam.t+dt/DURATION);
+        cam.t=Math.min(1,cam.t+dt/I.duration);
       }
     }
   }
@@ -296,21 +303,48 @@ function tick(now){
 requestAnimationFrame(tick);
 document.getElementById("intoWindow").onclick=()=>goTo(0.26);
 document.getElementById("around").onclick=()=>goTo(0);
+const playBtn=document.getElementById("playBtn");
+playBtn.onclick=()=>{ paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза"; };
+document.getElementById("scrubHit").onpointerdown=e=>{
+  const r=e.currentTarget.getBoundingClientRect();
+  goTo((e.clientX-r.left)/r.width);
+};
 const stage=document.getElementById("stage");
-stage.addEventListener("wheel",e=>{e.preventDefault(); bump(); cam.t=Math.min(1,Math.max(0,cam.t+e.deltaY*0.00042))},{passive:false});
+stage.addEventListener("wheel",e=>{
+  const raw=e.deltaMode===1?e.deltaY*16:e.deltaY;
+  const d=raw*I.wheelGain;
+  if((cam.t<=0&&d<0)||(cam.t>=1&&d>0)) return;
+  e.preventDefault(); bump(); cam.t=Math.min(1,Math.max(0,cam.t+d));
+},{passive:false});
 stage.onpointerdown=e=>{
   if(e.target.closest("button,a"))return;
   e.currentTarget.setPointerCapture(e.pointerId);
-  drag={x:e.clientX,y:e.clientY,t:cam.t,yaw:yawOff};
-  auto=false;
+  drag={x:e.clientX,y:e.clientY,t:cam.t,yaw:yawOff,axis:"none"};
+  flickT=0; flickYaw=0; auto=false;
   stage.classList.add("is-grabbing");
 };
 addEventListener("pointermove",e=>{
   if(!drag)return;
-  yawOff=drag.yaw+(e.clientX-drag.x)*0.38;
-  cam.t=Math.min(1,Math.max(0,drag.t+(e.clientY-drag.y)*0.00115));
+  const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+  if(drag.axis==="none") drag.axis=axisOf(dx,dy);
+  if(drag.axis==="yaw"||drag.axis==="none") yawOff=drag.yaw+dx*I.dragYaw;
+  if(drag.axis==="scrub") cam.t=Math.min(1,Math.max(0,drag.t+dy*I.dragScrub));
 });
-addEventListener("pointerup",()=>{drag=null; resumeAt=performance.now()+2800; stage.classList.remove("is-grabbing")});
+addEventListener("pointerup",e=>{
+  if(drag){
+    const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+    if(drag.axis==="scrub") flickT=dy*I.flickScrub*18;
+    if(drag.axis==="yaw") flickYaw=dx*I.flickYaw;
+  }
+  drag=null; if(!paused) resumeAt=performance.now()+I.resumeMs; stage.classList.remove("is-grabbing");
+});
+addEventListener("keydown",e=>{
+  if(e.code==="Space"){e.preventDefault(); paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза";}
+  if(e.code==="ArrowRight"||e.code==="ArrowDown"){bump(); cam.t=Math.min(1,cam.t+0.03)}
+  if(e.code==="ArrowLeft"||e.code==="ArrowUp"){bump(); cam.t=Math.max(0,cam.t-0.03)}
+  if(e.code==="Home") goTo(0);
+  if(e.code==="End") goTo(1);
+});
 </script>
 </body>
 </html>
