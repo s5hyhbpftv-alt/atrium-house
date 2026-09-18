@@ -6,7 +6,7 @@
 <title>SHERWOOD · 3D-тур</title>
 <meta name="theme-color" content="#0B0B0C"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-<link rel="preload" as="image" href="images/yard.webp"/>
+<link rel="preload" as="image" href="images/house.webp"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
@@ -14,97 +14,159 @@
 :root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
-.stage{position:absolute;inset:0;overflow:hidden;opacity:0;transform:scale(1.12);transition:opacity .52s cubic-bezier(.22,1,.36,1),transform .72s cubic-bezier(.22,1,.36,1)}
-.stage.on{opacity:1;transform:scale(1)}
-.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.stage .lq{transform:scale(1.1);filter:blur(12px)}
-.stage .full{opacity:0;transition:opacity .3s ease-out}
-.stage .full.ready{opacity:1}
-.shade{position:absolute;inset:0;background:linear-gradient(to top,var(--bg),transparent 45%,rgba(11,11,12,.2));pointer-events:none}
-.top{position:fixed;top:0;left:0;right:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:22px 8vw;letter-spacing:.24em;text-transform:uppercase;font-size:12px;font-family:var(--serif)}
-.top a{color:var(--accent);text-decoration:none;font-family:var(--sans);min-height:44px;display:inline-flex;align-items:center}
-.ui{position:fixed;left:0;right:0;bottom:0;z-index:2;max-width:42rem;padding:28px 8vw 32px}
-.ui .eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px;margin-bottom:8px}
-.ui h1{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,48px)}
-.ui p{color:var(--muted);line-height:1.65;margin:8px 0 16px;max-width:36ch}
-.rooms{display:flex;flex-wrap:wrap;gap:8px}
-.rooms button{background:transparent;color:var(--accent);border:1px solid var(--line);padding:10px 12px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:11px;min-height:44px;font-family:var(--sans)}
-.rooms button.on{background:var(--accent);color:var(--ink);border-color:var(--accent)}
-.arrow{position:fixed;top:50%;z-index:2;transform:translateY(-50%);width:44px;height:44px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;font-size:22px}
-.arrow:disabled{opacity:.3}
-.arrow.prev{left:12px}
-.arrow.next{right:12px}
-@media(max-width:700px){.arrow{display:none}}
-@media(prefers-reduced-motion:reduce){.stage{transform:none;transition:opacity .28s ease-out}}
+.view{position:absolute;inset:0;overflow:hidden}
+.view img{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover}
+.view .lq{filter:blur(12px);transform:scale(1.08)}
+.shade{position:absolute;inset:0;background:linear-gradient(to top,var(--bg),transparent 45%,rgba(11,11,12,.25));pointer-events:none}
+.top{position:fixed;top:0;left:0;right:0;z-index:3;display:flex;justify-content:space-between;align-items:center;padding:22px 8vw;gap:16px;letter-spacing:.18em;text-transform:uppercase;font-size:12px}
+.top a,.top button{color:var(--accent);background:none;border:0;font:inherit;letter-spacing:.18em;text-transform:uppercase;min-height:44px;cursor:pointer}
+.ui{position:fixed;left:0;bottom:0;z-index:3;max-width:36rem;padding:28px 8vw 32px}
+.eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,48px);margin-top:8px}
+.ui p{color:var(--muted);line-height:1.65;margin:10px 0 16px;max-width:40ch}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.row button{background:transparent;color:var(--accent);border:1px solid var(--line);padding:10px 12px;min-height:44px;letter-spacing:.08em;text-transform:uppercase;font-size:11px;cursor:pointer;font-family:var(--sans)}
+.row button.on,.row button.go{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+.arrow{position:fixed;top:50%;z-index:3;transform:translateY(-50%);width:44px;height:44px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;font-size:22px}
+.arrow.prev{left:12px}.arrow.next{right:12px}
+.door-layer{position:absolute;inset:0;z-index:20;perspective:1680px;pointer-events:none}
+.doorway{position:absolute;left:50%;top:50%;width:min(32vw,280px);height:min(76vh,640px);transform:translate3d(-50%,-54%,-420px);transform-style:preserve-3d;opacity:0}
+.door-frame{position:absolute;inset:-11px -12px -6px -12px;border:11px solid #2a1c12;box-shadow:inset 0 0 0 3px #5a4030,0 18px 40px rgba(0,0,0,.55)}
+.door-leaf{position:absolute;inset:0;transform-origin:left center;background:url("images/door-leaf.webp") center/cover;backface-visibility:hidden}
+.plan{position:fixed;right:8vw;bottom:120px;z-index:4;width:min(352px,46vw);border:1px solid var(--line);background:rgba(11,11,12,.84);padding:16px}
+.grid{position:relative;height:216px;border:1px solid var(--line);background:rgba(20,19,18,.7)}
+.cell{position:absolute;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:rgba(11,11,12,.35);color:var(--fg);font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:var(--sans)}
+.cell.on{border-color:var(--accent);background:rgba(196,165,116,.22);color:var(--accent)}
+.hint{margin-top:8px;font-size:11px;color:var(--muted)}
+@media(max-width:700px){.arrow{display:none}.plan{left:16px;right:16px;width:auto;bottom:150px}}
 </style>
 </head>
 <body>
-<div class="top"><span>SHERWOOD · 3D-тур</span><a href="index.html">На сайт</a></div>
-<button class="arrow prev" id="prev" type="button" aria-label="Предыдущая комната">‹</button>
-<button class="arrow next" id="next" type="button" aria-label="Следующая комната">›</button>
-<div id="stage"></div>
+<div class="view" id="view"><img class="lq" id="lq" alt=""/><img id="photo" alt=""/></div>
 <div class="shade"></div>
+<div class="door-layer"><div class="doorway" id="doorway"><div class="door-frame"></div><div class="door-leaf" id="leaf"></div></div></div>
+<div class="top">
+  <span>SHERWOOD · 3D-тур</span>
+  <div class="row">
+    <button type="button" id="around">Вокруг дома</button>
+    <button type="button" id="togglePlan">Планировка</button>
+    <a href="index.html">На сайт</a>
+  </div>
+</div>
+<button class="arrow prev" id="prev" type="button">‹</button>
+<button class="arrow next" id="next" type="button">›</button>
 <div class="ui">
   <p class="eyebrow" id="eye"></p>
   <h1 id="title"></h1>
   <p id="copy"></p>
-  <div class="rooms" id="btns"></div>
+  <div class="row" id="btns"></div>
 </div>
+<aside class="plan" id="plan">
+  <div class="row" id="floors"></div>
+  <div class="grid" id="grid"></div>
+  <p class="hint">Нажмите комнату — дверь откроет вход.</p>
+</aside>
 <script>
-const rooms=[
-  {i:"01",p:"Дом",t:"Весь объём",c:"Смотрите сразу целиком: крылья, крыша, двор, лес вокруг. Дом не прячется за кадром — он стоит, как его потом сдадут.",img:"images/house.webp",lq:"images/house.lq.webp"},
-  {i:"02",p:"Гостиная",t:"Очаг",c:"Вечером огонь и лес за стеклом — будто сидите на опушке, только тепло. Голоса не гуляют эхом, диван не смотрит в телевизор, он смотрит в кроны.",img:"images/living.webp",lq:"images/living.lq.webp"},
-  {i:"03",p:"Кухня",t:"Ритм утра",c:"Камень острова холодный на ладонь. Вода, газ и вытяжка спрятаны в каркас: готовка без шума и запаха по дому. Завтрак — и уже виден двор.",img:"images/kitchen.webp",lq:"images/kitchen.lq.webp"},
-  {i:"04",p:"Спальня",t:"Тишина",c:"Здесь дом выдыхает. Стены не пропускают кухню, шторы сами гасят свет, воздух не сушит кожу. Утром — только лес, без будильника с соседней комнаты.",img:"images/bedroom.webp",lq:"images/bedroom.lq.webp"},
-  {i:"05",p:"Детская",t:"Своё окно",c:"Окно в кроны, тёплый пол, полки под рост. Можно шуметь — стены держат. Вечером лампа у кровати, утром — свой свет, не общий коридор.",img:"images/kids.webp",lq:"images/kids.lq.webp"},
-  {i:"06",p:"Кабинет",t:"Дверь мягко",c:"Стол к лесу, книги в нише, дверь, которая закрывается без хлопка. Здесь думается. Никто не проходит насквозь — это не проходная.",img:"images/study.webp",lq:"images/study.lq.webp"},
-  {i:"07",p:"Гардеробная",t:"Всё на местах",c:"Свет зажигается сам. Пальто, чемоданы, утро без поиска. Никаких стульев с одеждой в спальне — дому не нужно выглядеть как примерочная.",img:"images/closet.webp",lq:"images/closet.lq.webp"},
-  {i:"08",p:"Ванная",t:"Камень греет",c:"Ступни на тёплом камне, душ как дождь, ванна к окну. Пар уходит в рекуперацию, не в коридор. После леса — вода, и снова тишина.",img:"images/bath.webp",lq:"images/bath.lq.webp"},
-  {i:"09",p:"Спа",t:"Жар и вода",c:"Сауна, вода, лес в окошке. Не отель — свой ритуал. Вышли, легли на тёплый пол, и дом ещё держит тепло, когда уже спите.",img:"images/spa.webp",lq:"images/spa.lq.webp"},
-  {i:"10",p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной. Дверь глухая, вентиляция тихая, свет мягкий. Гости не ищут его по дому — он на своём месте.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
+const facades=[
+  {id:"front",p:"Фасад",t:"С улицы",c:"Весь дом в одном взгляде: крылья, кровля, въезд. Так его сдают — не кадром, а объёмом.",img:"images/house-front.webp",lq:"images/house-front.lq.webp"},
+  {id:"angle",p:"Объём",t:"Три четверти",c:"Подъезд, крыльцо, оба крыла. Обойдите — и видно, как дом стоит в лесу, а не на картинке.",img:"images/house.webp",lq:"images/house.lq.webp"},
+  {id:"side",p:"Торец",t:"Длинный край",c:"Дом вытянут вдоль поляны. Камень, дерево, свет в торце — инженерия не вылезает на фасад.",img:"images/house-side.webp",lq:"images/house-side.lq.webp"},
+  {id:"court",p:"Двор",t:"Со стороны леса",c:"Терраса и стекло в кроны. Здесь живут вечером: огонь внутри, лес снаружи, без забора из обещаний.",img:"images/house-court.webp",lq:"images/house-court.lq.webp"}
 ];
-let active=0;
-const mounted=new Set([0,1]);
-const stage=document.getElementById("stage");
-const btns=document.getElementById("btns");
-stage.innerHTML=rooms.map((r,n)=>`<div class="stage${n?"":" on"}" data-i="${n}"><img class="lq" src="${r.lq}" alt="" width="48" height="27"/></div>`).join("");
-btns.innerHTML=rooms.map((r,n)=>`<button type="button" data-i="${n}" class="${n?"":"on"}">${r.p}</button>`).join("");
-function mount(n){
-  [n-1,n,n+1].forEach(i=>{
-    if(i<0||i>=rooms.length) return;
-    mounted.add(i);
-    const box=document.querySelector(`.stage[data-i="${i}"]`);
-    if(box.querySelector(".full")) return;
-    const img=new Image();
-    img.className="full";
-    img.alt="";
-    img.width=1600; img.height=900;
-    img.decoding=i===active?"sync":"async";
-    img.fetchPriority=i===active?"high":"low";
-    img.onload=()=>img.classList.add("ready");
-    img.src=rooms[i].img;
-    box.appendChild(img);
-  });
+const interiors=[
+  {id:"living",p:"Гостиная",t:"Очаг",c:"Вечером огонь и лес за стеклом — будто сидите на опушке, только тепло.",img:"images/living.webp",lq:"images/living.lq.webp"},
+  {id:"kitchen",p:"Кухня",t:"Ритм утра",c:"Камень острова холодный на ладонь. Вода, газ и вытяжка спрятаны в каркас.",img:"images/kitchen.webp",lq:"images/kitchen.lq.webp"},
+  {id:"bedroom",p:"Спальня",t:"Тишина",c:"Здесь дом выдыхает. Стены не пропускают кухню, шторы сами гасят свет.",img:"images/bedroom.webp",lq:"images/bedroom.lq.webp"},
+  {id:"kids",p:"Детская",t:"Своё окно",c:"Окно в кроны, тёплый пол, полки под рост. Можно шуметь — стены держат.",img:"images/kids.webp",lq:"images/kids.lq.webp"},
+  {id:"study",p:"Кабинет",t:"Дверь мягко",c:"Стол к лесу, книги в нише, дверь, которая закрывается без хлопка.",img:"images/study.webp",lq:"images/study.lq.webp"},
+  {id:"closet",p:"Гардеробная",t:"Всё на местах",c:"Свет зажигается сам. Пальто, чемоданы, утро без поиска.",img:"images/closet.webp",lq:"images/closet.lq.webp"},
+  {id:"bath",p:"Ванная",t:"Камень греет",c:"Ступни на тёплом камне, душ как дождь, ванна к окну.",img:"images/bath.webp",lq:"images/bath.lq.webp"},
+  {id:"spa",p:"Спа",t:"Жар и вода",c:"Сауна, вода, лес в окошке. Не отель — свой ритуал.",img:"images/spa.webp",lq:"images/spa.lq.webp"},
+  {id:"toilet",p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной. Дверь глухая, вентиляция тихая.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
+];
+const floors=[
+  {id:"0",name:"1 этаж",cells:[{id:"living",x:2,y:4,w:46,h:52},{id:"kitchen",x:50,y:4,w:48,h:24},{id:"study",x:50,y:30,w:24,h:26},{id:"spa",x:2,y:58,w:28,h:38},{id:"toilet",x:32,y:58,w:16,h:38},{id:"bath",x:50,y:58,w:48,h:38}]},
+  {id:"1",name:"2 этаж",cells:[{id:"bedroom",x:2,y:8,w:48,h:84},{id:"closet",x:52,y:8,w:46,h:36},{id:"kids",x:52,y:48,w:46,h:44}]}
+];
+let mode="orbit", facade=1, active=0, floor="0", planOn=true;
+const doorway=document.getElementById("doorway");
+const leaf=document.getElementById("leaf");
+function clamp01(n){return Math.min(1,Math.max(0,n))}
+function smoothstep(n){const x=clamp01(n);return x*x*(3-2*x)}
+function hingeAngle(u){const t=clamp01(u);const swing=1-Math.pow(1-t,2.65);const bounce=t>0.8?Math.sin((t-0.8)*Math.PI*5)*4.2*(1-t):0;return swing*92+bounce}
+function hingeShadow(deg){const a=Math.abs(deg);return `${10+a*0.2}px 4px ${16+a*0.4}px rgba(0,0,0,${0.3+a*0.004})`}
+function hingeBright(deg){return 1-Math.min(0.38,Math.abs(deg)*0.0036)}
+function doorPose(frac){
+  let open=0,opacity=0,z=-640,scale=0.7;
+  if(frac<0.18){const u=smoothstep(frac/0.18);opacity=u;z=-640+u*140;scale=0.68+u*0.06;}
+  else if(frac<0.36){const u=smoothstep((frac-0.18)/0.18);opacity=1;z=-500+u*220;scale=0.74+u*0.2;}
+  else if(frac<0.7){const u=(frac-0.36)/0.34;opacity=1;open=hingeAngle(u);z=-280+smoothstep(u)*200;scale=0.94+smoothstep(u)*0.1;}
+  else{const u=clamp01((frac-0.7)/0.3);const s=smoothstep(u);opacity=Math.max(0,1-u*1.25);open=hingeAngle(1)+s*10;z=-80+s*420;scale=1.04+s*0.4;}
+  return {open,opacity,z,scale};
 }
-function go(n){
-  active=Math.max(0,Math.min(rooms.length-1,n));
-  const r=rooms[active];
-  document.getElementById("eye").textContent=`${r.i} — ${r.p}`;
-  document.getElementById("title").textContent=r.t;
-  document.getElementById("copy").textContent=r.c;
-  document.querySelectorAll(".stage").forEach((el,i)=>el.classList.toggle("on",i===active));
-  document.querySelectorAll(".rooms button").forEach((b,i)=>b.classList.toggle("on",i===active));
-  document.getElementById("prev").disabled=active===0;
-  document.getElementById("next").disabled=active===rooms.length-1;
-  mount(active);
+function view(){return mode==="orbit"?facades[facade]:interiors[active]}
+function render(){
+  const v=view();
+  document.getElementById("lq").src=v.lq;
+  document.getElementById("photo").src=v.img;
+  document.getElementById("eye").textContent=(mode==="orbit"?"Обход — ":"Внутри — ")+v.p;
+  document.getElementById("title").textContent=v.t;
+  document.getElementById("copy").textContent=v.c;
+  const btns=document.getElementById("btns");
+  if(mode==="orbit"){
+    btns.innerHTML=facades.map((f,i)=>`<button type="button" data-f="${i}" class="${i===facade?"on":""}">${f.p}</button>`).join("")+`<button type="button" class="go" id="enter">Войти в дом</button>`;
+    btns.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{facade=+b.dataset.f;render();});
+    document.getElementById("enter").onclick=()=>enter("living");
+  }else btns.innerHTML="";
+  drawPlan();
 }
-document.getElementById("prev").onclick=()=>go(active-1);
-document.getElementById("next").onclick=()=>go(active+1);
-btns.onclick=e=>{const b=e.target.closest("button"); if(b) go(+b.dataset.i)};
-addEventListener("keydown",e=>{if(e.key==="ArrowRight")go(active+1);if(e.key==="ArrowLeft")go(active-1)});
-go(0);
-const idle=window.requestIdleCallback||(cb=>setTimeout(cb,600));
-idle(()=>rooms.forEach(r=>{const i=new Image(); i.src=r.img;}));
+function drawPlan(){
+  const fl=floors.find(f=>f.id===floor);
+  document.getElementById("floors").innerHTML=floors.map(f=>`<button type="button" class="${f.id===floor?"on":""}" data-fl="${f.id}">${f.name}</button>`).join("");
+  document.getElementById("floors").querySelectorAll("button").forEach(b=>b.onclick=()=>{floor=b.dataset.fl;drawPlan();});
+  const on=mode==="inside"?interiors[active].id:"";
+  document.getElementById("grid").innerHTML=fl.cells.map(c=>{
+    const room=interiors.find(r=>r.id===c.id);
+    return `<button class="cell${on===c.id?" on":""}" data-id="${c.id}" style="left:${c.x}%;top:${c.y}%;width:${c.w}%;height:${c.h}%">${room.p}</button>`;
+  }).join("");
+  document.getElementById("grid").querySelectorAll(".cell").forEach(b=>b.onclick=()=>enter(b.dataset.id));
+}
+function enter(id){
+  const i=interiors.findIndex(r=>r.id===id); if(i<0) return;
+  mode="inside";active=i;if(id==="bedroom"||id==="kids"||id==="closet") floor="1"; else floor="0";render();
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const t0=performance.now();
+  const tick=(now)=>{
+    const u=Math.min(1,(now-t0)/1250);
+    const pose=doorPose(u);
+    doorway.style.opacity=pose.opacity;
+    doorway.style.transform=`translate3d(-50%,-54%,${pose.z}px) scale(${pose.scale})`;
+    leaf.style.transform=`rotateY(${-pose.open}deg)`;
+    leaf.style.boxShadow=hingeShadow(pose.open);
+    leaf.style.filter=`brightness(${hingeBright(pose.open)})`;
+    if(u<1) requestAnimationFrame(tick); else doorway.style.opacity=0;
+  };
+  requestAnimationFrame(tick);
+}
+document.getElementById("around").onclick=()=>{mode="orbit";render();};
+document.getElementById("togglePlan").onclick=()=>{planOn=!planOn;document.getElementById("plan").style.display=planOn?"block":"none";};
+document.getElementById("prev").onclick=()=>{if(mode==="orbit") facade=(facade+3)%4; else active=Math.max(0,active-1); render();};
+document.getElementById("next").onclick=()=>{if(mode==="orbit") facade=(facade+1)%4; else active=Math.min(interiors.length-1,active+1); render();};
+addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight") document.getElementById("next").click();
+  if(e.key==="ArrowLeft") document.getElementById("prev").click();
+});
+const box=document.getElementById("view");
+let drag=null;
+box.onpointerdown=e=>{if(e.target.closest("button,a,aside")) return; if(mode==="orbit") drag={x:e.clientX,from:facade};};
+box.onpointermove=e=>{
+  if(mode==="inside"){document.getElementById("photo").style.objectPosition=`${50+(0.5-e.clientX/innerWidth)*14}% ${48+(0.5-e.clientY/innerHeight)*8}%`;return;}
+  if(!drag) return;
+  const dx=e.clientX-drag.x;
+  if(Math.abs(dx)>64){facade=dx<0?(drag.from+1)%4:(drag.from+3)%4;drag={x:e.clientX,from:facade};render();}
+};
+box.onpointerup=()=>{drag=null};
+render();
 </script>
 </body>
 </html>
