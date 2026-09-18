@@ -1,24 +1,107 @@
 <!DOCTYPE html>
-<html lang="ru"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Sherwood 3D</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400&display=swap" rel="stylesheet"/>
-<style>html,body{margin:0;height:100%;background:#0b0b0c;color:#f4efe6;font-family:Manrope,system-ui,sans-serif;overflow:hidden}canvas{display:block}.ui{position:fixed;left:28px;bottom:28px;z-index:2;max-width:340px}.ui h1{font-family:Cormorant Garamond,Georgia,serif;font-weight:400;font-size:42px;margin:0 0 8px}.ui p{color:#a39a8c;line-height:1.65;margin:0 0 16px}.rooms{display:flex;flex-wrap:wrap;gap:8px}.rooms button{background:transparent;color:#c4a574;border:1px solid rgba(196,165,116,.45);padding:8px 12px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:10px}.top{position:fixed;top:22px;left:28px;right:28px;display:flex;justify-content:space-between;z-index:2;letter-spacing:.24em;text-transform:uppercase;font-size:12px}.top a{color:#c4a574;text-decoration:none}</style></head>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATRIUM · 3D-тур</title>
+<meta name="theme-color" content="#0B0B0C"/>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link rel="preload" as="image" href="images/yard.webp"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+.stage{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity .5s ease-out}
+.stage.on{opacity:1}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.stage .lq{transform:scale(1.1);filter:blur(12px)}
+.stage .full{opacity:0;transition:opacity .3s ease-out}
+.stage .full.ready{opacity:1}
+.shade{position:absolute;inset:0;background:linear-gradient(to top,var(--bg),transparent 45%,rgba(11,11,12,.2));pointer-events:none}
+.top{position:fixed;top:0;left:0;right:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:22px 8vw;letter-spacing:.24em;text-transform:uppercase;font-size:12px;font-family:var(--serif)}
+.top a{color:var(--accent);text-decoration:none;font-family:var(--sans);min-height:44px;display:inline-flex;align-items:center}
+.ui{position:fixed;left:0;right:0;bottom:0;z-index:2;max-width:42rem;padding:28px 8vw 32px}
+.ui .eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px;margin-bottom:8px}
+.ui h1{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,48px)}
+.ui p{color:var(--muted);line-height:1.65;margin:8px 0 16px;max-width:36ch}
+.rooms{display:flex;flex-wrap:wrap;gap:8px}
+.rooms button{background:transparent;color:var(--accent);border:1px solid var(--line);padding:10px 12px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:11px;min-height:44px;font-family:var(--sans)}
+.rooms button.on{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+.arrow{position:fixed;top:50%;z-index:2;transform:translateY(-50%);width:44px;height:44px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;font-size:22px}
+.arrow:disabled{opacity:.3}
+.arrow.prev{left:12px}
+.arrow.next{right:12px}
+@media(max-width:700px){.arrow{display:none}}
+</style>
+</head>
 <body>
-<div class="top"><span>Sherwood · 3D-тур</span><a href="index.html">На сайт</a></div>
-<div class="ui"><h1 id="title">Двор</h1><p id="copy">Каменная дорожка и тёплый фасад среди сосен.</p><div class="rooms" id="rooms"></div></div>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
-<script type="module">
-import * as THREE from 'three';
-const rooms=[{n:'Двор',c:'Каменная дорожка и тёплый фасад среди сосен.',col:0x1a2418,p:[0,2.2,10]},{n:'Порог',c:'Дубовая дверь, свет из холла.',col:0x2a2118,p:[0,1.8,6]},{n:'Холл',c:'Двойная высота и ось до сада.',col:0x2c241c,p:[0,2.4,2]},{n:'Гостиная',c:'Камин, лён, лес за стеклом.',col:0x3a2c20,p:[-4,1.7,-2]},{n:'Кухня',c:'Остров из камня и скрытые сети.',col:0x24201c,p:[4,1.7,-2]},{n:'Спальня',c:'Тишина и лунный свет.',col:0x1c1820,p:[-3,4.2,-6]},{n:'Спа',c:'Камень, пар, тёплый пол.',col:0x1a1e22,p:[3,1.6,-6]},{n:'Сети',c:'Одна инженерная схема дома.',col:0x16181c,p:[0,1.4,-9]}];
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b0b0c);scene.fog=new THREE.Fog(0x0b0b0c,8,28);
-const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,80);camera.position.set(0,2.2,12);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));document.body.appendChild(renderer.domElement);
-scene.add(new THREE.AmbientLight(0x6a5a48,.55));const key=new THREE.PointLight(0xc4a574,40,28);key.position.set(2,6,4);scene.add(key);
-const floor=new THREE.Mesh(new THREE.BoxGeometry(28,.2,28),new THREE.MeshStandardMaterial({color:0x1a1714,roughness:.9}));floor.position.y=-.1;scene.add(floor);
-function box(x,y,z,w,h,d,col){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:col,roughness:.75,metalness:.05}));m.position.set(x,y,z);scene.add(m)}
-box(0,2,-1,10,4.2,8,0x2a241c);box(-6,1.6,-1,4,3.2,5,0x3a2c22);box(6,1.6,-1,4,3.2,5,0x24201c);box(0,1.4,-7,6,2.8,4,0x1c2224);box(0,5.2,-1,2.2,.2,3,0xc4a574);
-const target=new THREE.Vector3(0,2,0);let goal=new THREE.Vector3(0,2.2,10);
-function go(i){const r=rooms[i];goal.set(...r.p);document.getElementById('title').textContent=r.n;document.getElementById('copy').textContent=r.c;key.color.setHex(r.col)}
-document.getElementById('rooms');rooms.forEach((r,i)=>{const b=document.createElement('button');b.textContent=r.n;b.onclick=()=>go(i);document.getElementById('rooms').appendChild(b)});
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-(function loop(){requestAnimationFrame(loop);camera.position.lerp(goal,.04);camera.lookAt(target);renderer.render(scene,camera)})();
-</script></body></html>
+<div class="top"><span>ATRIUM · 3D-тур</span><a href="index.html">На сайт</a></div>
+<button class="arrow prev" id="prev" type="button" aria-label="Предыдущая комната">‹</button>
+<button class="arrow next" id="next" type="button" aria-label="Следующая комната">›</button>
+<div id="stage"></div>
+<div class="shade"></div>
+<div class="ui">
+  <p class="eyebrow" id="eye"></p>
+  <h1 id="title"></h1>
+  <p id="copy"></p>
+  <div class="rooms" id="btns"></div>
+</div>
+<script>
+const rooms=[
+  {i:"01",p:"Двор",t:"Подъезд к дому",c:"Дренаж, отмостка, тёплый свет дорожки, фасад из дерева и камня.",img:"images/yard.webp",lq:"images/yard.lq.webp"},
+  {i:"02",p:"Порог",t:"Вход",c:"Поворотная дубовая дверь, скрытые петли, тёплый воздух из холла.",img:"images/door.webp",lq:"images/door.lq.webp"},
+  {i:"03",p:"Холл",t:"Ось дома",c:"Двойная высота, свет сверху, лестница как скульптура.",img:"images/hall.webp",lq:"images/hall.lq.webp"},
+  {i:"04",p:"Гостиная",t:"Очаг",c:"Камин, акустика без эха, лес за стеклом в полную высоту.",img:"images/living.webp",lq:"images/living.lq.webp"},
+  {i:"05",p:"Кухня",t:"Ритм",c:"Остров из камня. Вода, газ, вытяжка и свет — внутри каркаса, не на стенах.",img:"images/kitchen.webp",lq:"images/kitchen.lq.webp"},
+  {i:"06",p:"Спальня",t:"Тишина",c:"Звукоизоляция, точный климат, шторы в сценариях умного дома.",img:"images/bedroom.webp",lq:"images/bedroom.lq.webp"},
+  {i:"07",p:"Спа",t:"Вода",c:"Гидроизоляция, тёплый пол, рекуперация воздуха, сауна.",img:"images/spa.webp",lq:"images/spa.lq.webp"},
+  {i:"08",p:"Сети",t:"Инженерия",c:"Электрика, вода, тепло, воздух и слаботочка — одна схема, один договор.",img:"images/systems.webp",lq:"images/systems.lq.webp"}
+];
+let active=0;
+const mounted=new Set([0,1]);
+const stage=document.getElementById("stage");
+const btns=document.getElementById("btns");
+stage.innerHTML=rooms.map((r,n)=>`<div class="stage${n?"":" on"}" data-i="${n}"><img class="lq" src="${r.lq}" alt="" width="48" height="27"/></div>`).join("");
+btns.innerHTML=rooms.map((r,n)=>`<button type="button" data-i="${n}" class="${n?"":"on"}">${r.p}</button>`).join("");
+function mount(n){
+  [n-1,n,n+1].forEach(i=>{
+    if(i<0||i>=rooms.length||mounted.has(i)&&document.querySelector(`.stage[data-i="${i}"] .full`)) { if(i>=0&&i<rooms.length) mounted.add(i); return; }
+    mounted.add(i);
+    const box=document.querySelector(`.stage[data-i="${i}"]`);
+    if(box.querySelector(".full")) return;
+    const img=new Image();
+    img.className="full";
+    img.alt="";
+    img.width=1600; img.height=900;
+    img.decoding=i===active?"sync":"async";
+    img.fetchPriority=i===active?"high":"low";
+    img.onload=()=>img.classList.add("ready");
+    img.src=rooms[i].img;
+    box.appendChild(img);
+  });
+}
+function go(n){
+  active=Math.max(0,Math.min(rooms.length-1,n));
+  const r=rooms[active];
+  document.getElementById("eye").textContent=`${r.i} — ${r.p}`;
+  document.getElementById("title").textContent=r.t;
+  document.getElementById("copy").textContent=r.c;
+  document.querySelectorAll(".stage").forEach((el,i)=>el.classList.toggle("on",i===active));
+  document.querySelectorAll(".rooms button").forEach((b,i)=>b.classList.toggle("on",i===active));
+  document.getElementById("prev").disabled=active===0;
+  document.getElementById("next").disabled=active===rooms.length-1;
+  mount(active);
+}
+document.getElementById("prev").onclick=()=>go(active-1);
+document.getElementById("next").onclick=()=>go(active+1);
+btns.onclick=e=>{const b=e.target.closest("button"); if(b) go(+b.dataset.i)};
+addEventListener("keydown",e=>{if(e.key==="ArrowRight")go(active+1);if(e.key==="ArrowLeft")go(active-1)});
+go(0);
+const idle=window.requestIdleCallback||(cb=>setTimeout(cb,600));
+idle(()=>rooms.forEach(r=>{const i=new Image(); i.src=r.img;}));
+</script>
+</body>
+</html>
