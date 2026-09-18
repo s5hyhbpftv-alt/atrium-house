@@ -29,6 +29,13 @@ body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-s
 .orbit-spec,.orbit-mat{position:absolute;inset:0;pointer-events:none}
 .orbit-spec{mix-blend-mode:screen;background:radial-gradient(ellipse 46% 38% at var(--lx,58%) var(--ly,36%), rgb(255 244 220 / var(--spec,0.16)) 0%, transparent 70%)}
 .orbit-mat{mix-blend-mode:overlay;opacity:.22;background-image:repeating-linear-gradient(90deg,transparent 0 2px,rgb(90 70 40 / 8%) 2px 3px),repeating-linear-gradient(0deg,transparent 0 11px,rgb(40 28 16 / 7%) 11px 12px)}
+.light-rig{position:absolute;inset:0;z-index:3;pointer-events:none}
+.light-hdri,.light-sun,.light-rim,.light-windows,.light-ao{position:absolute;inset:0}
+.light-hdri{mix-blend-mode:soft-light;opacity:.55;background:linear-gradient(180deg,rgb(var(--fill-rgb,180 210 235)/.28) 0%,transparent 42%),linear-gradient(90deg,rgb(var(--fill-rgb,180 210 235)/.12),transparent 40%,rgb(var(--sun-rgb,255 186 120)/.18))}
+.light-sun{mix-blend-mode:screen;background:radial-gradient(ellipse 55% 42% at var(--sun-x,62%) var(--sun-y,34%), rgb(var(--sun-rgb,255 186 120)/var(--key,.42)) 0%, transparent 68%)}
+.light-rim{mix-blend-mode:screen;background:radial-gradient(ellipse 38% 60% at var(--rim-x,18%) var(--rim-y,30%), rgb(var(--fill-rgb,180 210 235)/var(--rim,.18)) 0%, transparent 70%)}
+.light-windows{mix-blend-mode:screen;filter:blur(10px);background:radial-gradient(ellipse 22% 16% at 58% 52%, rgb(var(--win-rgb,255 176 96)/var(--win,.45)) 0%, transparent 72%)}
+.light-ao{mix-blend-mode:multiply;opacity:.42;background:linear-gradient(to top,rgb(18 12 8/.55) 0%,transparent 28%),radial-gradient(ellipse at center,transparent 52%,rgb(11 11 12/.35) 100%)}
 .tour-hint{position:absolute;left:50%;bottom:5.5rem;z-index:16;transform:translateX(-50%);letter-spacing:.18em;text-transform:uppercase;font-size:11px;color:var(--accent);pointer-events:none;transition:opacity .6s ease}
 .dive-film{z-index:4;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
 .fly-plane{z-index:5;opacity:0}
@@ -140,7 +147,7 @@ function orbitWeights(yaw,count){
 const orbit=document.getElementById("orbit");
 const roomsEl=document.getElementById("rooms");
 const dotsEl=document.getElementById("dots");
-orbit.innerHTML=facades.map((f)=>`<div class="orbit-still"><img src="${f.img}" alt="" width="1600" height="900"/><span class="orbit-spec"></span><span class="orbit-mat"></span></div>`).join("");
+orbit.innerHTML=facades.map((f)=>`<div class="orbit-still"><img src="${f.img}" alt="" width="1600" height="900"/><span class="orbit-spec"></span><span class="orbit-mat"></span></div>`).join("")+'<div class="light-rig" id="rig"><span class="light-hdri"></span><span class="light-sun"></span><span class="light-rim"></span><span class="light-windows"></span><span class="light-ao"></span></div>';
 roomsEl.innerHTML=rooms.map((r,n)=>`<article class="fly-plane"><img src="${n===0?r.img:r.lq}" alt="" width="1600" height="900"/><div class="shade"></div><div class="copy"><span class="eyebrow">0${n+2} — ${r.p}</span><h3>${r.t}</h3><p>${r.c}</p></div></article>`).join("");
 dotsEl.innerHTML=`<i class="on"></i>`+rooms.map(()=>`<i></i>`).join("");
 const faces=[...orbit.querySelectorAll(".orbit-still")];
@@ -169,8 +176,26 @@ function evalPbr(nv,nl,nh,mat){
   const kd=(1-F)*(1-mat.metallic);
   return {diffuse:0.38+kd*nl*0.72, spec, fresnel:F, env:F*(1-mat.roughness)*(0.35+0.65*(1-nv)), blur:6+mat.roughness*48, size:14+mat.roughness*48};
 }
-function wallLight(rel,mat){
-  return evalPbr(Math.cos(rel),Math.cos(rel-0.38),Math.cos(rel-0.19),mat);
+function kelvinRgb(k){
+  const t=k/100;
+  const r=t<=66?255:Math.min(255,329.7*Math.pow(t-60,-0.133));
+  const g=t<=66?Math.min(255,99.47*Math.log(t)-161.12):Math.min(255,288.12*Math.pow(t-60,-0.0755));
+  const b=t>=66?255:t<=19?0:Math.min(255,138.52*Math.log(t-10)-305.04);
+  return `${Math.round(r)} ${Math.round(g)} ${Math.round(b)}`;
+}
+function sceneLights(yaw){
+  const sun=48-yaw, rad=sun*Math.PI/180, alt=17*Math.PI/180;
+  const facing=Math.max(0,Math.cos(rad)), back=Math.max(0,-Math.cos(rad));
+  return {
+    sunX:`${50+Math.sin(rad)*34}%`, sunY:`${42-Math.sin(alt)*22}%`,
+    rimX:`${50-Math.sin(rad)*38}%`, rimY:`${28+Math.sin(alt)*8}%`,
+    key:0.28+facing*0.42, rim:0.08+back*0.26, fill:0.2, windows:0.58*(0.7+facing*0.3),
+    sunRgb:kelvinRgb(4200), fillRgb:kelvinRgb(7400), windowRgb:kelvinRgb(2650), sunOffset:rad
+  };
+}
+function wallLight(rel,mat,sunOffset){
+  sunOffset=sunOffset??0.38;
+  return evalPbr(Math.cos(rel),Math.cos(rel-sunOffset),Math.cos(rel-sunOffset*0.5),mat);
 }
 function goTo(t){const s=track.offsetTop,e=s+track.offsetHeight-innerHeight;scrollTo({top:s+t*(e-s)})}
 const scrub=document.getElementById("scrub");
@@ -184,6 +209,21 @@ function draw(t,yaw){
   orbitEl.style.opacity=shot.orbit;
   orbitEl.style.transform=`scale(${shot.scale})`;
   const w=orbitWeights(yaw,faces.length);
+  const rig=sceneLights(yaw);
+  const rigEl=document.getElementById("rig");
+  if(rigEl){
+    rigEl.style.setProperty("--sun-x",rig.sunX);
+    rigEl.style.setProperty("--sun-y",rig.sunY);
+    rigEl.style.setProperty("--rim-x",rig.rimX);
+    rigEl.style.setProperty("--rim-y",rig.rimY);
+    rigEl.style.setProperty("--key",rig.key);
+    rigEl.style.setProperty("--rim",rig.rim);
+    rigEl.style.setProperty("--fill",rig.fill);
+    rigEl.style.setProperty("--win",rig.windows);
+    rigEl.style.setProperty("--sun-rgb",rig.sunRgb);
+    rigEl.style.setProperty("--fill-rgb",rig.fillRgb);
+    rigEl.style.setProperty("--win-rgb",rig.windowRgb);
+  }
   faces.forEach((el,i)=>{
     const a=w[i]||0;
     el.style.opacity=a<0.12?0:a;
@@ -191,11 +231,11 @@ function draw(t,yaw){
     if(a>=0.12){
       const step=360/faces.length;
       const rel=(shortest(yaw-i*step)*Math.PI)/180;
-      const light=wallLight(rel,i%2?wallMats[1]:wallMats[0]);
+      const light=wallLight(rel,i%2?wallMats[1]:wallMats[0],rig.sunOffset);
       const img=el.querySelector("img");
       const spec=el.querySelector(".orbit-spec");
-      if(img) img.style.filter=`contrast(${1.05+(1-light.blur/54)*0.06}) saturate(1.08) brightness(${0.94+light.diffuse*0.1})`;
-      if(spec){spec.style.setProperty("--spec",String(Math.min(0.32,light.spec*0.18+light.env*0.22)));spec.style.setProperty("--lx",`${50+Math.sin(rel)*16}%`);spec.style.setProperty("--ly",`${40-Math.cos(rel)*10}%`);}
+      if(img) img.style.filter=`contrast(${1.08+(1-light.blur/54)*0.05}) saturate(1.1) brightness(${0.9+light.diffuse*0.14})`;
+      if(spec){spec.style.setProperty("--spec",String(Math.min(0.38,light.spec*0.2+light.env*0.24)));spec.style.setProperty("--lx",rig.sunX);spec.style.setProperty("--ly",rig.sunY);}
     }
   });
   if(dive){
