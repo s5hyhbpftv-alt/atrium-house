@@ -91,7 +91,9 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
   </div>
 </section>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
 <script>
+gsap.registerPlugin(Draggable);
 const facades=[0,1,2,3,4,5,6,7].map(i=>({img:`images/orbit-${i}.webp`}));
 const rooms=[
   {p:"Гостиная",t:"Очаг",c:"Вечером огонь и лес за стеклом — будто сидите на опушке, только тепло.",img:"images/living.webp",lq:"images/living.lq.webp"},
@@ -322,8 +324,9 @@ function tick(now){
       auto=true; proxy.t=cam.t; tl.seek(labelFor(cam.t)); tl.play();
     }
     if(auto && !paused){ if(tl.paused()) tl.play(); }
-    if(!drag && (auto || tl.isActive())){ cam.t=proxy.t; yawOff=proxy.pan; }
+    if(!drag && (auto || tl.isActive())) yawOff=proxy.pan;
   }
+  if(!drag || drag.axis!=="yaw") cam.t=proxy.t;
   const shot=sampleTour(cam.t,rooms.length);
   if(!drag && tl.paused()) yawOff*=0.88;
   const look=(shot.layer<0.4||shot.label==="inside")?yawOff:0;
@@ -346,39 +349,43 @@ playBtn.onclick=()=>{
   else tl.pause();
   playBtn.textContent=paused?"Смотреть":"Пауза";
 };
-document.getElementById("scrubHit").onpointerdown=e=>{
-  const r=e.currentTarget.getBoundingClientRect();
-  goTo((e.clientX-r.left)/r.width);
-};
+const bar=document.getElementById("scrubHit");
+Draggable.create(document.createElement("div"),{
+  trigger:bar, type:"x", cursor:"ew-resize",
+  onPressInit(){ auto=false; paused=true; playBtn.textContent="Смотреть";
+    const r=bar.getBoundingClientRect(); tl.progress((this.pointerX-r.left)/r.width); tl.pause(); },
+  onDrag(){ const r=bar.getBoundingClientRect(); tl.progress((this.pointerX-r.left)/r.width); tl.pause(); }
+});
 const stage=document.getElementById("stage");
+const dragProxy=document.createElement("div");
+const start={yaw:0,p:0};
+Draggable.create(dragProxy,{
+  trigger:stage, type:"x,y", lockAxis:true, dragClickables:false, cursor:"grab", activeCursor:"grabbing",
+  onPressInit(){
+    const t=this.pointerEvent&&this.pointerEvent.target;
+    if(t&&t.closest&&t.closest("button,a,.tour-hlr,.tour-scrub,.tour-play")){ this.endDrag(); return; }
+    start.yaw=yawOff; start.p=tl.progress(); auto=false; tl.pause();
+    drag={axis:"none"}; stage.classList.add("is-grabbing");
+  },
+  onDrag(){
+    drag.axis=this.lockedAxis==="y"?"scrub":"yaw";
+    if(drag.axis==="yaw") yawOff=start.yaw+this.x*I.dragYaw;
+    else { tl.progress(Math.min(1,Math.max(0,start.p-this.y*I.dragScrub))); tl.pause(); }
+  },
+  onRelease(){
+    if(this.lockedAxis==="x") flickYaw=this.x*I.flickYaw*0.08;
+    if(this.lockedAxis==="y") flickT=-this.y*I.flickScrub*0.4;
+    gsap.set(dragProxy,{x:0,y:0});
+    drag=null; if(!paused) resumeAt=performance.now()+I.resumeMs;
+    stage.classList.remove("is-grabbing");
+  }
+});
 stage.addEventListener("wheel",e=>{
   const raw=e.deltaMode===1?e.deltaY*16:e.deltaY;
   const d=raw*I.wheelGain;
-  if((cam.t<=0&&d<0)||(cam.t>=1&&d>0)) return;
-  e.preventDefault(); bump(); cam.t=Math.min(1,Math.max(0,cam.t+d));
+  if((tl.progress()<=0&&d<0)||(tl.progress()>=1&&d>0)) return;
+  e.preventDefault(); bump(); tl.progress(Math.min(1,Math.max(0,tl.progress()+d*1.8))); tl.pause();
 },{passive:false});
-stage.onpointerdown=e=>{
-  if(e.target.closest("button,a"))return;
-  e.currentTarget.setPointerCapture(e.pointerId);
-  drag={x:e.clientX,y:e.clientY,t:cam.t,yaw:yawOff,axis:"none"};
-  flickT=0; flickYaw=0; auto=false; tl.pause();
-  stage.classList.add("is-grabbing");
-};
-addEventListener("pointermove",e=>{
-  if(!drag)return;
-  const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
-  if(drag.axis==="none") drag.axis=axisOf(dx,dy);
-  if(drag.axis==="yaw"||drag.axis==="none") yawOff=drag.yaw+dx*I.dragYaw;
-  if(drag.axis==="scrub") cam.t=Math.min(1,Math.max(0,drag.t+dy*I.dragScrub));
-});
-addEventListener("pointerup",e=>{
-  if(drag){
-    const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
-    if(drag.axis==="scrub") flickT=dy*I.flickScrub*18;
-    if(drag.axis==="yaw") flickYaw=dx*I.flickYaw;
-  }
-  drag=null; if(!paused) resumeAt=performance.now()+I.resumeMs; stage.classList.remove("is-grabbing");
-});
 addEventListener("keydown",e=>{
   if(e.code==="Space"){e.preventDefault(); paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза";}
   if(e.code==="ArrowRight"||e.code==="ArrowDown"){bump(); cam.t=Math.min(1,cam.t+0.03)}
