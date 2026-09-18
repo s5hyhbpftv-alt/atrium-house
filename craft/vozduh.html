@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="ru"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SHERWOOD · Воздух, которым можно спать</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans)}
+a{color:var(--accent);text-decoration:none}
+.nav{position:fixed;inset:0 0 auto;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:22px var(--gutter);pointer-events:none}
+.nav a{pointer-events:auto;min-height:44px;display:inline-flex;align-items:center;letter-spacing:.18em;text-transform:uppercase;font-size:12px}
+.logo{color:var(--fg);letter-spacing:.28em;font-family:var(--serif)}
+.eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px}
+.hero{position:relative;min-height:88dvh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(to top,var(--bg),rgba(11,11,12,.55) 42%,transparent 78%)}
+.hero .copy{position:relative;z-index:2;padding:8rem var(--gutter) 4rem;max-width:52rem}
+h1,h2,h3{font-family:var(--serif);font-weight:400}
+h1{font-size:clamp(36px,6vw,72px);line-height:.95;margin-top:12px}
+.lede{margin-top:22px;max-width:36rem;line-height:1.65;color:rgba(244,239,230,.8)}
+.split{display:grid;gap:48px;padding:90px var(--gutter)}
+@media(min-width:800px){.split{grid-template-columns:1fr 1fr}}
+.split p{color:var(--muted);line-height:1.75;margin-bottom:16px}
+ul{list-style:none}
+li{border-bottom:1px solid var(--line);padding:12px 0;font-size:14px;line-height:1.6}
+.scenes{padding:0 var(--gutter) 90px}
+.grid{display:grid;gap:14px;margin-top:28px}
+@media(min-width:800px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{border:1px solid var(--line);padding:24px;min-height:140px}
+.card h3{font-size:26px}
+.card p{color:var(--muted);margin-top:10px;font-size:14px;line-height:1.6}
+.rel{padding:0 var(--gutter) 40px}
+.rel a{display:block;border:1px solid var(--line);padding:20px;color:var(--fg)}
+.rel .grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.cta{padding:80px var(--gutter)}
+.cta a.btn{display:inline-flex;min-height:44px;align-items:center;border:1px solid var(--accent);padding:12px 18px;letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--fg);margin-top:18px}
+footer{padding:28px var(--gutter);border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted)}
+.index{padding:140px var(--gutter) 40px}
+.index h1{font-size:clamp(44px,8vw,96px)}
+.list{padding:20px var(--gutter) 80px;display:grid;gap:40px}
+.row{display:grid;gap:20px;border-top:1px solid var(--line);padding-top:24px;color:var(--fg)}
+@media(min-width:800px){.row{grid-template-columns:1.1fr 1fr;align-items:center}}
+.row img{width:100%;height:260px;object-fit:cover}
+.row.feat img{height:340px}
+</style></head><body>
+<header class="nav"><a class="logo" href="../index.html">SHERWOOD</a><nav><a href="index.html">Что мы умеем</a><a href="../tour.html">3D-тур</a></nav></header>
+<section class="hero"><img src="../images/bedroom.webp" alt=""/><div class="shade"></div>
+<div class="copy"><p class="eyebrow">Что мы умеем · 08 · Вентиляция</p>
+<h1>Воздух, которым можно спать</h1><p class="lede">Окно «для проветривания» зимой — сквозняк и плесень. Рекуперация держит тепло и вытягивает пар из душа.</p></div></section>
+<section class="split"><div><p>Считаем воздухообмен по комнатам. Приток в жилые, вытяжка из мокрых.</p><p>Фильтры, акустика каналов, решётки без свиста.</p><p>Умный дом держит CO₂ и влажность.</p></div><div><p class="eyebrow">Что входит</p><ul><li>Приток-вытяжка с рекуперацией</li><li>Зонирование жилые / мокрые / кухня</li><li>Увлажнение и осушение</li><li>Кондиционирование без коробок на фасаде, где можно</li><li>Сервис фильтров</li><li>Датчики воздуха в сценариях</li></ul></div></section>
+
+<section class="rel"><p class="eyebrow">Рядом по смыслу</p><div class="grid"><a href='teplo.html'><span class='eyebrow'>ещё</span><strong>Тепло, которое не гудит и не сушит</strong></a><a href='umnyi-dom.html'><span class='eyebrow'>ещё</span><strong>Умный дом, который не видно</strong></a><a href='kanalizaciya.html'><span class='eyebrow'>ещё</span><strong>Канализация, о которой не вспоминают</strong></a></div></section>
+<section class="cta"><p class="eyebrow">Консультация</p><h2>Расскажите, что нужно дому</h2>
+<a class="btn" href="../index.html#consult">Оставить заявку</a></section>
+<footer><span class="logo">SHERWOOD</span><a href="../index.html">На сайт</a></footer>
+</body></html>
