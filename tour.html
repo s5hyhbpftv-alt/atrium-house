@@ -15,7 +15,7 @@
 <style>
 :root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
 .track{height:1800vh}
 .stage{position:sticky;top:0;height:100dvh;width:100%;overflow:hidden;background:#0b0b0c}
@@ -26,7 +26,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-s
 .orbit-face img,.fly-plane img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .dive-film{z-index:4;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
 .fly-plane{z-index:5;opacity:0}
-.fly-plane .shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.85),transparent 50%);pointer-events:none}
+.fly-plane .shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.8),transparent 50%);pointer-events:none}
 .copy,.orbit-copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:12;max-width:32rem;pointer-events:none}
 .orbit-copy{pointer-events:auto}
 .eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px}
@@ -38,7 +38,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
 .dots{position:absolute;right:var(--gutter);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:10}
 .dots i{display:block;width:1px;height:20px;background:var(--line)}
 .dots i.on{background:var(--accent)}
-.stage:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,rgba(11,11,12,.4) 100%)}
+.stage:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(11,11,12,.32) 100%)}
 @media(max-width:700px){.dots{display:none}.track{height:1480vh}}
 </style>
 </head>
@@ -82,7 +82,7 @@ const rooms=[
   {p:"Спа",t:"Жар и вода",c:"Сауна, вода, лес в окошке. Не отель — свой ритуал.",img:"images/spa.webp",lq:"images/spa.lq.webp"},
   {p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
 ];
-const ORBIT_END=0.2,DIVE_END=0.36;
+const DIVE_IN=0.24,DIVE_FULL=0.3,DIVE_OUT_START=0.4,DIVE_OUT=0.48,INSIDE_IN=0.4;
 const orbit=document.getElementById("orbit");
 const roomsEl=document.getElementById("rooms");
 const dotsEl=document.getElementById("dots");
@@ -92,74 +92,88 @@ dotsEl.innerHTML=`<i class="on"></i>`+rooms.map(()=>`<i></i>`).join("");
 const faces=[...orbit.querySelectorAll(".orbit-face")];
 const els=[...roomsEl.querySelectorAll(".fly-plane")];
 const copies=[...roomsEl.querySelectorAll(".copy")];
-const vis=[...roomsEl.querySelectorAll("img")];
+const vis=[...roomsEl.querySelectorAll(".fly-plane > img")];
 const dots=[...dotsEl.querySelectorAll("i")];
 const dive=document.getElementById("dive");
 const orbitCopy=document.getElementById("orbitCopy");
 const track=document.getElementById("track");
 const loaded=new Set([0,1]);
-let yawOff=8,drag=null,phase="orbit";
-const cam={t:0,yaw:8,p:0,playing:false};
+let yawOff=0,drag=null,phase="orbit";
+const cam={t:0,yaw:0,p:0,playing:false};
+const vel={t:0,yaw:0,p:0};
 function clamp01(n){return Math.min(1,Math.max(0,n))}
-function shortest(a){return ((a+180)%360+360)%360-180}
 function wrap360(a){return (a%360+360)%360}
-function damp(cur,tgt,lam,dt){return cur+(tgt-cur)*(1-Math.exp(-lam*dt))}
-function dampAngle(cur,tgt,lam,dt){return cur+shortest(tgt-cur)*(1-Math.exp(-lam*dt))}
+function shortest(a){return ((a+180)%360+360)%360-180}
 function smootherstep(n){const x=clamp01(n);return x*x*x*(x*(x*6-15)+10)}
+function smoothDamp(cur,tgt,key,st,dt){
+  st=Math.max(0.0001,st); const omega=2/st, x=omega*dt, exp=1/(1+x+0.48*x*x+0.235*x*x*x);
+  const change=cur-tgt, temp=(vel[key]+omega*change)*dt; vel[key]=(vel[key]-omega*temp)*exp;
+  return tgt+(change+temp)*exp;
+}
+function smoothDampAngle(cur,tgt,key,st,dt){
+  const d=shortest(tgt-cur); return wrap360(smoothDamp(cur,cur+d,key,st,dt));
+}
+function envelope(t,a,b,c,d){
+  if(t<=a)return 0; if(t<b)return smootherstep((t-a)/(b-a||1)); if(t<=c)return 1;
+  if(t<d)return 1-smootherstep((t-c)/(d-c||1)); return 0;
+}
+function shotPair(progress,count,hold){
+  if(count<=1)return {a:0,b:0,mix:0};
+  const x=clamp01(progress)*(count-1); const i=Math.min(count-2,Math.floor(x)); const f=x-i;
+  if(f<=hold)return {a:i,b:i+1,mix:0};
+  return {a:i,b:i+1,mix:smootherstep((f-hold)/(1-hold))};
+}
 function goTo(t){const s=track.offsetTop,e=s+track.offsetHeight-innerHeight;scrollTo({top:s+t*(e-s)})}
 function draw(t,yaw,p){
-  const u=clamp01((t-ORBIT_END)/(DIVE_END-ORBIT_END));
-  const diveMix=smootherstep(u)*(1-smootherstep((t-DIVE_END)/0.08));
-  const insideMix=smootherstep((t-(DIVE_END-0.04))/0.1);
-  const orbitMix=(1-diveMix)*(1-insideMix);
-  phase=insideMix>0.55?"inside":diveMix>0.35?"dive":"orbit";
+  const orbitMix=envelope(t,-0.02,0,0.22,0.3);
+  const diveMix=envelope(t,DIVE_IN,DIVE_FULL,DIVE_OUT_START,DIVE_OUT);
+  const insideMix=envelope(t,INSIDE_IN,DIVE_OUT,1.05,1.2);
+  phase=insideMix>0.5?"inside":diveMix>0.35?"dive":"orbit";
+  const facesPair=shotPair(wrap360(yaw)/360,facades.length,0.7);
   faces.forEach((el,i)=>{
-    const face=Math.max(0,Math.pow(Math.cos((Math.min(90,Math.abs(shortest(yaw-i*90)))*Math.PI)/180),1.15));
-    el.style.opacity=orbitMix*face;
-    el.style.transform=`scale(${1.02+diveMix*0.08})`;
+    let v=0; if(i===facesPair.a)v=1-facesPair.mix; if(i===facesPair.b)v=Math.max(v,facesPair.mix);
+    el.style.opacity=orbitMix*v; el.style.transform=`scale(${1.02+(1-v)*0.03})`;
   });
   if(dive){
     dive.style.opacity=diveMix;
-    if(diveMix>0.12 && !cam.playing){cam.playing=true;try{dive.currentTime=0}catch(e){} dive.play()}
-    if(diveMix<0.04 && cam.playing){cam.playing=false;dive.pause()}
+    if(diveMix>0.2 && !cam.playing){cam.playing=true;try{dive.currentTime=0.01}catch(e){} dive.play()}
+    if(diveMix<0.05 && cam.playing){cam.playing=false;dive.pause()}
   }
+  const pair=shotPair(p/Math.max(1,rooms.length-1),rooms.length,0.7);
   rooms.forEach((r,i)=>{
-    const dlt=p-i;
-    if(Math.abs(dlt)<1.5&&!loaded.has(i)){loaded.add(i);vis[i].src=r.img}
-    const abs=Math.abs(dlt);
-    els[i].style.opacity=Math.max(0,1-abs)*insideMix;
-    els[i].style.transform=`translate3d(0,0,${dlt*720}px)`;
-    els[i].style.clipPath="none";
-    els[i].style.zIndex=4+Math.max(0,Math.round((1-abs)*8));
-    copies[i].style.opacity=(insideMix>0.6&&abs<0.35)?"1":"0";
-    dots[i+1].classList.toggle("on",phase==="inside"&&Math.round(p)===i);
+    let v=0; if(i===pair.a)v=1-pair.mix; if(i===pair.b)v=Math.max(v,pair.mix);
+    if(v>0.05&&!loaded.has(i)){loaded.add(i);vis[i].src=r.img}
+    els[i].style.opacity=insideMix*v;
+    els[i].style.transform=`scale(${1.02+v*0.04})`;
+    copies[i].style.opacity=(insideMix>0.7&&v>0.65)?"1":"0";
+    dots[i+1].classList.toggle("on",phase==="inside"&&(pair.mix>0.5?pair.b:pair.a)===i);
   });
   dots[0].classList.toggle("on",phase!=="inside");
-  orbitCopy.style.opacity=Math.max(orbitMix,diveMix*0.85)*(1-insideMix);
-  const showBtn=orbitMix>0.65&&diveMix<0.12;
+  orbitCopy.style.opacity=Math.max(orbitMix,diveMix*0.9)*(1-insideMix);
+  const showBtn=orbitMix>0.85&&diveMix<0.08;
   document.getElementById("intoWindow").style.opacity=showBtn?1:0;
   document.getElementById("intoWindow").style.pointerEvents=showBtn?"auto":"none";
-  document.getElementById("orbitEye").textContent=diveMix>0.35?"Залёт":"Облёт дома";
-  document.getElementById("orbitTitle").textContent=diveMix>0.35?"Внутрь":"Весь дом";
+  document.getElementById("orbitEye").textContent=diveMix>0.4?"Залёт":"Облёт дома";
+  document.getElementById("orbitTitle").textContent=diveMix>0.4?"Внутрь":"Весь дом";
 }
 let last=performance.now();
 function tick(now){
-  const dt=Math.min(0.048,(now-last)/1000); last=now;
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
   const s=track.offsetTop,e=s+track.offsetHeight-innerHeight;
   const target=Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)));
-  cam.t=damp(cam.t,target,9.5,dt);
-  const spin=wrap360((Math.min(cam.t,ORBIT_END)/ORBIT_END)*300+yawOff);
-  cam.yaw=wrap360(dampAngle(cam.yaw,spin,drag?12:7.5,dt));
-  const roomT=Math.max(0,(cam.t-DIVE_END)/(1-DIVE_END));
-  cam.p=damp(cam.p,roomT*(rooms.length-0.001),8.2,dt);
+  cam.t=smoothDamp(cam.t,target,"t",0.22,dt);
+  const spin=wrap360(Math.min(1,cam.t/0.22)*330+yawOff);
+  cam.yaw=smoothDampAngle(cam.yaw,spin,"yaw",drag?0.08:0.28,dt);
+  const roomT=Math.max(0,(cam.t-INSIDE_IN)/(1-INSIDE_IN));
+  cam.p=smoothDamp(cam.p,roomT*(rooms.length-1),"p",0.28,dt);
   draw(cam.t,cam.yaw,cam.p);
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
-document.getElementById("intoWindow").onclick=()=>goTo(ORBIT_END+0.02);
+document.getElementById("intoWindow").onclick=()=>goTo(DIVE_IN+0.02);
 document.getElementById("around").onclick=()=>goTo(0);
 document.getElementById("stage").onpointerdown=e=>{if(e.target.closest("button,a"))return;if(phase!=="orbit")return;drag={x:e.clientX,yaw:yawOff}};
-addEventListener("pointermove",e=>{if(!drag||phase!=="orbit")return;yawOff=drag.yaw+(e.clientX-drag.x)*0.22});
+addEventListener("pointermove",e=>{if(!drag||phase!=="orbit")return;yawOff=drag.yaw+(e.clientX-drag.x)*0.18});
 addEventListener("pointerup",()=>{drag=null});
 </script>
 </body>
