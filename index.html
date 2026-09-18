@@ -3,13 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sherwood — дома под ключ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500&display=swap" rel="stylesheet" />
+  <title>Sherwood</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Manrope:wght@400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="services.css" />
   <link rel="stylesheet" href="photos.css" />
+  <link rel="stylesheet" href="intro.css" />
 </head>
 <body>
+  <div class="intro" id="intro">
+    <div class="intro-mark">AI Video Lab · Sample</div>
+    <div class="intro-word"><span>S</span><span>H</span><span>E</span><span>R</span><span>W</span><span>O</span><span>O</span><span>D</span></div>
+    <div class="intro-bar"></div>
+    <div class="intro-sub">Дом · Ремонт · Коммуникации</div>
+  </div>
   <div class="noise"></div>
   <div class="cursor" id="cursor"></div>
   <nav class="nav">
@@ -18,7 +25,6 @@
       <li><a href="#journey">Путь</a></li>
       <li><a href="#services">Услуги</a></li>
       <li><a href="tour.html">3D-тур</a></li>
-      <li><a href="#works">Объекты</a></li>
     </ul>
     <a class="nav-cta" href="#consult">Консультация</a>
   </nav>
@@ -26,52 +32,39 @@
     <section class="hero">
       <div class="hero-bg" id="heroBg"></div>
       <div class="hero-veil"></div>
-      <p class="eyebrow">Sherwood · Дом под ключ · Ремонт · Все коммуникации</p>
+      <p class="eyebrow">Sherwood</p>
       <h1>Дом в лесу<br /><em>и вся жизнь внутри</em></h1>
-      <p class="lede">Строим дома под ключ, ведём ремонт и прокладываем все коммуникации. Скролл — проход по фото комнат. <a href="tour.html" style="color:#c4a574">3D-тур</a></p>
+      <p class="lede">Скролл — кинопроход по дому. <a href="tour.html" style="color:#c4a574">3D-тур</a></p>
     </section>
     <section class="journey" id="journey">
       <div class="journey-sticky"><div class="stage">
-        <article class="room active"><div class="room-visual approach"></div><div class="room-copy"><span>01 — Двор</span><h2>Участок и фасад</h2><p>Вход к дому среди деревьев.</p></div></article>
-        <article class="room"><div class="room-visual threshold"></div><div class="room-copy"><span>02 — Порог</span><h2>Дверь открывается</h2><p>Тёплый свет из холла.</p></div></article>
-        <article class="room"><div class="room-visual foyer"></div><div class="room-copy"><span>03 — Холл</span><h2>Свет сверху</h2><p>Двойная высота.</p></div></article>
-        <article class="room"><div class="room-visual living"></div><div class="room-copy"><span>04 — Гостиная</span><h2>Очаг</h2><p>Камин и вечерний свет.</p></div></article>
-        <article class="room"><div class="room-visual kitchen"></div><div class="room-copy"><span>05 — Кухня</span><h2>Ритм дома</h2><p>Остров и скрытые сети.</p></div></article>
-        <article class="room"><div class="room-visual bedroom"></div><div class="room-copy"><span>06 — Спальня</span><h2>Тишина</h2><p>Звук и климат.</p></div></article>
-        <article class="room"><div class="room-visual bath"></div><div class="room-copy"><span>07 — Спа</span><h2>Вода и камень</h2><p>Мокрые зоны.</p></div></article>
-        <article class="room"><div class="room-visual systems"></div><div class="room-copy"><span>08 — Системы</span><h2>Все коммуникации</h2><p>Одна схема Sherwood.</p></div></article>
+        <article class="room active"><div class="room-visual approach"></div><div class="room-copy"><span>01</span><h2>Двор</h2></div></article>
+        <article class="room"><div class="room-visual threshold"></div><div class="room-copy"><span>02</span><h2>Порог</h2></div></article>
+        <article class="room"><div class="room-visual foyer"></div><div class="room-copy"><span>03</span><h2>Холл</h2></div></article>
+        <article class="room"><div class="room-visual living"></div><div class="room-copy"><span>04</span><h2>Гостиная</h2></div></article>
+        <article class="room"><div class="room-visual kitchen"></div><div class="room-copy"><span>05</span><h2>Кухня</h2></div></article>
+        <article class="room"><div class="room-visual bedroom"></div><div class="room-copy"><span>06</span><h2>Спальня</h2></div></article>
+        <article class="room"><div class="room-visual bath"></div><div class="room-copy"><span>07</span><h2>Спа</h2></div></article>
+        <article class="room"><div class="room-visual systems"></div><div class="room-copy"><span>08</span><h2>Системы</h2></div></article>
       </div><div class="journey-progress" id="jProgress"></div></div>
     </section>
     <section class="services" id="services">
-      <header><p class="eyebrow">Услуги</p><h2>Дом, ремонт, все сети</h2></header>
+      <header><p class="eyebrow">Услуги</p><h2>Дом, ремонт, сети</h2></header>
       <div class="svc-wrap">
-        <article><em>01</em><h3>Дом под ключ</h3><ul><li>Проект</li><li>Фундамент и коробка</li><li>Фасад и отделка</li><li>Благоустройство</li></ul></article>
-        <article><em>02</em><h3>Цикл ремонта</h3><ul><li>Капитальный ремонт</li><li>Реконструкция</li><li>Отделка</li><li>Сауна и спа</li></ul></article>
-        <article><em>03</em><h3>Все коммуникации</h3><ul><li>Электрика</li><li>Вода и канализация</li><li>Отопление и газ</li><li>Вентиляция и умный дом</li></ul></article>
-      </div>
-    </section>
-    <section class="works" id="works">
-      <header><p class="eyebrow">Объекты</p><h2>Дома Sherwood</h2></header>
-      <div class="works-rail">
-        <figure><a href="tour.html"><div class="fig pine"></div></a><figcaption><strong>Сосны</strong><span><a href="tour.html" style="color:#c4a574">3D-тур</a></span></figcaption></figure>
-        <figure><div class="fig lake"></div><figcaption><strong>Дом у воды</strong></figcaption></figure>
-        <figure><div class="fig barn"></div><figcaption><strong>Поляна</strong></figcaption></figure>
-        <figure><div class="fig city"></div><figcaption><strong>Реконструкция</strong></figcaption></figure>
+        <article><em>01</em><h3>Дом под ключ</h3><ul><li>Проект</li><li>Коробка</li><li>Отделка</li></ul></article>
+        <article><em>02</em><h3>Ремонт</h3><ul><li>Капитальный</li><li>Реконструкция</li><li>Спа</li></ul></article>
+        <article><em>03</em><h3>Коммуникации</h3><ul><li>Электрика</li><li>Вода и тепло</li><li>Умный дом</li></ul></article>
       </div>
     </section>
     <section class="consult" id="consult">
-      <div class="consult-card">
-        <h2>Заявка</h2>
-        <form onsubmit="event.preventDefault();this.querySelector('button').textContent='Заявка принята';">
-          <input name="name" placeholder="Имя" required />
-          <input name="phone" placeholder="Телефон" required />
-          <select name="need"><option>Дом под ключ</option><option>Ремонт</option><option>Коммуникации</option></select>
-          <button type="submit">Отправить</button>
-        </form>
-      </div>
+      <h2>Заявка</h2>
+      <form onsubmit="event.preventDefault();this.querySelector('button').textContent='Принято';">
+        <input name="name" placeholder="Имя" required />
+        <input name="phone" placeholder="Телефон" required />
+        <button>Отправить</button>
+      </form>
     </section>
   </main>
-  <footer><strong>Sherwood</strong><p>Дома · ремонт · сети</p></footer>
   <script src="app.js"></script>
 </body>
 </html>
