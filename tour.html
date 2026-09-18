@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sherwood — 3D-тур</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#c4a574;--ink:#f4efe6;--bg:#0b0b0c}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Manrope,sans-serif;overflow:hidden}
+canvas{display:block}
+.ui{position:fixed;inset:0;pointer-events:none}
+.top{pointer-events:auto;position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:20px 28px;background:linear-gradient(#0b0b0ccc,transparent)}
+.logo{font-family:"Cormorant Garamond",serif;letter-spacing:.28em;color:var(--ink);text-decoration:none}
+.back{color:var(--gold);text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--gold);padding:8px 14px}
+.hint{position:absolute;left:28px;bottom:28px;max-width:36ch}
+.hint span{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.hint h1{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:36px;line-height:1;margin-bottom:8px}
+.hint p{color:#a39a8c;font-size:14px;line-height:1.6}
+.rooms{position:absolute;right:28px;bottom:28px;display:flex;flex-direction:column;gap:8px;pointer-events:auto}
+.rooms button{background:transparent;color:var(--ink);border:1px solid #ffffff22;padding:10px 14px;text-align:left;cursor:pointer;font:12px/1 Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.rooms button.active,.rooms button:hover{border-color:var(--gold);color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="ui">
+<div class="top"><a class="logo" href="index.html">Sherwood</a><a class="back" href="index.html">На сайт</a></div>
+<div class="hint"><span id="tag">00 — Участок</span><h1 id="title">Резиденция «Сосны»</h1><p id="copy">Тяните мышью. Колёсико — ближе. Справа — войти в комнаты образца.</p></div>
+<div class="rooms" id="rooms"></div>
+</div>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+const spots=[
+{name:"Участок",tag:"00 — Двор",title:"Резиденция «Сосны»",copy:"Камень, сосны, тёплый фасад — та же сцена, что на сайте.",pos:[18,8,22],look:[0,3,0]},
+{name:"Холл",tag:"01 — Холл",title:"Свет сверху",copy:"Двойная высота и ось к саду.",pos:[0,3.2,7],look:[0,2.4,0]},
+{name:"Гостиная",tag:"02 — Гостиная",title:"Очаг",copy:"Камин и низкая зона.",pos:[-6,2.4,3],look:[-6,1.6,-2]},
+{name:"Кухня",tag:"03 — Кухня",title:"Ритм дома",copy:"Остров. Сети заложены в каркасе.",pos:[6,2.4,2.5],look:[6,1.6,-2]},
+{name:"Спальня",tag:"04 — Спальня",title:"Тишина",copy:"Второй свет и климат без сквозняка.",pos:[-5.5,6.2,-2],look:[-5.5,5.4,-6]},
+{name:"Спа",tag:"05 — Спа",title:"Вода и камень",copy:"Мокрая зона как архитектура.",pos:[5.5,6.2,-2],look:[5.5,5.4,-6]}
+];
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b0d10);scene.fog=new THREE.Fog(0x0b0d10,28,70);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,200);camera.position.set(18,8,22);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;document.body.prepend(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,3,0);controls.maxPolarAngle=Math.PI*0.48;controls.minDistance=2;controls.maxDistance=40;
+scene.add(new THREE.AmbientLight(0x8899aa,0.35));
+const sun=new THREE.DirectionalLight(0xffe6c4,1.15);sun.position.set(18,22,10);sun.castShadow=true;scene.add(sun);
+scene.add(new THREE.PointLight(0xffc27a,18,22)).position.set(0,4.2,0);
+const ground=new THREE.Mesh(new THREE.CircleGeometry(48,64),new THREE.MeshStandardMaterial({color:0x1a2418,roughness:0.95}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+function box(w,h,d,color,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:0.72,metalness:0.04}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
+box(16,0.4,14,0x2a241c,0,0.2,0);box(16,5.2,0.35,0x3a3228,0,2.8,-7);box(0.35,5.2,14,0x332c24,-8,2.8,0);box(0.35,5.2,14,0x332c24,8,2.8,0);box(16,0.35,14,0x241e18,0,5.5,0);box(16,4.2,0.35,0x3a3228,0,7.6,-7);box(0.35,4.2,14,0x2e281f,-8,7.6,0);box(0.35,4.2,14,0x2e281f,8,7.6,0);box(16.6,0.35,14.6,0x1a1612,0,9.8,0);
+const glass=new THREE.Mesh(new THREE.PlaneGeometry(14,4.6),new THREE.MeshStandardMaterial({color:0x87a0b0,transparent:true,opacity:0.22,roughness:0.05,metalness:0.4,side:THREE.DoubleSide}));glass.position.set(0,2.8,6.9);scene.add(glass);
+box(2.2,2.4,0.8,0x4a4338,-6,1.4,-6.4);
+const fire=new THREE.PointLight(0xff7a3a,8,8);fire.position.set(-6,1.3,-5.6);scene.add(fire);
+box(3.2,0.9,1.4,0x2b2420,6,0.9,-1);box(2.4,0.5,2.0,0x2a2228,-5.5,5.9,-4.5);box(1.6,0.45,2.4,0x3a3a3a,5.5,5.85,-4.2);
+for(let i=0;i<16;i++){const a=(i/16)*Math.PI*2,r=20+(i%3)*3;box(0.6,6+(i%4),0.6,0x1c1812,Math.cos(a)*r,3,Math.sin(a)*r);const crown=new THREE.Mesh(new THREE.SphereGeometry(2.2+(i%3)*0.3,12,10),new THREE.MeshStandardMaterial({color:0x1a2a1c,roughness:1}));crown.position.set(Math.cos(a)*r,7.5+(i%3),Math.sin(a)*r);scene.add(crown);}
+const ui=document.getElementById("rooms");
+function go(i){const s=spots[i];document.getElementById("tag").textContent=s.tag;document.getElementById("title").textContent=s.title;document.getElementById("copy").textContent=s.copy;[...ui.children].forEach((b,idx)=>b.classList.toggle("active",idx===i));const start=camera.position.clone(),end=new THREE.Vector3(...s.pos),target=new THREE.Vector3(...s.look),tStart=controls.target.clone();let n=0;(function step(){n+=0.035;const k=1-Math.pow(1-Math.min(n,1),3);camera.position.lerpVectors(start,end,k);controls.target.lerpVectors(tStart,target,k);if(n<1)requestAnimationFrame(step);})();}
+spots.forEach((s,i)=>{const b=document.createElement("button");b.textContent=s.name;b.onclick=()=>go(i);ui.appendChild(b);});ui.children[0].classList.add("active");
+addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+(function loop(){requestAnimationFrame(loop);controls.update();fire.intensity=7+Math.sin(performance.now()/180)*1.4;renderer.render(scene,camera);})();
+</script>
+</body>
+</html>
