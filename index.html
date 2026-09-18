@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ATRIUM</title>
-<meta name="description" content="ATRIUM — дома под ключ, капитальный ремонт и все коммуникации. Скролл — кинопроход. Кнопка — 3D-тур."/>
+<title>SHERWOOD</title>
+<meta name="description" content="SHERWOOD — дома под ключ, капитальный ремонт и все коммуникации. Скролл — пролёт через дом. Кнопка — 3D-тур."/>
 <meta name="theme-color" content="#0B0B0C"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="preload" as="image" href="images/hero.webp"/>
@@ -13,37 +13,37 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0b0b0c;--surface:#141312;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw}
+:root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw;--persp:1400px;--depth:1100px}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);overflow-x:hidden}
 a{color:var(--accent);text-decoration:none}
 button,a[role=button]{cursor:pointer}
 h1,h2,h3{text-wrap:balance;font-weight:400}
-p{text-wrap:pretty}
 .eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px}
-.intro{position:fixed;inset:0;z-index:50;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;width:100%;color:var(--fg);transition:opacity .9s cubic-bezier(.22,1,.36,1),visibility .9s}
+.intro{position:fixed;inset:0;z-index:50;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;width:100%;color:var(--fg);perspective:var(--persp);transition:opacity .9s cubic-bezier(.22,1,.36,1),visibility .9s}
 .intro.done{opacity:0;visibility:hidden;pointer-events:none}
-.intro h1{font-family:var(--serif);letter-spacing:.28em;font-size:clamp(40px,8vw,86px);margin-top:18px}
+.intro h1{font-family:var(--serif);letter-spacing:.28em;font-size:clamp(40px,8vw,86px);margin-top:18px;animation:name-fly 1.15s cubic-bezier(.22,1,.36,1) both}
+@keyframes name-fly{from{opacity:0;transform:translateZ(-440px) scale(1.7);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
 .nav{position:fixed;inset:0 0 auto;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:22px var(--gutter);pointer-events:none}
 .nav a{pointer-events:auto;min-height:44px;display:inline-flex;align-items:center}
 .logo{color:var(--fg);letter-spacing:.28em;font-family:var(--serif)}
 .nav-links{display:flex;gap:20px;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
 .hero{min-height:100dvh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px var(--gutter) 80px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:-8%;background:linear-gradient(to top,var(--bg),rgba(11,11,12,.35) 40%,transparent),url("images/hero.webp") center/cover}
+.hero-bg{position:absolute;inset:-8%;background:linear-gradient(to top,var(--bg),rgba(11,11,12,.35) 40%,transparent),url("images/hero.webp") center/cover;animation:hero-fly 5.2s cubic-bezier(.22,1,.36,1) both}
+@keyframes hero-fly{from{transform:scale(1.24) translate3d(0,6%,0)}to{transform:scale(1) translate3d(0,0,0)}}
 .hero h2{font-family:var(--serif);font-size:clamp(48px,8vw,108px);line-height:.92;position:relative;max-width:13ch}
 .hero h2 em{font-style:italic;color:rgba(244,239,230,.8)}
 .lede{max-width:52ch;color:var(--muted);margin:22px 0 28px;line-height:1.75;position:relative}
 .btns{position:relative;display:flex;gap:14px;flex-wrap:wrap}
 .btn{border:1px solid var(--accent);padding:12px 18px;letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--fg);min-height:44px;display:inline-flex;align-items:center}
 .btn:hover{background:var(--accent);color:var(--ink)}
-.journey{height:800vh}
-.sticky{position:sticky;top:0;height:100dvh;overflow:hidden}
-.room{position:absolute;inset:0;opacity:0;transition:opacity .5s ease-out}
-.room.on{opacity:1}
+.journey{height:1100vh}
+.sticky{position:sticky;top:0;height:100dvh;overflow:hidden;perspective:var(--persp);perspective-origin:50% 46%}
+.room{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform,opacity;backface-visibility:hidden}
 .vis{position:absolute;inset:0;background-size:cover;background-position:center}
 .vis:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.9),transparent 50%)}
-.copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:2;max-width:38ch}
+.copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:2;max-width:38ch;transition:opacity .28s ease-out,transform .28s ease-out}
 .copy h3{font-family:var(--serif);font-size:clamp(30px,5vw,60px)}
 .copy p{color:var(--muted);margin-top:12px;line-height:1.7}
 .dots{position:absolute;right:var(--gutter);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:2}
@@ -73,16 +73,16 @@ button.send{background:var(--fg);color:var(--ink);border:none;letter-spacing:.12
 footer{padding:28px var(--gutter) 50px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
 footer .logo{color:var(--fg)}
 #thanks{display:none;max-width:440px;color:var(--muted);line-height:1.7}
-@media(max-width:700px){.nav-links a:not(.tour){display:none}.journey{height:640vh}.dots{display:none}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro,.intro.done{opacity:0;visibility:hidden;transition:none}}
+@media(max-width:700px){.nav-links a:not(.tour){display:none}.journey{height:880vh}.dots{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro,.intro.done{opacity:0;visibility:hidden;transition:none}.hero-bg,.intro h1{animation:none}}
 </style>
 </head>
 <body>
-<button class="intro" id="intro" type="button"><span class="eyebrow">Luxury houses</span><h1>ATRIUM</h1></button>
+<button class="intro" id="intro" type="button"><span class="eyebrow">Luxury houses</span><h1>SHERWOOD</h1></button>
 <header class="nav">
-  <a class="logo" href="#top">ATRIUM</a>
+  <a class="logo" href="#top">SHERWOOD</a>
   <nav class="nav-links">
-    <a href="#walk">Проход</a>
+    <a href="#walk">Пролёт</a>
     <a href="#services">Услуги</a>
     <a class="tour" href="tour.html">3D-тур</a>
   </nav>
@@ -92,7 +92,7 @@ footer .logo{color:var(--fg)}
   <div class="hero-bg"></div>
   <p class="eyebrow">Дом под ключ · ремонт · все коммуникации</p>
   <h2>Дом, который<br/><em>не спорит с лесом</em></h2>
-  <p class="lede">ATRIUM ведёт объект от первого эскиза до ключей: архитектура, коробка, вся инженерия, чистовая отделка и сервис. Скролл — кинопроход. Кнопка — живой 3D-тур.</p>
+  <p class="lede">SHERWOOD ведёт объект от первого эскиза до ключей: архитектура, коробка, вся инженерия, чистовая отделка и сервис. Скролл — пролёт через дом. Кнопка — живой 3D-тур.</p>
   <div class="btns">
     <a class="btn" href="tour.html">Открыть 3D-тур</a>
     <a class="btn" href="#services">Услуги</a>
@@ -158,7 +158,7 @@ footer .logo{color:var(--fg)}
 <section class="block" id="consult">
   <p class="eyebrow">Консультация</p>
   <h2>Расскажите про участок</h2>
-  <p id="thanks">Заявка принята. Архитектор ATRIUM свяжется с вами и согласует выезд на участок.</p>
+  <p id="thanks">Заявка принята. Архитектор SHERWOOD свяжется с вами и согласует выезд на участок.</p>
   <form id="lead">
     <label for="name">Имя</label>
     <input id="name" name="name" placeholder="Как к вам обращаться" required autocomplete="name"/>
@@ -177,7 +177,7 @@ footer .logo{color:var(--fg)}
 </section>
 </main>
 <footer>
-  <span class="logo">ATRIUM</span>
+  <span class="logo">SHERWOOD</span>
   <a href="tour.html">3D-тур</a>
 </footer>
 <script>
@@ -192,28 +192,43 @@ const rooms=[
   {i:"08",p:"Сети",t:"Инженерия",c:"Электрика, вода, тепло, воздух и слаботочка — одна схема, один договор.",img:"images/systems.webp",lq:"images/systems.lq.webp"}
 ];
 const hold=document.getElementById("rooms");
-hold.innerHTML=rooms.map((r,n)=>`<article class="room${n?"":" on"}" data-i="${n}"><div class="vis" style="background-image:url(${r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c}</p></div></article>`).join("")+`<div class="dots">${rooms.map((_,n)=>`<i class="${n?"":"on"}"></i>`).join("")}</div>`;
+hold.innerHTML=rooms.map((r,n)=>`<article class="room" data-i="${n}"><div class="vis" style="background-image:url(${n<=1?r.img:r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c}</p></div></article>`).join("")+`<div class="dots">${rooms.map((_,n)=>`<i class="${n?"":"on"}"></i>`).join("")}</div>`;
 const els=[...hold.querySelectorAll(".room")];
+const copies=[...hold.querySelectorAll(".copy")];
+const vis=[...hold.querySelectorAll(".vis")];
 const dots=[...hold.querySelectorAll(".dots i")];
-const loaded=new Set();
-function load(n){
-  [n-1,n,n+1].forEach(i=>{
-    if(i<0||i>=rooms.length||loaded.has(i))return;
-    loaded.add(i);
-    const vis=els[i].querySelector(".vis");
-    vis.style.backgroundImage=`url(${rooms[i].img})`;
-  });
-}
-load(0);
+const loaded=new Set([0,1]);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const j=document.querySelector(".journey");
-addEventListener("scroll",()=>{
+let frame=0;
+function paint(){
   const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;
   const t=Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)));
-  const i=Math.min(rooms.length-1,Math.floor(t*rooms.length));
-  els.forEach((r,n)=>r.classList.toggle("on",n===i));
-  dots.forEach((d,n)=>d.classList.toggle("on",n===i));
-  load(i);
-},{passive:true});
+  const p=t*(rooms.length-0.001);
+  const active=Math.min(rooms.length-1,Math.floor(p));
+  rooms.forEach((r,i)=>{
+    const d=p-i;
+    if(Math.abs(d)<1.6 && !loaded.has(i)){loaded.add(i);vis[i].style.backgroundImage=`url(${r.img})`;}
+    if(reduce){
+      els[i].style.transform="none";
+      els[i].style.opacity=i===active?"1":"0";
+      copies[i].style.opacity=i===active?"1":"0";
+    }else{
+      const z=d*1100;
+      const scale=1+Math.max(-0.08,Math.min(0.22,d*0.12));
+      let op=0;
+      if(d<0){const ahead=-d;op=ahead>1.05?0:1-ahead*0.12;}
+      else op=Math.max(0,1-d*1.35);
+      els[i].style.transform=`translate3d(0,0,${z}px) scale(${scale})`;
+      els[i].style.opacity=op;
+      copies[i].style.opacity=(d>-0.35&&d<0.72)?1-Math.abs(d)*0.4:0;
+      copies[i].style.transform=`translate3d(0, ${d*24}px, 0)`;
+    }
+    dots[i].classList.toggle("on",i===active);
+  });
+}
+addEventListener("scroll",()=>{if(frame)return;frame=requestAnimationFrame(()=>{frame=0;paint();});},{passive:true});
+paint();
 const intro=document.getElementById("intro");
 intro.onclick=()=>intro.classList.add("done");
 addEventListener("load",()=>setTimeout(()=>intro.classList.add("done"),1400));
@@ -221,7 +236,7 @@ document.getElementById("lead").onsubmit=e=>{
   e.preventDefault();
   const f=new FormData(e.currentTarget);
   const lead={name:String(f.get("name")||"").trim(),phone:String(f.get("phone")||"").trim(),service:String(f.get("service")||""),createdAt:new Date().toISOString()};
-  try{const prev=JSON.parse(localStorage.getItem("atrium-leads")||"[]");localStorage.setItem("atrium-leads",JSON.stringify([lead,...prev].slice(0,40)));}catch(_){}
+  try{const prev=JSON.parse(localStorage.getItem("sherwood-leads")||"[]");localStorage.setItem("sherwood-leads",JSON.stringify([lead,...prev].slice(0,40)));}catch(_){}
   e.currentTarget.style.display="none";
   document.getElementById("thanks").style.display="block";
 };

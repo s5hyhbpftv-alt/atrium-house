@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ATRIUM · 3D-тур</title>
+<title>SHERWOOD · 3D-тур</title>
 <meta name="theme-color" content="#0B0B0C"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="preload" as="image" href="images/yard.webp"/>
@@ -14,8 +14,8 @@
 :root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
-.stage{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity .5s ease-out}
-.stage.on{opacity:1}
+.stage{position:absolute;inset:0;overflow:hidden;opacity:0;transform:scale(1.12);transition:opacity .52s cubic-bezier(.22,1,.36,1),transform .72s cubic-bezier(.22,1,.36,1)}
+.stage.on{opacity:1;transform:scale(1)}
 .stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .stage .lq{transform:scale(1.1);filter:blur(12px)}
 .stage .full{opacity:0;transition:opacity .3s ease-out}
@@ -35,10 +35,11 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--san
 .arrow.prev{left:12px}
 .arrow.next{right:12px}
 @media(max-width:700px){.arrow{display:none}}
+@media(prefers-reduced-motion:reduce){.stage{transform:none;transition:opacity .28s ease-out}}
 </style>
 </head>
 <body>
-<div class="top"><span>ATRIUM · 3D-тур</span><a href="index.html">На сайт</a></div>
+<div class="top"><span>SHERWOOD · 3D-тур</span><a href="index.html">На сайт</a></div>
 <button class="arrow prev" id="prev" type="button" aria-label="Предыдущая комната">‹</button>
 <button class="arrow next" id="next" type="button" aria-label="Следующая комната">›</button>
 <div id="stage"></div>
@@ -68,7 +69,7 @@ stage.innerHTML=rooms.map((r,n)=>`<div class="stage${n?"":" on"}" data-i="${n}">
 btns.innerHTML=rooms.map((r,n)=>`<button type="button" data-i="${n}" class="${n?"":"on"}">${r.p}</button>`).join("");
 function mount(n){
   [n-1,n,n+1].forEach(i=>{
-    if(i<0||i>=rooms.length||mounted.has(i)&&document.querySelector(`.stage[data-i="${i}"] .full`)) { if(i>=0&&i<rooms.length) mounted.add(i); return; }
+    if(i<0||i>=rooms.length) return;
     mounted.add(i);
     const box=document.querySelector(`.stage[data-i="${i}"]`);
     if(box.querySelector(".full")) return;
