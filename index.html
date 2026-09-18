@@ -3,126 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ATRIUM — дома под ключ, ремонт и инженерия</title>
-  <meta name="description" content="ATRIUM проектирует и строит дома под ключ, ведёт ремонт и прокладывает все коммуникации. Полный цикл — от участка до ключей." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <title>Sherwood — дома под ключ, ремонт и инженерия</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="noise"></div>
   <div class="cursor" id="cursor"></div>
-
   <nav class="nav">
-    <a class="logo" href="#top">ATRIUM</a>
+    <a class="logo" href="#top">Sherwood</a>
     <ul>
       <li><a href="#journey">Путь</a></li>
       <li><a href="#cycle">Цикл</a></li>
+      <li><a href="#systems">Инженерия</a></li>
       <li><a href="#works">Объекты</a></li>
       <li><a href="#process">Процесс</a></li>
     </ul>
     <a class="nav-cta" href="#consult">Консультация</a>
   </nav>
-
   <main id="top">
     <section class="hero">
       <div class="hero-bg" id="heroBg"></div>
       <div class="hero-veil"></div>
-      <p class="eyebrow">Полный цикл · Архитектура · Инженерия · Отделка</p>
-      <h1>
-        Входите в дом,<br />
-        <em>который ещё строят</em>
-      </h1>
-      <p class="lede">Скролл — это проход: участок, порог, гостиная, кухня, спальня, инженерия. Мы проектируем, возводим, ремонтируем и проводим все коммуникации — без разрыва между этапами.</p>
-      <div class="hero-meta">
-        <span>12 лет практики</span>
-        <span>87 домов сдано</span>
-        <span>Гарантия 10 лет</span>
-      </div>
-      <div class="scroll-hint">
-        <span>Прокрутите, чтобы войти</span>
-        <i></i>
-      </div>
+      <p class="eyebrow">Sherwood · Дома · Ремонт · Коммуникации</p>
+      <h1>Дом в лесу<br /><em>и вся жизнь внутри</em></h1>
+      <p class="lede">Sherwood строит дома под ключ, делает ремонт и проводит все коммуникации. Скролл — проход по дому.</p>
+      <div class="hero-meta"><span>Полный цикл</span><span>Фиксированные этапы</span><span>Гарантия 10 лет</span></div>
+      <div class="scroll-hint"><span>Войти в дом</span><i></i></div>
     </section>
     <section class="journey" id="journey">
-      <div class="journey-sticky">
-        <div class="stage" id="stage">
-          <article class="room active" data-room="0"><div class="room-visual approach"></div><div class="room-copy"><span>01 — Подъезд</span><h2>Участок встречает тишиной</h2><p>Дорожка из натурального камня, тёплый свет фасада, кроны, которые уже «ваши». Мы начинаем не с котлована — с того, как дом будет ощущаться вечером.</p></div></article>
-          <article class="room" data-room="1"><div class="room-visual threshold"></div><div class="room-copy"><span>02 — Порог</span><h2>Дверь открывается внутрь жизни</h2><p>Высокий портал, тёплый дуб, скрытые петли. Первый воздух дома — не запах стройки, а дерево, камень и правильно собранная вентиляция.</p></div></article>
-          <article class="room" data-room="2"><div class="room-visual foyer"></div><div class="room-copy"><span>03 — Атриум</span><h2>Свет падает сверху</h2><p>Двойной свет, лестница как скульптура, ось взгляда до сада. Планировка строится вокруг движения семьи.</p></div></article>
-          <article class="room" data-room="3"><div class="room-visual living"></div><div class="room-copy"><span>04 — Гостиная</span><h2>Очаг, в котором остаются</h2><p>Камин, низкая мебель, акустика без эха. Мы считаем инженерию так же тщательно, как пропорции окон.</p></div></article>
-          <article class="room" data-room="4"><div class="room-visual kitchen"></div><div class="room-copy"><span>05 — Кухня</span><h2>Лаборатория домашнего ритма</h2><p>Остров, скрытая техника. Электрика, вода, газ и вытяжка закладываются на этапе каркаса.</p></div></article>
-          <article class="room" data-room="5"><div class="room-visual bedroom"></div><div class="room-copy"><span>06 — Спальня</span><h2>Тишина как материал</h2><p>Звукоизоляция перекрытий, затемнение, климат без сквозняка.</p></div></article>
-          <article class="room" data-room="6"><div class="room-visual bath"></div><div class="room-copy"><span>07 — Спа</span><h2>Вода, камень, пар</h2><p>Гидроизоляция, тёплый пол, скрытый коллектор, рекуперация.</p></div></article>
-          <article class="room" data-room="7"><div class="room-visual systems"></div><div class="room-copy"><span>08 — Инженерия</span><h2>Дом дышит незаметно</h2><p>Электрика, слаботочка, отопление, вода, канализация, вентиляция, умный дом — одна схема, один подрядчик, одна гарантия.</p></div></article>
-        </div>
-        <div class="journey-progress" id="jProgress"></div>
-      </div>
+      <div class="journey-sticky"><div class="stage">
+        <article class="room active"><div class="room-visual approach"></div><div class="room-copy"><span>01 — Лес и двор</span><h2>Sherwood начинается с тишины</h2><p>Каменная дорожка, тёплый фасад, кроны вокруг участка.</p></div></article>
+        <article class="room"><div class="room-visual threshold"></div><div class="room-copy"><span>02 — Порог</span><h2>Дверь открывается внутрь</h2><p>Дуб, скрытые петли. Первый воздух — дерево и камень.</p></div></article>
+        <article class="room"><div class="room-visual foyer"></div><div class="room-copy"><span>03 — Холл</span><h2>Свет падает сверху</h2><p>Двойная высота, ось до сада, лестница как скульптура.</p></div></article>
+        <article class="room"><div class="room-visual living"></div><div class="room-copy"><span>04 — Гостиная</span><h2>Очаг, в котором остаются</h2><p>Камин, тишина без эха.</p></div></article>
+        <article class="room"><div class="room-visual kitchen"></div><div class="room-copy"><span>05 — Кухня</span><h2>Ритм дома</h2><p>Остров, скрытая техника. Сети в каркасе.</p></div></article>
+        <article class="room"><div class="room-visual bedroom"></div><div class="room-copy"><span>06 — Спальня</span><h2>Тишина как материал</h2><p>Звукоизоляция, климат без сквозняка.</p></div></article>
+        <article class="room"><div class="room-visual bath"></div><div class="room-copy"><span>07 — Спа</span><h2>Вода, камень, пар</h2><p>Гидроизоляция, тёплый пол, рекуперация.</p></div></article>
+        <article class="room"><div class="room-visual systems"></div><div class="room-copy"><span>08 — Системы</span><h2>Дом дышит незаметно</h2><p>Все сети — одна схема Sherwood.</p></div></article>
+      </div><div class="journey-progress" id="jProgress"></div></div>
     </section>
     <section class="cycle" id="cycle">
-      <header><p class="eyebrow">Полный цикл</p><h2>Один договор.<br />От грунта до ключей.</h2></header>
+      <header><p class="eyebrow">Полный цикл Sherwood</p><h2>Один договор.<br />От грунта до ключей.</h2></header>
       <div class="cycle-grid">
-        <article><em>01</em><h3>Проектирование</h3><p>Архитектура, конструктив, инженерия, интерьер.</p></article>
-        <article><em>02</em><h3>Строительство</h3><p>Фундамент, коробка, кровля, фасад. Фотоотчёт каждую неделю.</p></article>
-        <article><em>03</em><h3>Коммуникации</h3><p>Электрика, вода, отопление, канализация, вентиляция, газ, умный дом.</p></article>
-        <article><em>04</em><h3>Ремонт и отделка</h3><p>Чистовая отделка, столярка, свет, мебель.</p></article>
-        <article><em>05</em><h3>Благоустройство</h3><p>Дренаж, отмостка, террасы, освещение участка.</p></article>
-        <article><em>06</em><h3>Сервис</h3><p>Гарантия 10 лет на конструктив, 3 года на инженерию.</p></article>
+        <article><em>01</em><h3>Проектирование</h3><p>Архитектура, конструктив, инженерия.</p></article>
+        <article><em>02</em><h3>Строительство</h3><p>Фундамент, коробка, кровля, фасад.</p></article>
+        <article><em>03</em><h3>Коммуникации</h3><p>Электрика, вода, тепло, воздух, умный дом.</p></article>
+        <article><em>04</em><h3>Ремонт</h3><p>Капитальный ремонт и реконструкция.</p></article>
+        <article><em>05</em><h3>Отделка</h3><p>Чистовая, столярка, свет.</p></article>
+        <article><em>06</em><h3>Сервис</h3><p>10 лет на конструктив, 3 года на инженерию.</p></article>
+      </div>
+    </section>
+    <section class="systems" id="systems">
+      <header><p class="eyebrow">Инженерия</p><h2>Всё, что обычно «потом»</h2></header>
+      <div class="sys-list">
+        <div><strong>Силовое и свет</strong><span>Щиты, группы, сценарии.</span></div>
+        <div><strong>Вода</strong><span>Коллекторы, фильтры, дренаж.</span></div>
+        <div><strong>Тепло</strong><span>Полы, радиаторы, насос или газ.</span></div>
+        <div><strong>Воздух</strong><span>Приток, вытяжка, рекуперация.</span></div>
+        <div><strong>Слаботочка</strong><span>Сеть, камеры, акустика.</span></div>
+        <div><strong>Умный дом</strong><span>Одна логика сценариев.</span></div>
       </div>
     </section>
     <section class="works" id="works">
-      <header><p class="eyebrow">Объекты</p><h2>Дома, в которые уже входят</h2></header>
+      <header><p class="eyebrow">Объекты</p><h2>Дома Sherwood</h2></header>
       <div class="works-rail">
-        <figure><div class="fig pine"></div><figcaption><strong>Резиденция «Сосны»</strong><span>420 м² · монолит · 11 месяцев</span></figcaption></figure>
-        <figure><div class="fig lake"></div><figcaption><strong>Дом у воды</strong><span>310 м² · керамика · инженерия под ключ</span></figcaption></figure>
-        <figure><div class="fig barn"></div><figcaption><strong>Барнхаус «Поле»</strong><span>240 м² · каркас + отделка</span></figcaption></figure>
-        <figure><div class="fig city"></div><figcaption><strong>Капремонт таунхауса</strong><span>186 м² · коммуникации + интерьер</span></figcaption></figure>
-      </div>
-    </section>
-    <section class="compare">
-      <header><p class="eyebrow">Почему не «как у всех»</p><h2>Что делают конкуренты — и где мы идём дальше</h2></header>
-      <div class="compare-table">
-        <div class="row head"><span></span><span>Типичный подрядчик</span><span>Премиум-студии мира</span><span>ATRIUM</span></div>
-        <div class="row"><span>Сайт</span><span>Каталог проектов и форма</span><span>Кинофото + параллакс</span><span>Скролл-проход по дому</span></div>
-        <div class="row"><span>Цикл</span><span>Коробка отдельно</span><span>Дизайн-билд</span><span>Коробка + инженерия + ремонт</span></div>
-        <div class="row"><span>Инженерия</span><span>Субподряд «потом»</span><span>Часто скрыта</span><span>Показана как часть архитектуры</span></div>
+        <figure><div class="fig pine"></div><figcaption><strong>Резиденция «Сосны»</strong><span>420 м²</span></figcaption></figure>
+        <figure><div class="fig lake"></div><figcaption><strong>Дом у воды</strong><span>310 м²</span></figcaption></figure>
+        <figure><div class="fig barn"></div><figcaption><strong>Барнхаус «Поляна»</strong><span>240 м²</span></figcaption></figure>
+        <figure><div class="fig city"></div><figcaption><strong>Реконструкция усадьбы</strong><span>186 м²</span></figcaption></figure>
       </div>
     </section>
     <section class="process" id="process">
       <header><p class="eyebrow">Как работаем</p><h2>Прозрачный маршрут</h2></header>
       <ol>
-        <li><strong>Брифинг на участке</strong> рельеф, свет, ограничения, бюджет.</li>
-        <li><strong>Концепция за 14 дней</strong> объём, планировка, инженерия в одном файле.</li>
-        <li><strong>Договор с этапами</strong> фиксируем состав работ.</li>
-        <li><strong>Стройка с надзором</strong> еженедельный отчёт, приёмка скрытых работ.</li>
-        <li><strong>Пусконаладка</strong> все системы, инструкция, ключи.</li>
+        <li><strong>Брифинг на участке</strong></li>
+        <li><strong>Концепция за 14 дней</strong></li>
+        <li><strong>Договор с этапами</strong></li>
+        <li><strong>Надзор и приёмка</strong></li>
+        <li><strong>Пусконаладка и ключи Sherwood</strong></li>
       </ol>
     </section>
     <section class="consult" id="consult">
       <div class="consult-card">
-        <p class="eyebrow">Первый шаг</p>
-        <h2>Расскажите про участок.<br />Мы покажем, как войти в дом.</h2>
-        <form id="form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Заявка принята';">
+        <p class="eyebrow">Sherwood</p>
+        <h2>Расскажите про участок.</h2>
+        <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Заявка принята';">
           <input type="text" name="name" placeholder="Имя" required />
           <input type="tel" name="phone" placeholder="Телефон" required />
-          <select name="need">
-            <option>Дом под ключ</option>
-            <option>Ремонт / реконструкция</option>
-            <option>Только коммуникации</option>
-            <option>Проектирование</option>
-          </select>
+          <select name="need"><option>Дом под ключ</option><option>Ремонт</option><option>Коммуникации</option></select>
           <button type="submit">Запросить консультацию</button>
         </form>
-        <p class="fine">Ответим в рабочий день.</p>
       </div>
     </section>
   </main>
-  <footer>
-    <strong>ATRIUM</strong>
-    <p>Строительство домов под ключ · ремонт · все коммуникации</p>
-    <p>© 2026</p>
-  </footer>
+  <footer><strong>Sherwood</strong><p>Дома под ключ · ремонт · коммуникации</p><p>© 2026</p></footer>
   <script src="app.js"></script>
 </body>
 </html>
