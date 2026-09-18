@@ -21,7 +21,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-s
 .stage{touch-action:none;overscroll-behavior:none}
 .tour-scrub{height:14px;padding-top:12px;cursor:ew-resize;background:linear-gradient(to top,rgba(11,11,12,.45),transparent)}
 .tour-scrub i{display:block;height:2px;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
-.tour-play{position:absolute;right:var(--gutter);bottom:1.6rem;z-index:24;min-height:44px;padding:0 14px;border:0;background:none;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;font-size:11px;cursor:pointer}
+.tour-hots{position:absolute;left:50%;bottom:2.4rem;z-index:24;display:flex;gap:.35rem;max-width:min(92vw,52rem);transform:translateX(-50%);overflow-x:auto;pointer-events:auto;padding:0 .5rem}
+.tour-hots button{flex:none;min-height:36px;padding:0 10px;border:0;background:none;color:rgba(244,239,230,.55);letter-spacing:.12em;text-transform:uppercase;font-size:10px;cursor:pointer;white-space:nowrap;font-family:var(--sans)}
+.tour-hots button.is-on{color:var(--accent)}
 .tour-scrub i{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
 .stage{position:sticky;top:0;height:100dvh;width:100%;overflow:hidden;background:#0b0b0c;cursor:grab}
 .stage.is-grabbing{cursor:grabbing}
@@ -80,6 +82,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
     </div>
     <p class="tour-hint" id="hint">Идёт само · тяните, чтобы вести</p>
     <button class="tour-play" type="button" id="playBtn">Пауза</button>
+    <nav class="tour-hots" id="hots"></nav>
     <div class="tour-scrub" id="scrubHit"><i id="scrub"></i></div>
     <div class="dots" id="dots"></div>
   </div>
@@ -160,7 +163,8 @@ function sizeTrack(){track.style.height=innerHeight+"px"}
 sizeTrack(); addEventListener("resize",sizeTrack);
 const loaded=new Set([0,1]);
 let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,holdUntil=0,paused=false,flickT=0,flickYaw=0;
-const I={duration:32,resumeMs:4200,endHoldMs:2000,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2};
+const I={duration:38,resumeMs:5000,endHoldMs:2800,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:0.26,insideStart:0.42};
+function roomPlayhead(i,n){if(n<=1)return I.insideStart; return I.insideStart+(i/Math.max(1,n-1))*(1-I.insideStart)*0.92}
 function axisOf(dx,dy){
   const ax=Math.abs(dx), ay=Math.abs(dy);
   if(ax<I.deadzone&&ay<I.deadzone) return "none";
@@ -286,7 +290,10 @@ function tick(now){
     if(auto && !paused){
       if(cam.t>=0.995){
         if(!holdUntil) holdUntil=now+I.endHoldMs;
-        if(now>holdUntil){cam.t=0; holdUntil=0}
+        if(now>holdUntil){
+          if(I.loop){cam.t=0; holdUntil=0}
+          else {cam.t=1; auto=false; paused=true; playBtn.textContent="Ещё раз"}
+        }
       } else {
         holdUntil=0;
         cam.t=Math.min(1,cam.t+dt/I.duration);
@@ -301,10 +308,16 @@ function tick(now){
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
-document.getElementById("intoWindow").onclick=()=>goTo(0.26);
+document.getElementById("intoWindow").onclick=()=>goTo(I.windowAt);
 document.getElementById("around").onclick=()=>goTo(0);
+const hots=document.getElementById("hots");
+hots.innerHTML=`<button type="button" data-t="0">Дом</button>`+rooms.map((r,i)=>`<button type="button" data-t="${roomPlayhead(i,rooms.length)}">${r.p}</button>`).join("");
+hots.onclick=e=>{const b=e.target.closest("button"); if(b) goTo(+b.dataset.t)};
 const playBtn=document.getElementById("playBtn");
-playBtn.onclick=()=>{ paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза"; };
+playBtn.onclick=()=>{
+  if(paused && cam.t>=0.995) cam.t=0;
+  paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза";
+};
 document.getElementById("scrubHit").onpointerdown=e=>{
   const r=e.currentTarget.getBoundingClientRect();
   goTo((e.clientX-r.left)/r.width);
