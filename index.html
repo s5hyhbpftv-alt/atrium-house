@@ -257,15 +257,9 @@ const orbitCopy=document.getElementById("orbitCopy");
 const loaded=new Set([0,1]);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const j=document.querySelector(".journey");
-const ORBIT_END=0.18, DIVE_END=0.38;
-let yawOff=18, drag=null, phase="orbit";
-function cineEase(t){return smootherstep(smootherstep(t))}
-function dwellProgress(t,n,rest){if(n<=1)return 0;const x=clamp01(t)*n;const i=Math.min(n-1,Math.floor(x));const f=x-i;if(i>=n-1)return n-0.001;if(f<rest)return i;return i+cineEase((f-rest)/(1-rest))}
-function orbitBeats(yaw,s){const beat=Math.round(yaw/90)*90;return yaw+shortest(beat-yaw)*s}
-function cinePose(u,om,dm,im,p){const glass=Math.sin(Math.PI*clamp01((u-0.28)/0.44));return{pitch:7.2*om+(7.2+(-0.6-7.2)*cineEase(u))*dm+1.4*im,roll:glass*dm*0.7,fov:1760-420*glass*dm+70*im,y:1.6*om+3.4*cineEase(u)*dm-0.5*im,x:Math.sin(p*0.9)*0.55*im,blur:glass*dm*5.2}}
-const cam={t:0,yaw:18,p:0,seek:0,pitch:7,roll:0,fov:1760,x:0,y:1.6,blur:0};
-const rig=document.getElementById("rig");
-const sticky=document.querySelector(".sticky");
+const ORBIT_END=0.2, DIVE_END=0.36;
+let yawOff=8, drag=null, phase="orbit";
+const cam={t:0,yaw:8,p:0,playing:false};
 function clamp01(n){return Math.min(1,Math.max(0,n))}
 function shortest(a){return ((a+180)%360+360)%360-180}
 function wrap360(a){return (a%360+360)%360}
@@ -273,70 +267,60 @@ function damp(cur,tgt,lam,dt){return cur+(tgt-cur)*(1-Math.exp(-lam*dt))}
 function dampAngle(cur,tgt,lam,dt){return cur+shortest(tgt-cur)*(1-Math.exp(-lam*dt))}
 function smootherstep(n){const x=clamp01(n);return x*x*x*(x*(x*6-15)+10)}
 function readT(){const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;return Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)))}
-function draw(t,yaw,p,dt){
-  const diveMix=smootherstep((t-(ORBIT_END-0.05))/0.14)*(1-smootherstep((t-(DIVE_END-0.05))/0.1));
-  const insideMix=smootherstep((t-(DIVE_END-0.08))/0.12);
-  const orbitMix=(1-diveMix*0.92)*(1-insideMix);
-  const u=cineEase((t-ORBIT_END)/(DIVE_END-ORBIT_END||1));
-  phase=insideMix>0.55?"inside":diveMix>0.4?"dive":"orbit";
+function draw(t,yaw,p){
+  const u=clamp01((t-ORBIT_END)/(DIVE_END-ORBIT_END));
+  const diveMix=smootherstep(u)*(1-smootherstep((t-DIVE_END)/0.08));
+  const insideMix=smootherstep((t-(DIVE_END-0.04))/0.1);
+  const orbitMix=(1-diveMix)*(1-insideMix);
+  phase=insideMix>0.55?"inside":diveMix>0.35?"dive":"orbit";
   faces.forEach((el,i)=>{
-    const d=Math.abs(shortest(yaw-i*90));
-    const face=Math.max(0,Math.pow(Math.cos((Math.min(95,d)*Math.PI)/180),1.2));
-    el.style.opacity=Math.max(orbitMix*face, i===0&&orbitMix>0.75?0.15:0);
-    el.style.transform=`scale(${1.04+cineEase(u)*(i===3?0.18:0.06)})`;
-    el.style.zIndex=Math.round(face*8);
+    const face=Math.max(0,Math.pow(Math.cos((Math.min(90,Math.abs(shortest(yaw-i*90)))*Math.PI)/180),1.15));
+    el.style.opacity=orbitMix*face;
+    el.style.transform=`scale(${1.02+diveMix*0.08})`;
   });
   if(dive){
     dive.style.opacity=diveMix;
-    const dur=dive.duration||6;
-    const want=Math.min(dur-0.04,u*dur);
-    cam.seek=damp(cam.seek,want,5.5,dt);
-    if(diveMix>0.08){if(dive.paused) dive.play(); if(Math.abs(dive.currentTime-cam.seek)>0.18) dive.currentTime=cam.seek;}
-    else if(!dive.paused) dive.pause();
+    if(diveMix>0.12 && !cam.playing){cam.playing=true;try{dive.currentTime=0}catch(e){} dive.play()}
+    if(diveMix<0.04 && cam.playing){cam.playing=false;dive.pause()}
   }
   rooms.forEach((r,i)=>{
     const dlt=p-i;
-    if(Math.abs(dlt)<1.6 && !loaded.has(i)){loaded.add(i);vis[i].style.backgroundImage=`url(${r.img})`;}
-    const z=dlt*1320;
-    const settle=Math.exp(-14*dlt*dlt);
-    const scale=1+Math.max(-0.18,Math.min(0.12,dlt*0.18))+settle*0.02;
-    let op=0,dim=1,clip="inset(0)";
-    if(dlt<0){const ahead=-dlt;const k=smootherstep(ahead/0.55);op=ahead>1.2?0:1;dim=0.7+Math.max(0,1-ahead)*0.3;clip=`inset(${8*k}% ${16*k}% ${7*k}% ${16*k}%)`;}
-    else{op=Math.max(0,1-dlt*0.92);dim=Math.max(0.5,1-dlt*0.38);}
-    els[i].style.transform=`translate3d(0,0,${z}px) scale(${scale})`;
-    els[i].style.opacity=op*insideMix;
-    els[i].style.clipPath=clip;
-    els[i].style.filter=`brightness(${dim})`;
-    els[i].style.zIndex=Math.round(12-Math.abs(dlt)*8);
-    copies[i].style.opacity=(insideMix>0.55&&dlt>-0.2&&dlt<0.45)?"1":"0";
-    titles[i].classList.toggle("live",phase==="inside"&&Math.floor(p)===i);
-    lines[i].classList.toggle("live",phase==="inside"&&Math.floor(p)===i);
-    dots[i+1]?.classList.toggle("on",phase==="inside"&&Math.floor(p)===i);
+    if(Math.abs(dlt)<1.5 && !loaded.has(i)){loaded.add(i);vis[i].style.backgroundImage=`url(${r.img})`;}
+    const abs=Math.abs(dlt);
+    els[i].style.opacity=Math.max(0,1-abs)*insideMix;
+    els[i].style.transform=`translate3d(0,0,${dlt*720}px)`;
+    els[i].style.clipPath="none";
+    els[i].style.filter="none";
+    els[i].style.zIndex=4+Math.max(0,Math.round((1-abs)*8));
+    copies[i].style.opacity=(insideMix>0.6&&abs<0.35)?"1":"0";
+    titles[i].classList.toggle("live",phase==="inside"&&Math.round(p)===i);
+    lines[i].classList.toggle("live",phase==="inside"&&Math.round(p)===i);
+    dots[i+1]?.classList.toggle("on",phase==="inside"&&Math.round(p)===i);
   });
   dots[0].classList.toggle("on",phase!=="inside");
   orbitCopy.style.opacity=Math.max(orbitMix,diveMix*0.85)*(1-insideMix);
-  document.getElementById("intoWindow").style.opacity=(orbitMix>0.55&&diveMix<0.2)?orbitMix:0;
-  document.getElementById("intoWindow").style.pointerEvents=(orbitMix>0.55&&diveMix<0.2)?"auto":"none";
-  document.getElementById("orbitEye").textContent=diveMix>0.45?"Залёт":`Облёт — ${Math.round(yaw)}°`;
-  document.getElementById("orbitTitle").textContent=diveMix>0.45?"Внутрь":"Весь дом";
+  const showBtn=orbitMix>0.65&&diveMix<0.12;
+  document.getElementById("intoWindow").style.opacity=showBtn?1:0;
+  document.getElementById("intoWindow").style.pointerEvents=showBtn?"auto":"none";
+  document.getElementById("orbitEye").textContent=diveMix>0.35?"Залёт":"Облёт дома";
+  document.getElementById("orbitTitle").textContent=diveMix>0.35?"Внутрь":"Весь дом";
 }
 let last=performance.now();
 function tick(now){
-  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  const dt=Math.min(0.048,(now-last)/1000); last=now;
   const target=readT();
-  cam.t=reduce?target:damp(cam.t,target,4.6,dt);
-  const spin=wrap360(orbitBeats((Math.min(cam.t,ORBIT_END)/ORBIT_END)*340+yawOff, drag?0.04:0.2));
-  cam.yaw=reduce?spin:wrap360(dampAngle(cam.yaw,spin,drag?11:4.8,dt));
+  cam.t=reduce?target:damp(cam.t,target,9.5,dt);
+  const spin=wrap360((Math.min(cam.t,ORBIT_END)/ORBIT_END)*300+yawOff);
+  cam.yaw=reduce?spin:wrap360(dampAngle(cam.yaw,spin,drag?12:7.5,dt));
   const roomT=Math.max(0,(cam.t-DIVE_END)/(1-DIVE_END));
-  const targetP=dwellProgress(roomT,rooms.length,0.44);
-  cam.p=reduce?targetP:damp(cam.p,targetP,4.4,dt);
-  draw(cam.t,cam.yaw,cam.p,dt);
+  cam.p=reduce?roomT*(rooms.length-0.001):damp(cam.p,roomT*(rooms.length-0.001),8.2,dt);
+  draw(cam.t,cam.yaw,cam.p);
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
 function goTo(t){
   const s=j.offsetTop,e=s+j.offsetHeight-innerHeight;
-  scrollTo({top:s+t*(e-s),behavior:"smooth"});
+  scrollTo({top:s+t*(e-s)});
 }
 document.getElementById("intoWindow").onclick=()=>goTo(ORBIT_END+0.02);
 hold.onpointerdown=e=>{
