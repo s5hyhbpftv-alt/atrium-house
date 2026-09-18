@@ -18,17 +18,18 @@
 html{scroll-behavior:auto}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
 .track{height:1800vh}
-.stage{position:sticky;top:0;height:100dvh;width:100%;overflow:hidden;background:#0b0b0c}
+.stage{position:sticky;top:0;height:100dvh;width:100%;overflow:hidden;background:#0b0b0c;perspective:1600px;perspective-origin:50% 46%}
 .orbit-stage,.orbit-face,.fly-plane,.dive-film{position:absolute;inset:0}
-.orbit-stage{z-index:2}
-.orbit-face{opacity:0}
-.orbit-face.on{opacity:1}
+.orbit-stage{z-index:2;transform-style:preserve-3d}
+.orbit-rig{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 46%}
+.orbit-face{backface-visibility:hidden}
 .orbit-face img,.fly-plane img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .dive-film{z-index:4;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
 .fly-plane{z-index:5;opacity:0}
 .fly-plane .shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.8),transparent 50%);pointer-events:none}
 .copy,.orbit-copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:12;max-width:32rem;pointer-events:none}
-.orbit-copy{pointer-events:auto}
+.orbit-copy{pointer-events:none}
+.window-hit{margin-top:18px;min-height:44px;border:0;background:var(--accent);color:var(--ink);padding:10px 16px;letter-spacing:.14em;text-transform:uppercase;font-size:11px;cursor:pointer;font-family:var(--sans);pointer-events:auto}
 .eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px}
 h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margin-top:8px}
 .copy p,.orbit-copy p{color:var(--muted);margin-top:12px;line-height:1.7;max-width:42ch}
@@ -52,13 +53,13 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
         <a href="index.html">На сайт</a>
       </div>
     </div>
-    <div class="orbit-stage" id="orbit"></div>
+    <div class="orbit-stage" id="orbit"><div class="orbit-rig" id="rig"></div></div>
     <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/house-court.webp"><source src="videos/window.mp4" type="video/mp4"/></video>
     <div id="rooms"></div>
     <div class="orbit-copy" id="orbitCopy">
       <span class="eyebrow" id="orbitEye">Облёт дома</span>
       <h3 id="orbitTitle">Весь дом</h3>
-      <p>Тяните или скролльте — дом можно обойти со всех сторон. Дальше — залёт в окно.</p>
+      <p>Тяните в сторону — дом крутится вокруг. Скролл ведёт к окну.</p>
       <button class="window-hit" type="button" id="intoWindow">Залететь в окно</button>
     </div>
     <div class="dots" id="dots"></div>
@@ -82,14 +83,14 @@ const rooms=[
   {p:"Спа",t:"Жар и вода",c:"Сауна, вода, лес в окошке. Не отель — свой ритуал.",img:"images/spa.webp",lq:"images/spa.lq.webp"},
   {p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
 ];
-const DIVE_IN=0.24,DIVE_FULL=0.3,DIVE_OUT_START=0.4,DIVE_OUT=0.48,INSIDE_IN=0.4;
-const orbit=document.getElementById("orbit");
+const DIVE_IN=0.34,DIVE_FULL=0.4,DIVE_OUT_START=0.48,DIVE_OUT=0.56,INSIDE_IN=0.48,WINDOW_YAW=270;
+const rig=document.getElementById("rig");
 const roomsEl=document.getElementById("rooms");
 const dotsEl=document.getElementById("dots");
-orbit.innerHTML=facades.map((f,i)=>`<div class="orbit-face${i===0?" on":""}"><img src="${f.img}" alt="" width="1600" height="900"/></div>`).join("");
+rig.innerHTML=facades.map((f)=>`<div class="orbit-face"><img src="${f.img}" alt="" width="1600" height="900"/></div>`).join("");
 roomsEl.innerHTML=rooms.map((r,n)=>`<article class="fly-plane"><img src="${n===0?r.img:r.lq}" alt="" width="1600" height="900"/><div class="shade"></div><div class="copy"><span class="eyebrow">0${n+2} — ${r.p}</span><h3>${r.t}</h3><p>${r.c}</p></div></article>`).join("");
 dotsEl.innerHTML=`<i class="on"></i>`+rooms.map(()=>`<i></i>`).join("");
-const faces=[...orbit.querySelectorAll(".orbit-face")];
+const faces=[...rig.querySelectorAll(".orbit-face")];
 const els=[...roomsEl.querySelectorAll(".fly-plane")];
 const copies=[...roomsEl.querySelectorAll(".copy")];
 const vis=[...roomsEl.querySelectorAll(".fly-plane > img")];
@@ -125,14 +126,18 @@ function shotPair(progress,count,hold){
 }
 function goTo(t){const s=track.offsetTop,e=s+track.offsetHeight-innerHeight;scrollTo({top:s+t*(e-s)})}
 function draw(t,yaw,p){
-  const orbitMix=envelope(t,-0.02,0,0.22,0.3);
+  const orbitMix=envelope(t,-0.02,0,0.32,0.42);
   const diveMix=envelope(t,DIVE_IN,DIVE_FULL,DIVE_OUT_START,DIVE_OUT);
   const insideMix=envelope(t,INSIDE_IN,DIVE_OUT,1.05,1.2);
   phase=insideMix>0.5?"inside":diveMix>0.35?"dive":"orbit";
-  const facesPair=shotPair(wrap360(yaw)/360,facades.length,0.7);
+  const radius=Math.min(innerWidth,innerHeight)*0.46;
+  const dolly=diveMix*radius*0.85;
+  document.getElementById("orbit").style.opacity=orbitMix;
+  rig.style.transform=`translateZ(${-radius+dolly}px) rotateY(${-yaw}deg)`;
   faces.forEach((el,i)=>{
-    let v=0; if(i===facesPair.a)v=1-facesPair.mix; if(i===facesPair.b)v=Math.max(v,facesPair.mix);
-    el.style.opacity=orbitMix*v; el.style.transform=`scale(${1.02+(1-v)*0.03})`;
+    el.style.transform=`rotateY(${i*90}deg) translateZ(${radius}px)`;
+    const facing=Math.cos(((yaw-i*90)*Math.PI)/180);
+    el.style.opacity=0.2+0.8*Math.max(0,facing);
   });
   if(dive){
     dive.style.opacity=diveMix;
@@ -162,8 +167,9 @@ function tick(now){
   const s=track.offsetTop,e=s+track.offsetHeight-innerHeight;
   const target=Math.min(1,Math.max(0,(scrollY-s)/(e-s||1)));
   cam.t=smoothDamp(cam.t,target,"t",0.22,dt);
-  const spin=wrap360(Math.min(1,cam.t/0.22)*330+yawOff);
-  cam.yaw=smoothDampAngle(cam.yaw,spin,"yaw",drag?0.08:0.28,dt);
+  const orbitSpin=Math.min(1,cam.t/0.32)*270+yawOff;
+  const spin=wrap360(cam.t>DIVE_IN?WINDOW_YAW:orbitSpin);
+  cam.yaw=smoothDampAngle(cam.yaw,spin,"yaw",drag?0.07:0.32,dt);
   const roomT=Math.max(0,(cam.t-INSIDE_IN)/(1-INSIDE_IN));
   cam.p=smoothDamp(cam.p,roomT*(rooms.length-1),"p",0.28,dt);
   draw(cam.t,cam.yaw,cam.p);
@@ -172,8 +178,8 @@ function tick(now){
 requestAnimationFrame(tick);
 document.getElementById("intoWindow").onclick=()=>goTo(DIVE_IN+0.02);
 document.getElementById("around").onclick=()=>goTo(0);
-document.getElementById("stage").onpointerdown=e=>{if(e.target.closest("button,a"))return;if(phase!=="orbit")return;drag={x:e.clientX,yaw:yawOff}};
-addEventListener("pointermove",e=>{if(!drag||phase!=="orbit")return;yawOff=drag.yaw+(e.clientX-drag.x)*0.18});
+document.getElementById("stage").onpointerdown=e=>{if(e.target.closest("button,a"))return;if(phase!=="orbit")return;e.currentTarget.setPointerCapture(e.pointerId);drag={x:e.clientX,yaw:yawOff}};
+addEventListener("pointermove",e=>{if(!drag||phase!=="orbit")return;yawOff=drag.yaw+(e.clientX-drag.x)*0.28});
 addEventListener("pointerup",()=>{drag=null});
 </script>
 </body>
