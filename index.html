@@ -58,9 +58,11 @@ h1,h2,h3{text-wrap:balance;font-weight:400}
 .journey{height:1800vh}
 .sticky{position:sticky;top:0;height:100dvh;overflow:hidden;perspective:var(--persp);perspective-origin:50% 46%}
 .sticky:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,rgba(11,11,12,.55) 100%)}
-.room{position:absolute;inset:0;z-index:5;transform-origin:50% 48%;will-change:transform,opacity,filter,clip-path;backface-visibility:hidden}
+.room{position:absolute;inset:0;z-index:5;opacity:0;transform-origin:50% 48%;will-change:transform,opacity}
 .orbit-stage{position:absolute;inset:0;z-index:2}
-.cam-rig{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 46%}
+.orbit-face{position:absolute;inset:0;opacity:0}
+.orbit-face.on{opacity:1}
+.orbit-face img,.room .vis{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center}
 .orbit-face{position:absolute;inset:0;background-size:cover;background-position:center;transform-origin:50% 46%;will-change:transform,opacity,filter}
 .dive-film{position:absolute;inset:0;z-index:4;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
 .window-hit{margin-top:18px;min-height:44px;border:1px solid var(--accent);background:var(--accent);color:var(--ink);padding:10px 16px;letter-spacing:.14em;text-transform:uppercase;font-size:11px;cursor:pointer;font-family:var(--sans)}
@@ -242,7 +244,7 @@ const rooms=[
   {i:"10",p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной. Дверь глухая, вентиляция тихая, свет мягкий. Гости не ищут его по дому — он на своём месте.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
 ];
 const hold=document.getElementById("rooms");
-hold.innerHTML=`<div class="cam-rig" id="rig"><div class="orbit-stage" id="orbit">${facades.map(f=>`<div class="orbit-face" style="background-image:url(${f.img})"></div>`).join("")}</div><video class="dive-film" id="dive" muted playsinline preload="auto"><source src="videos/window.mp4" type="video/mp4"/></video>`+rooms.map((r,n)=>`<article class="room" data-i="${n}"><div class="vis" style="background-image:url(${n===0?r.img:r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c.split(" ").map((w,i)=>`<span style="--i:${i}">${w} </span>`).join("")}</p></div></article>`).join("")+`</div><div class="orbit-copy" id="orbitCopy"><span class="eyebrow" id="orbitEye">Облёт</span><h3 id="orbitTitle">Весь дом</h3><p>Тяните или скролльте — дом можно обойти со всех сторон. Дальше — залёт в окно.</p><button class="window-hit" type="button" id="intoWindow">Залететь в окно</button></div><div class="dots"><i class="on"></i>${rooms.map(()=>`<i></i>`).join("")}</div>`;
+hold.innerHTML=`<div class="orbit-stage" id="orbit">${facades.map((f,i)=>`<div class="orbit-face${i===0?" on":""}"><img src="${f.img}" alt="" width="1600" height="900"/></div>`).join("")}</div><video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/house-court.webp"><source src="videos/window.mp4" type="video/mp4"/></video>`+rooms.map((r,n)=>`<article class="room" data-i="${n}"><div class="vis" style="background-image:url(${n===0?r.img:r.lq})"></div><div class="copy"><span class="eyebrow">${r.i} — ${r.p}</span><h3>${r.t}</h3><p>${r.c.split(" ").map((w,i)=>`<span style="--i:${i}">${w} </span>`).join("")}</p></div></article>`).join("")+`<div class="orbit-copy" id="orbitCopy"><span class="eyebrow" id="orbitEye">Облёт дома</span><h3 id="orbitTitle">Весь дом</h3><p>Тяните или скролльте — дом можно обойти со всех сторон. Дальше — залёт в окно.</p><button class="window-hit" type="button" id="intoWindow">Залететь в окно</button></div><div class="dots"><i class="on"></i>${rooms.map(()=>`<i></i>`).join("")}</div>`;
 const els=[...hold.querySelectorAll(".room")];
 const copies=[...hold.querySelectorAll(".room .copy")];
 const titles=[...hold.querySelectorAll(".room .copy h3")];
@@ -276,24 +278,12 @@ function draw(t,yaw,p,dt){
   const diveMix=smootherstep((t-(ORBIT_END-0.02))/0.08)*(1-smootherstep((t-(DIVE_END-0.06))/0.1));
   const insideMix=smootherstep((t-(DIVE_END-0.08))/0.12);
   const u=cineEase((t-ORBIT_END)/(DIVE_END-ORBIT_END||1));
-  const pose=cinePose(u,orbitMix,diveMix,insideMix,p);
-  cam.pitch=damp(cam.pitch,pose.pitch,5.4,dt);
-  cam.roll=damp(cam.roll,pose.roll,6.8,dt);
-  cam.fov=damp(cam.fov,pose.fov,4.8,dt);
-  cam.x=damp(cam.x,pose.x,4.2,dt);
-  cam.y=damp(cam.y,pose.y,5.1,dt);
-  cam.blur=damp(cam.blur,pose.blur,8.5,dt);
-  if(sticky){sticky.style.perspective=cam.fov+"px";sticky.style.perspectiveOrigin=`${50+cam.x*4}% ${44+cam.y*0.6}%`}
-  if(rig){rig.style.transform=`rotateX(${cam.pitch}deg) rotateZ(${cam.roll}deg) translate3d(${cam.x}%,${cam.y}%,0)`;rig.style.filter=cam.blur>0.08?`blur(${cam.blur}px)`:"none"}
   phase=insideMix>0.55?"inside":diveMix>0.4?"dive":"orbit";
   faces.forEach((el,i)=>{
     const d=Math.abs(shortest(yaw-i*90));
-    const face=Math.max(0,Math.pow(Math.cos((Math.min(90,d)*Math.PI)/180),1.35));
-    const twist=shortest(yaw-i*90)*0.16;
-    const push=(1-face)*-160+cineEase(u)*560*(i===3?1:0.12);
-    const scale=1.02+face*0.03+cineEase(u)*(i===3?1.55:0.08);
-    el.style.opacity=orbitMix*face;
-    el.style.transform=`translate3d(0,0,${push}px) rotateY(${twist}deg) scale(${scale})`;
+    const face=Math.max(0,Math.pow(Math.cos((Math.min(95,d)*Math.PI)/180),1.2));
+    el.style.opacity=Math.max(orbitMix*face, i===0&&orbitMix>0.7?0.2:0);
+    el.style.transform=`scale(${1.04+cineEase(u)*(i===3?0.22:0.08)})`;
   });
   if(dive){
     dive.style.opacity=diveMix;
