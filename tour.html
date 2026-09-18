@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Sherwood 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400&display=swap" rel="stylesheet"/>
+<style>html,body{margin:0;height:100%;background:#0b0b0c;color:#f4efe6;font-family:Manrope,system-ui,sans-serif;overflow:hidden}canvas{display:block}.ui{position:fixed;left:28px;bottom:28px;z-index:2;max-width:340px}.ui h1{font-family:Cormorant Garamond,Georgia,serif;font-weight:400;font-size:42px;margin:0 0 8px}.ui p{color:#a39a8c;line-height:1.65;margin:0 0 16px}.rooms{display:flex;flex-wrap:wrap;gap:8px}.rooms button{background:transparent;color:#c4a574;border:1px solid rgba(196,165,116,.45);padding:8px 12px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:10px}.top{position:fixed;top:22px;left:28px;right:28px;display:flex;justify-content:space-between;z-index:2;letter-spacing:.24em;text-transform:uppercase;font-size:12px}.top a{color:#c4a574;text-decoration:none}</style></head>
+<body>
+<div class="top"><span>Sherwood · 3D-тур</span><a href="index.html">На сайт</a></div>
+<div class="ui"><h1 id="title">Двор</h1><p id="copy">Каменная дорожка и тёплый фасад среди сосен.</p><div class="rooms" id="rooms"></div></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+const rooms=[{n:'Двор',c:'Каменная дорожка и тёплый фасад среди сосен.',col:0x1a2418,p:[0,2.2,10]},{n:'Порог',c:'Дубовая дверь, свет из холла.',col:0x2a2118,p:[0,1.8,6]},{n:'Холл',c:'Двойная высота и ось до сада.',col:0x2c241c,p:[0,2.4,2]},{n:'Гостиная',c:'Камин, лён, лес за стеклом.',col:0x3a2c20,p:[-4,1.7,-2]},{n:'Кухня',c:'Остров из камня и скрытые сети.',col:0x24201c,p:[4,1.7,-2]},{n:'Спальня',c:'Тишина и лунный свет.',col:0x1c1820,p:[-3,4.2,-6]},{n:'Спа',c:'Камень, пар, тёплый пол.',col:0x1a1e22,p:[3,1.6,-6]},{n:'Сети',c:'Одна инженерная схема дома.',col:0x16181c,p:[0,1.4,-9]}];
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b0b0c);scene.fog=new THREE.Fog(0x0b0b0c,8,28);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,80);camera.position.set(0,2.2,12);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));document.body.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0x6a5a48,.55));const key=new THREE.PointLight(0xc4a574,40,28);key.position.set(2,6,4);scene.add(key);
+const floor=new THREE.Mesh(new THREE.BoxGeometry(28,.2,28),new THREE.MeshStandardMaterial({color:0x1a1714,roughness:.9}));floor.position.y=-.1;scene.add(floor);
+function box(x,y,z,w,h,d,col){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:col,roughness:.75,metalness:.05}));m.position.set(x,y,z);scene.add(m)}
+box(0,2,-1,10,4.2,8,0x2a241c);box(-6,1.6,-1,4,3.2,5,0x3a2c22);box(6,1.6,-1,4,3.2,5,0x24201c);box(0,1.4,-7,6,2.8,4,0x1c2224);box(0,5.2,-1,2.2,.2,3,0xc4a574);
+const target=new THREE.Vector3(0,2,0);let goal=new THREE.Vector3(0,2.2,10);
+function go(i){const r=rooms[i];goal.set(...r.p);document.getElementById('title').textContent=r.n;document.getElementById('copy').textContent=r.c;key.color.setHex(r.col)}
+rooms.forEach((r,i)=>{const b=document.createElement('button');b.textContent=r.n;b.onclick=()=>go(i);document.getElementById('rooms').appendChild(b)});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+(function loop(){requestAnimationFrame(loop);camera.position.lerp(goal,.04);camera.lookAt(target);renderer.render(scene,camera)})();
+</script></body></html>
