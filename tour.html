@@ -90,6 +90,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
     <div class="dots" id="dots"></div>
   </div>
 </section>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script>
 const facades=[0,1,2,3,4,5,6,7].map(i=>({img:`images/orbit-${i}.webp`}));
 const rooms=[
@@ -172,39 +173,28 @@ const CA={yawOrbit:0.34,yawDrag:0.045,yawDive:0.12,yawInside:0.22,maxYaw:86,panO
 const I={duration:52,resumeMs:GT.resumeMs,endHoldMs:GT.stop*1000,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:GT.windowAt,insideStart:GT.insideStart};
 function roomPlayhead(i,n){if(n<=1)return I.insideStart; return I.insideStart+(i/Math.max(1,n-1))*(1-I.insideStart)*0.92}
 function sm01(t){const x=Math.min(1,Math.max(0,t));return x*x*x*(x*(x*6-15)+10)}
-function ease(name,x){x=Math.min(1,Math.max(0,x)); return name==="linear"?x:sm01(x)}
-const script=[
-  {id:"start",to:0,walk:0.35,hold:0.4,pan:0,ease:"linear"},
-  {id:"orbit",to:0.18,walk:GT.orbit,hold:1.4,pan:22,ease:"linear"},
-  {id:"window",to:0.22,walk:1.2,hold:1.1,pan:0,ease:"smooth"},
-  {id:"dive",to:0.32,walk:1.9,hold:1.5,pan:0,ease:"smooth"}
-].concat(rooms.map((r,i)=>({id:r.p,to:roomPlayhead(i,rooms.length),walk:GT.walk,hold:GT.stop,pan:GT.panAngle,ease:"smooth"})));
-const play={i:0,phase:"walk",elapsed:0,from:0,panDir:1,primed:false};
-function cue(i,from){play.i=Math.max(0,Math.min(script.length-1,i)); play.phase="walk"; play.from=from; play.elapsed=0; play.primed=true}
-function clipAfter(t){const i=script.findIndex(c=>c.to>t+0.012); return i<0?script.length-1:i}
-function stepScript(dt,tNow){
-  if(!play.primed) cue(0,tNow);
-  const clip=script[play.i];
-  play.elapsed+=dt;
-  if(play.phase==="walk"){
-    const u=ease(clip.ease,play.elapsed/Math.max(0.08,clip.walk));
-    const t=play.from+(clip.to-play.from)*u;
-    if(play.elapsed>=clip.walk){ play.phase="hold"; play.elapsed=0; return {t:clip.to,pan:0,done:false} }
-    return {t,pan:0,done:false};
-  }
-  let pan=0;
-  if(GT.panOn && clip.pan){
-    const left=clip.hold-play.elapsed; let u=1;
-    if(play.elapsed<GT.panSec) u=ease("smooth",play.elapsed/GT.panSec);
-    else if(left<CA.panOut) u=ease("smooth",left/CA.panOut);
-    pan=play.panDir*clip.pan*u;
-  }
-  if(play.elapsed>=clip.hold){
-    if(play.i>=script.length-1) return {t:1,pan:0,done:true};
-    play.panDir*=-1; cue(play.i+1, clip.to);
-  }
-  return {t:clip.to,pan,done:false};
+const proxy={t:0,pan:0};
+function labelFor(t){
+  if(t<0.09) return "start";
+  if(t<0.2) return "orbit";
+  if(t<0.26) return "window";
+  if(t<0.4) return "dive";
+  const i=Math.min(rooms.length-1,Math.max(0,Math.round(((t-0.42)/0.58)*(rooms.length-1))));
+  return "room-"+i;
 }
+const tl=gsap.timeline({paused:true,defaults:{ease:"power2.inOut",overwrite:"auto"},onComplete:()=>{paused=true;auto=false;playBtn.textContent="Ещё раз"}});
+tl.addLabel("start").to(proxy,{t:0,duration:0.35,ease:"none"}).to({}, {duration:0.4})
+  .addLabel("orbit").to(proxy,{t:0.18,duration:GT.orbit,ease:"none"}).to(proxy,{pan:22,duration:1.1}).to(proxy,{pan:0,duration:CA.panOut})
+  .addLabel("window").to(proxy,{t:0.22,duration:1.2}).to({}, {duration:1.1})
+  .addLabel("dive").to(proxy,{t:0.32,duration:1.9}).to({}, {duration:1.5});
+rooms.forEach((_,i)=>{
+  const dir=i%2?-1:1;
+  tl.addLabel("room-"+i)
+    .to(proxy,{t:roomPlayhead(i,rooms.length),duration:GT.walk})
+    .to(proxy,{pan:dir*GT.panAngle,duration:GT.panSec})
+    .to(proxy,{pan:0,duration:CA.panOut},"-=0.12")
+    .to({}, {duration:0.25});
+});
 function axisOf(dx,dy){
   const ax=Math.abs(dx), ay=Math.abs(dy);
   if(ax<I.deadzone&&ay<I.deadzone) return "none";
@@ -251,7 +241,8 @@ function wallLight(rel,mat,sunOffset){
 }
 function goTo(t){
   cam.t=Math.min(1,Math.max(0,t));
-  auto=false; paused=true; resumeAt=performance.now()+I.resumeMs;
+  auto=false; paused=true; tl.pause();
+  tl.tweenTo(labelFor(t),{duration:1.15,ease:"power2.inOut"});
   const b=document.getElementById("playBtn"); if(b) b.textContent="Смотреть";
 }
 const scrub=document.getElementById("scrub");
@@ -306,7 +297,7 @@ function draw(t,yaw){
     if(v>0.04&&!loaded.has(i)){loaded.add(i);vis[i].src=r.img}
     els[i].style.opacity=v;
     const dir=i%2? -1:1;
-    const br=v>0.65&&play.phase==="hold"?1+CA.breathe*sm01(Math.min(1,play.elapsed/3.2)):1;
+    const br=v>0.65&&shot.roomMix<0.12?1+CA.breathe*(1-shot.roomMix):1;
     els[i].style.transform=`scale(${(1.03+v*0.05)*br}) translateX(${dir*(1-v)*2.4}%)`;
     copies[i].style.opacity=v>0.55?"1":"0";
     dots[i+1].classList.toggle("on",phase==="inside"&&((shot.roomMix>0.5?shot.room+1:shot.room)===i));
@@ -320,7 +311,7 @@ function draw(t,yaw){
   document.getElementById("orbitTitle").textContent=shot.label==="dive"?"Внутрь":"Весь дом";
 }
 let last=performance.now();
-function bump(){ if(paused) return; auto=false; resumeAt=performance.now()+I.resumeMs; }
+function bump(){ if(paused) return; auto=false; tl.pause(); resumeAt=performance.now()+I.resumeMs; }
 function tick(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if(!drag){
@@ -328,17 +319,13 @@ function tick(now){
     if(Math.abs(flickT)>0.0002){ cam.t=Math.min(1,Math.max(0,cam.t+flickT*dt)); flickT*=decay; } else flickT=0;
     if(Math.abs(flickYaw)>0.05){ yawOff+=flickYaw*dt; flickYaw*=decay; } else flickYaw=0;
     if(!paused && !auto && now>resumeAt){
-      auto=true;
-      cue(clipAfter(cam.t), cam.t);
+      auto=true; proxy.t=cam.t; tl.seek(labelFor(cam.t)); tl.play();
     }
-    if(auto && !paused){
-      const out=stepScript(dt, cam.t);
-      cam.t=out.t; yawOff=out.pan;
-      if(out.done){ cam.t=1; auto=false; paused=true; playBtn.textContent="Ещё раз"; }
-    }
+    if(auto && !paused){ if(tl.paused()) tl.play(); }
+    if(!drag && (auto || tl.isActive())){ cam.t=proxy.t; yawOff=proxy.pan; }
   }
   const shot=sampleTour(cam.t,rooms.length);
-  if(!drag && play.phase==="walk") yawOff*=0.88;
+  if(!drag && tl.paused()) yawOff*=0.88;
   const look=(shot.layer<0.4||shot.label==="inside")?yawOff:0;
   const spin=wrap360(shot.yaw+look);
   const yawT=drag?CA.yawDrag:shot.label==="dive"?CA.yawDive:shot.label==="inside"?CA.yawInside:CA.yawOrbit;
@@ -354,8 +341,10 @@ hots.innerHTML=`<button type="button" data-t="0"><img src="images/orbit-0.webp" 
 hots.onclick=e=>{const b=e.target.closest("button"); if(b) goTo(+b.dataset.t)};
 const playBtn=document.getElementById("playBtn");
 playBtn.onclick=()=>{
-  if(paused && cam.t>=0.99){ cam.t=0; play.primed=false; play.i=0; play.phase="walk"; play.elapsed=0; }
-  paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза";
+  paused=!paused; auto=!paused;
+  if(!paused){ if(cam.t>=0.99) tl.restart(); else tl.play(); }
+  else tl.pause();
+  playBtn.textContent=paused?"Смотреть":"Пауза";
 };
 document.getElementById("scrubHit").onpointerdown=e=>{
   const r=e.currentTarget.getBoundingClientRect();
@@ -372,7 +361,7 @@ stage.onpointerdown=e=>{
   if(e.target.closest("button,a"))return;
   e.currentTarget.setPointerCapture(e.pointerId);
   drag={x:e.clientX,y:e.clientY,t:cam.t,yaw:yawOff,axis:"none"};
-  flickT=0; flickYaw=0; auto=false;
+  flickT=0; flickYaw=0; auto=false; tl.pause();
   stage.classList.add("is-grabbing");
 };
 addEventListener("pointermove",e=>{
