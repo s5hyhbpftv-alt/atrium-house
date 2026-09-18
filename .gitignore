@@ -1,0 +1,12 @@
+node_modules
+dist
+.output
+.tanstack
+.vercel
+.env
+.env.local
+*.zip
+artifacts
+screenshots
+SHERWOOD-generated
+.DS_Store

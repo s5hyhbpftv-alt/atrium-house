@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SHERWOOD · 3D-тур</title>
+<meta name="theme-color" content="#0B0B0C"/>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link rel="preload" as="image" href="images/orbit-0.webp"/>
+<link rel="preload" as="image" href="images/orbit-6.webp"/>
+<link rel="preload" as="video" href="videos/window.mp4"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.track{height:100dvh}
+.stage{touch-action:none;overscroll-behavior:none}
+.tour-scrub{height:14px;padding-top:12px;cursor:ew-resize;background:linear-gradient(to top,rgba(11,11,12,.45),transparent)}
+.tour-scrub i{display:block;height:2px;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
+.tour-hlr{position:absolute;left:50%;bottom:2.1rem;z-index:24;display:flex;gap:.4rem;max-width:min(94vw,56rem);transform:translateX(-50%);overflow-x:auto;pointer-events:auto;padding:0 .25rem .2rem}
+.tour-hlr button{position:relative;flex:none;width:4.6rem;height:3.1rem;overflow:hidden;border:1px solid rgba(244,239,230,.18);padding:0;background:#111;cursor:pointer}
+.tour-hlr button img{width:100%;height:100%;object-fit:cover;opacity:.72}
+.tour-hlr button span{position:absolute;inset:auto 0 0;padding:.15rem .2rem;background:rgba(11,11,12,.55);color:rgba(244,239,230,.8);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.tour-hlr button.is-on{border-color:var(--accent)}
+.tour-hlr button.is-on img{opacity:1}
+.tour-scrub i{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
+.stage{position:sticky;top:0;height:100dvh;width:100%;overflow:hidden;background:#0b0b0c;cursor:grab}
+.stage.is-grabbing{cursor:grabbing}
+.orbit-stage,.orbit-still,.fly-plane,.dive-film{position:absolute;inset:0}
+.orbit-stage{z-index:2;overflow:hidden}
+.orbit-still{opacity:0}
+.orbit-still img,.fly-plane img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:contrast(1.06) saturate(1.08)}
+.orbit-spec,.orbit-mat{position:absolute;inset:0;pointer-events:none}
+.orbit-spec{mix-blend-mode:screen;background:radial-gradient(ellipse 46% 38% at var(--lx,58%) var(--ly,36%), rgb(255 244 220 / var(--spec,0.16)) 0%, transparent 70%)}
+.orbit-mat{mix-blend-mode:overlay;opacity:.22;background-image:repeating-linear-gradient(90deg,transparent 0 2px,rgb(90 70 40 / 8%) 2px 3px),repeating-linear-gradient(0deg,transparent 0 11px,rgb(40 28 16 / 7%) 11px 12px)}
+.light-rig{position:absolute;inset:0;z-index:3;pointer-events:none}
+.light-hdri,.light-sun,.light-rim,.light-windows,.light-ao{position:absolute;inset:0}
+.light-hdri{mix-blend-mode:soft-light;opacity:.55;background:linear-gradient(180deg,rgb(var(--fill-rgb,180 210 235)/.28) 0%,transparent 42%),linear-gradient(90deg,rgb(var(--fill-rgb,180 210 235)/.12),transparent 40%,rgb(var(--sun-rgb,255 186 120)/.18))}
+.light-sun{mix-blend-mode:screen;background:radial-gradient(ellipse 55% 42% at var(--sun-x,62%) var(--sun-y,34%), rgb(var(--sun-rgb,255 186 120)/var(--key,.42)) 0%, transparent 68%)}
+.light-rim{mix-blend-mode:screen;background:radial-gradient(ellipse 38% 60% at var(--rim-x,18%) var(--rim-y,30%), rgb(var(--fill-rgb,180 210 235)/var(--rim,.18)) 0%, transparent 70%)}
+.light-windows{mix-blend-mode:screen;filter:blur(10px);background:radial-gradient(ellipse 22% 16% at 58% 52%, rgb(var(--win-rgb,255 176 96)/var(--win,.45)) 0%, transparent 72%)}
+.light-ao{mix-blend-mode:multiply;opacity:.42;background:linear-gradient(to top,rgb(18 12 8/.55) 0%,transparent 28%),radial-gradient(ellipse at center,transparent 52%,rgb(11 11 12/.35) 100%)}
+.tour-hint{position:absolute;left:50%;bottom:5.5rem;z-index:16;transform:translateX(-50%);letter-spacing:.18em;text-transform:uppercase;font-size:11px;color:var(--accent);pointer-events:none;transition:opacity .6s ease}
+.dive-film{z-index:4;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
+.fly-plane{z-index:5;opacity:0}
+.fly-plane .shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,12,.8),transparent 50%);pointer-events:none}
+.copy,.orbit-copy{position:absolute;left:var(--gutter);bottom:12vh;z-index:12;max-width:32rem;pointer-events:none}
+.orbit-copy{pointer-events:none}
+.window-hit{margin-top:18px;min-height:44px;border:0;background:var(--accent);color:var(--ink);padding:10px 16px;letter-spacing:.14em;text-transform:uppercase;font-size:11px;cursor:pointer;font-family:var(--sans);pointer-events:auto}
+.eyebrow{color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-size:11px}
+h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margin-top:8px}
+.copy p,.orbit-copy p{color:var(--muted);margin-top:12px;line-height:1.7;max-width:42ch}
+.window-hit{margin-top:18px;min-height:44px;border:0;background:var(--accent);color:var(--ink);padding:10px 16px;letter-spacing:.14em;text-transform:uppercase;font-size:11px;cursor:pointer;font-family:var(--sans);pointer-events:auto}
+.top{position:absolute;inset:0 0 auto;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:22px var(--gutter);letter-spacing:.18em;text-transform:uppercase;font-size:12px}
+.top a,.top button{color:var(--accent);background:none;border:0;font:inherit;letter-spacing:.18em;text-transform:uppercase;min-height:44px;cursor:pointer}
+.dots{position:absolute;right:var(--gutter);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:10}
+.dots i{display:block;width:1px;height:20px;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.stage:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(11,11,12,.32) 100%)}
+@media(max-width:700px){.dots{display:none}.track{height:1480vh}}
+</style>
+</head>
+<body>
+<section class="track" id="track">
+  <div class="stage" id="stage">
+    <div class="top">
+      <span>SHERWOOD · 3D-тур</span>
+      <div>
+        <button type="button" id="around">Вокруг дома</button>
+        <a href="index.html">На сайт</a>
+      </div>
+    </div>
+    <div class="orbit-stage" id="orbit"></div>
+    <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/orbit-6.webp"><source src="videos/window.mp4" type="video/mp4"/></video>
+    <div id="rooms"></div>
+    <div class="orbit-copy" id="orbitCopy">
+      <span class="eyebrow" id="orbitEye">Облёт дома</span>
+      <h3 id="orbitTitle">Весь дом</h3>
+      <p>Камера ведёт сама. Тяните в сторону — крутить, вверх-вниз — листать пролёт.</p>
+      <button class="window-hit" type="button" id="intoWindow">Залететь в окно</button>
+    </div>
+    <p class="tour-hint" id="hint">Идёт само · тяните, чтобы вести</p>
+    <button class="tour-play" type="button" id="playBtn">Пауза</button>
+    <nav class="tour-hlr" id="hots"></nav>
+    <div class="tour-scrub" id="scrubHit"><i id="scrub"></i></div>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+<script>
+gsap.registerPlugin(Draggable);
+const facades=[0,1,2,3,4,5,6,7].map(i=>({img:`images/orbit-${i}.webp`}));
+const rooms=[
+  {p:"Гостиная",t:"Очаг",c:"Вечером огонь и лес за стеклом — будто сидите на опушке, только тепло.",img:"images/living.webp",lq:"images/living.lq.webp"},
+  {p:"Кухня",t:"Ритм утра",c:"Камень острова холодный на ладонь. Завтрак — и уже виден двор.",img:"images/kitchen.webp",lq:"images/kitchen.lq.webp"},
+  {p:"Спальня",t:"Тишина",c:"Здесь дом выдыхает. Утром — только лес.",img:"images/bedroom.webp",lq:"images/bedroom.lq.webp"},
+  {p:"Детская",t:"Своё окно",c:"Окно в кроны, тёплый пол. Можно шуметь — стены держат.",img:"images/kids.webp",lq:"images/kids.lq.webp"},
+  {p:"Кабинет",t:"Дверь мягко",c:"Стол к лесу. Здесь думается.",img:"images/study.webp",lq:"images/study.lq.webp"},
+  {p:"Гардеробная",t:"Всё на местах",c:"Свет зажигается сам. Пальто, чемоданы, утро без поиска.",img:"images/closet.webp",lq:"images/closet.lq.webp"},
+  {p:"Ванная",t:"Камень греет",c:"Ступни на тёплом камне, душ как дождь.",img:"images/bath.webp",lq:"images/bath.lq.webp"},
+  {p:"Спа",t:"Жар и вода",c:"Сауна, вода, лес в окошке. Не отель — свой ритуал.",img:"images/spa.webp",lq:"images/spa.lq.webp"},
+  {p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
+];
+const cam={t:0,yaw:0,playing:false};
+const vel={t:0,yaw:0};
+function clamp01(n){return Math.min(1,Math.max(0,n))}
+function wrap360(a){return (a%360+360)%360}
+function shortest(a){return ((a+180)%360+360)%360-180}
+function smootherstep(n){const x=clamp01(n);return x*x*x*(x*(x*6-15)+10)}
+function smoothDamp(cur,tgt,key,st,dt,max){
+  st=Math.max(0.0001,st); const omega=2/st, x=omega*dt, exp=1/(1+x+0.48*x*x+0.235*x*x*x);
+  let change=cur-tgt; if(max){const m=max*st; change=Math.min(m,Math.max(-m,change))}
+  const temp=(vel[key]+omega*change)*dt; vel[key]=(vel[key]-omega*temp)*exp;
+  return tgt+(change+temp)*exp;
+}
+function smoothDampAngle(cur,tgt,key,st,dt,max){
+  const d=shortest(tgt-cur); return wrap360(smoothDamp(cur,cur+d,key,st,dt,max));
+}
+function shotPair(progress,count,hold){
+  if(count<=1)return {a:0,b:0,mix:0};
+  const x=clamp01(progress)*(count-1); const i=Math.min(count-2,Math.floor(x)); const f=x-i;
+  if(f<=hold)return {a:i,b:i+1,mix:0};
+  return {a:i,b:i+1,mix:smootherstep((f-hold)/(1-hold))};
+}
+function sampleTour(t,n){
+  const x=clamp01(t); let yaw,dolly,scale,layer;
+  if(x<=0.18){const u=smootherstep(x/0.18); yaw=u*360; dolly=u*0.04; scale=1+u*0.03; layer=0;}
+  else if(x<=0.22){const u=smootherstep((x-0.18)/0.04); yaw=360-u*90; dolly=0.04+u*0.1; scale=1.03+u*0.04; layer=0;}
+  else if(x<=0.32){const u=smootherstep((x-0.22)/0.1); yaw=270; dolly=0.14+u*0.72; scale=1.07+u*0.1; layer=u;}
+  else if(x<=0.40){const u=smootherstep((x-0.32)/0.08); yaw=270; dolly=0.86+u*0.14; scale=1.17-u*0.12; layer=1+u;}
+  else { yaw=270; dolly=1; const pair=shotPair((x-0.40)/0.6,n,0.78); layer=2+pair.a+pair.mix; scale=1.04+pair.mix*0.04; }
+  const living=Math.max(0,Math.min(1,1-Math.abs(layer-2)));
+  const orbit=layer<1.2?Math.max(0,Math.min(1,1-layer*0.72))*(1-living*0.9):0;
+  const dive=layer<1?Math.max(0,Math.min(1,layer*1.15)):Math.max(0,Math.min(1,2.05-layer));
+  const room=Math.min(n-1,Math.max(0,Math.floor(layer-2+1e-6)));
+  const roomMix=clamp01((layer-2)-Math.floor(layer-2));
+  const label=layer<0.45?"orbit":layer<1.45?"dive":"inside";
+  return {yaw,dolly,scale,orbit,dive,room,roomMix,layer,label};
+}
+function roomVis(layer,i){return clamp01(1-Math.abs(layer-2-i))}
+function orbitWeights(yaw,count){
+  const step=360/count;
+  const raw=Array.from({length:count},(_,i)=>{
+    const rel=(shortest(yaw-i*step)*Math.PI)/180;
+    return Math.pow(Math.max(0,Math.cos(rel)),12);
+  });
+  const sum=raw.reduce((a,b)=>a+b,0)||1;
+  return raw.map(w=>w/sum);
+}
+const orbit=document.getElementById("orbit");
+const roomsEl=document.getElementById("rooms");
+const dotsEl=document.getElementById("dots");
+orbit.innerHTML=facades.map((f)=>`<div class="orbit-still"><img src="${f.img}" alt="" width="1600" height="900"/><span class="orbit-spec"></span><span class="orbit-mat"></span></div>`).join("")+'<div class="light-rig" id="rig"><span class="light-hdri"></span><span class="light-sun"></span><span class="light-rim"></span><span class="light-windows"></span><span class="light-ao"></span></div>';
+roomsEl.innerHTML=rooms.map((r,n)=>`<article class="fly-plane"><img src="${n===0?r.img:r.lq}" alt="" width="1600" height="900"/><div class="shade"></div><div class="copy"><span class="eyebrow">0${n+2} — ${r.p}</span><h3>${r.t}</h3><p>${r.c}</p></div></article>`).join("");
+dotsEl.innerHTML=`<i class="on"></i>`+rooms.map(()=>`<i></i>`).join("");
+const faces=[...orbit.querySelectorAll(".orbit-still")];
+const els=[...roomsEl.querySelectorAll(".fly-plane")];
+const copies=[...roomsEl.querySelectorAll(".copy")];
+const vis=[...roomsEl.querySelectorAll(".fly-plane > img")];
+const dots=[...dotsEl.querySelectorAll("i")];
+const dive=document.getElementById("dive");
+const orbitCopy=document.getElementById("orbitCopy");
+const track=document.getElementById("track");
+function sizeTrack(){track.style.height=innerHeight+"px"}
+sizeTrack(); addEventListener("resize",sizeTrack);
+const loaded=new Set([0,1]);
+let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,paused=false,flickT=0,flickYaw=0;
+const GT={walk:1.85,orbit:8.6,stop:3.5,loop:false,panOn:true,panAngle:32,panSec:2.8,resumeMs:5000,windowAt:0.26,insideStart:0.42};
+const CA={yawOrbit:0.34,yawDrag:0.045,yawDive:0.12,yawInside:0.22,maxYaw:86,panOut:0.55,breathe:0.03};
+const I={duration:52,resumeMs:GT.resumeMs,endHoldMs:GT.stop*1000,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:GT.windowAt,insideStart:GT.insideStart};
+function roomPlayhead(i,n){if(n<=1)return I.insideStart; return I.insideStart+(i/Math.max(1,n-1))*(1-I.insideStart)*0.92}
+function sm01(t){const x=Math.min(1,Math.max(0,t));return x*x*x*(x*(x*6-15)+10)}
+const proxy={t:0,pan:0};
+function labelFor(t){
+  if(t<0.09) return "start";
+  if(t<0.2) return "orbit";
+  if(t<0.26) return "window";
+  if(t<0.4) return "dive";
+  const i=Math.min(rooms.length-1,Math.max(0,Math.round(((t-0.42)/0.58)*(rooms.length-1))));
+  return "room-"+i;
+}
+const tl=gsap.timeline({paused:true,defaults:{ease:"power2.inOut",overwrite:"auto"},onComplete:()=>{paused=true;auto=false;playBtn.textContent="Ещё раз"}});
+tl.addLabel("start").to(proxy,{t:0,duration:0.35,ease:"none"}).to({}, {duration:0.4})
+  .addLabel("orbit").to(proxy,{t:0.18,duration:GT.orbit,ease:"none"}).to(proxy,{pan:22,duration:1.1}).to(proxy,{pan:0,duration:CA.panOut})
+  .addLabel("window").to(proxy,{t:0.22,duration:1.2}).to({}, {duration:1.1})
+  .addLabel("dive").to(proxy,{t:0.32,duration:1.9}).to({}, {duration:1.5});
+rooms.forEach((_,i)=>{
+  const dir=i%2?-1:1;
+  tl.addLabel("room-"+i)
+    .to(proxy,{t:roomPlayhead(i,rooms.length),duration:GT.walk})
+    .to(proxy,{pan:dir*GT.panAngle,duration:GT.panSec})
+    .to(proxy,{pan:0,duration:CA.panOut},"-=0.12")
+    .to({}, {duration:0.25});
+});
+function axisOf(dx,dy){
+  const ax=Math.abs(dx), ay=Math.abs(dy);
+  if(ax<I.deadzone&&ay<I.deadzone) return "none";
+  if(ax>ay+I.axisLock) return "yaw";
+  if(ay>ax+I.axisLock) return "scrub";
+  return ax>ay?"yaw":"scrub";
+}
+const wallMats=[
+  {roughness:0.58,metallic:0.02,f0:0.04},
+  {roughness:0.64,metallic:0,f0:0.04},
+  {roughness:0.52,metallic:0,f0:0.04},
+  {roughness:0.08,metallic:0.05,f0:0.08}
+];
+function evalPbr(nv,nl,nh,mat){
+  nv=Math.max(0.02,Math.abs(nv)); nl=Math.max(0.02,nl); nh=Math.max(0.02,nh);
+  const a=Math.max(0.02,mat.roughness*mat.roughness), a2=a*a, d=nh*nh*(a2-1)+1;
+  const D=a2/(Math.PI*d*d), k=((mat.roughness+1)**2)/8;
+  const G=(nv/(nv*(1-k)+k))*(nl/(nl*(1-k)+k));
+  const F=mat.f0+(1-mat.f0)*Math.pow(1-nv,5);
+  const spec=Math.min(2.2,(D*G*F)/(4*nv*nl));
+  const kd=(1-F)*(1-mat.metallic);
+  return {diffuse:0.38+kd*nl*0.72, spec, fresnel:F, env:F*(1-mat.roughness)*(0.35+0.65*(1-nv)), blur:6+mat.roughness*48, size:14+mat.roughness*48};
+}
+function kelvinRgb(k){
+  const t=k/100;
+  const r=t<=66?255:Math.min(255,329.7*Math.pow(t-60,-0.133));
+  const g=t<=66?Math.min(255,99.47*Math.log(t)-161.12):Math.min(255,288.12*Math.pow(t-60,-0.0755));
+  const b=t>=66?255:t<=19?0:Math.min(255,138.52*Math.log(t-10)-305.04);
+  return `${Math.round(r)} ${Math.round(g)} ${Math.round(b)}`;
+}
+function sceneLights(yaw){
+  const sun=48-yaw, rad=sun*Math.PI/180, alt=17*Math.PI/180;
+  const facing=Math.max(0,Math.cos(rad)), back=Math.max(0,-Math.cos(rad));
+  return {
+    sunX:`${50+Math.sin(rad)*34}%`, sunY:`${42-Math.sin(alt)*22}%`,
+    rimX:`${50-Math.sin(rad)*38}%`, rimY:`${28+Math.sin(alt)*8}%`,
+    key:0.28+facing*0.42, rim:0.08+back*0.26, fill:0.2, windows:0.58*(0.7+facing*0.3),
+    sunRgb:kelvinRgb(4200), fillRgb:kelvinRgb(7400), windowRgb:kelvinRgb(2650), sunOffset:rad
+  };
+}
+function wallLight(rel,mat,sunOffset){
+  sunOffset=sunOffset??0.38;
+  return evalPbr(Math.cos(rel),Math.cos(rel-sunOffset),Math.cos(rel-sunOffset*0.5),mat);
+}
+function goTo(t){
+  cam.t=Math.min(1,Math.max(0,t));
+  auto=false; paused=true; tl.pause();
+  tl.tweenTo(labelFor(t),{duration:1.15,ease:"power2.inOut"});
+  const b=document.getElementById("playBtn"); if(b) b.textContent="Смотреть";
+}
+const scrub=document.getElementById("scrub");
+const hint=document.getElementById("hint");
+function draw(t,yaw){
+  const shot=sampleTour(t,rooms.length);
+  phase=shot.label;
+  if(scrub) scrub.style.transform=`scaleX(${t})`;
+  if(hint) hint.style.opacity=(t<0.14&&!drag)?1:0;
+  const orbitEl=document.getElementById("orbit");
+  orbitEl.style.opacity=shot.orbit;
+  orbitEl.style.transform=`scale(${shot.scale})`;
+  const w=orbitWeights(yaw,faces.length);
+  const rig=sceneLights(yaw);
+  const rigEl=document.getElementById("rig");
+  if(rigEl){
+    rigEl.style.opacity=shot.dive>0.2?0:1;
+    rigEl.style.setProperty("--sun-x",rig.sunX);
+    rigEl.style.setProperty("--sun-y",rig.sunY);
+    rigEl.style.setProperty("--rim-x",rig.rimX);
+    rigEl.style.setProperty("--rim-y",rig.rimY);
+    rigEl.style.setProperty("--key",rig.key);
+    rigEl.style.setProperty("--rim",rig.rim);
+    rigEl.style.setProperty("--fill",rig.fill);
+    rigEl.style.setProperty("--win",rig.windows);
+    rigEl.style.setProperty("--sun-rgb",rig.sunRgb);
+    rigEl.style.setProperty("--fill-rgb",rig.fillRgb);
+    rigEl.style.setProperty("--win-rgb",rig.windowRgb);
+  }
+  faces.forEach((el,i)=>{
+    const a=w[i]||0;
+    el.style.opacity=a<0.12?0:a;
+    el.style.visibility=a<0.12?"hidden":"visible";
+    if(a>=0.12){
+      const step=360/faces.length;
+      const rel=(shortest(yaw-i*step)*Math.PI)/180;
+      const light=wallLight(rel,i%2?wallMats[1]:wallMats[0],rig.sunOffset);
+      const img=el.querySelector("img");
+      const spec=el.querySelector(".orbit-spec");
+      if(img) img.style.filter=`contrast(${1.08+(1-light.blur/54)*0.05}) saturate(1.1) brightness(${0.9+light.diffuse*0.14})`;
+      if(spec){spec.style.setProperty("--spec",String(Math.min(0.38,light.spec*0.2+light.env*0.24)));spec.style.setProperty("--lx",rig.sunX);spec.style.setProperty("--ly",rig.sunY);}
+    }
+  });
+  if(dive){
+    dive.style.opacity=shot.dive;
+    dive.style.transform=`scale(${1.02+shot.dolly*0.06})`;
+    if(shot.dive>0.08 && dive.paused){cam.playing=true;try{if(dive.readyState<2)dive.load();dive.currentTime=0.01}catch(e){} dive.play().catch(()=>{})}
+    if(shot.dive<0.04 && cam.playing){cam.playing=false;dive.pause()}
+  }
+  rooms.forEach((r,i)=>{
+    const v=roomVis(shot.layer,i);
+    if(v>0.04&&!loaded.has(i)){loaded.add(i);vis[i].src=r.img}
+    els[i].style.opacity=v;
+    const dir=i%2? -1:1;
+    const br=v>0.65&&shot.roomMix<0.12?1+CA.breathe*(1-shot.roomMix):1;
+    els[i].style.transform=`scale(${(1.03+v*0.05)*br}) translateX(${dir*(1-v)*2.4}%)`;
+    copies[i].style.opacity=v>0.55?"1":"0";
+    dots[i+1].classList.toggle("on",phase==="inside"&&((shot.roomMix>0.5?shot.room+1:shot.room)===i));
+  });
+  dots[0].classList.toggle("on",phase!=="inside");
+  orbitCopy.style.opacity=Math.max(shot.orbit,shot.dive*0.9)*(shot.layer<1.5?1:0);
+  const showBtn=shot.orbit>0.55&&shot.dive<0.12&&t>0.06;
+  document.getElementById("intoWindow").style.opacity=showBtn?1:0;
+  document.getElementById("intoWindow").style.pointerEvents=showBtn?"auto":"none";
+  document.getElementById("orbitEye").textContent=shot.label==="dive"?"Залёт":"Облёт дома";
+  document.getElementById("orbitTitle").textContent=shot.label==="dive"?"Внутрь":"Весь дом";
+}
+let last=performance.now();
+function bump(){ if(paused) return; auto=false; tl.pause(); resumeAt=performance.now()+I.resumeMs; }
+function tick(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(!drag){
+    const decay=Math.exp(-dt*I.inertia);
+    if(Math.abs(flickT)>0.0002){ cam.t=Math.min(1,Math.max(0,cam.t+flickT*dt)); flickT*=decay; } else flickT=0;
+    if(Math.abs(flickYaw)>0.05){ yawOff+=flickYaw*dt; flickYaw*=decay; } else flickYaw=0;
+    if(!paused && !auto && now>resumeAt){
+      auto=true; proxy.t=cam.t; tl.seek(labelFor(cam.t)); tl.play();
+    }
+    if(auto && !paused){ if(tl.paused()) tl.play(); }
+    if(!drag && (auto || tl.isActive())) yawOff=proxy.pan;
+  }
+  if(!drag || drag.axis!=="yaw") cam.t=proxy.t;
+  const shot=sampleTour(cam.t,rooms.length);
+  if(!drag && tl.paused()) yawOff*=0.88;
+  const look=(shot.layer<0.4||shot.label==="inside")?yawOff:0;
+  const spin=wrap360(shot.yaw+look);
+  const yawT=drag?CA.yawDrag:shot.label==="dive"?CA.yawDive:shot.label==="inside"?CA.yawInside:CA.yawOrbit;
+  cam.yaw=smoothDampAngle(cam.yaw,spin,"yaw",yawT,dt,CA.maxYaw);
+  draw(cam.t,cam.yaw);
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+document.getElementById("intoWindow").onclick=()=>goTo(I.windowAt);
+document.getElementById("around").onclick=()=>goTo(0);
+const hots=document.getElementById("hots");
+hots.innerHTML=`<button type="button" data-t="0"><img src="images/orbit-0.webp" alt=""/><span>Дом</span></button>`+rooms.map((r,i)=>`<button type="button" data-t="${roomPlayhead(i,rooms.length)}"><img src="${r.lq||r.img}" alt=""/><span>${r.p}</span></button>`).join("");
+hots.onclick=e=>{const b=e.target.closest("button"); if(b) goTo(+b.dataset.t)};
+const playBtn=document.getElementById("playBtn");
+playBtn.onclick=()=>{
+  paused=!paused; auto=!paused;
+  if(!paused){ if(cam.t>=0.99) tl.restart(); else tl.play(); }
+  else tl.pause();
+  playBtn.textContent=paused?"Смотреть":"Пауза";
+};
+const bar=document.getElementById("scrubHit");
+Draggable.create(document.createElement("div"),{
+  trigger:bar, type:"x", cursor:"ew-resize",
+  onPressInit(){ auto=false; paused=true; playBtn.textContent="Смотреть";
+    const r=bar.getBoundingClientRect(); tl.progress((this.pointerX-r.left)/r.width); tl.pause(); },
+  onDrag(){ const r=bar.getBoundingClientRect(); tl.progress((this.pointerX-r.left)/r.width); tl.pause(); }
+});
+const stage=document.getElementById("stage");
+const dragProxy=document.createElement("div");
+const start={yaw:0,p:0};
+Draggable.create(dragProxy,{
+  trigger:stage, type:"x,y", lockAxis:true, dragClickables:false, cursor:"grab", activeCursor:"grabbing",
+  onPressInit(){
+    const t=this.pointerEvent&&this.pointerEvent.target;
+    if(t&&t.closest&&t.closest("button,a,.tour-hlr,.tour-scrub,.tour-play")){ this.endDrag(); return; }
+    start.yaw=yawOff; start.p=tl.progress(); auto=false; tl.pause();
+    drag={axis:"none"}; stage.classList.add("is-grabbing");
+  },
+  onDrag(){
+    drag.axis=this.lockedAxis==="y"?"scrub":"yaw";
+    if(drag.axis==="yaw") yawOff=start.yaw+this.x*I.dragYaw;
+    else { tl.progress(Math.min(1,Math.max(0,start.p-this.y*I.dragScrub))); tl.pause(); }
+  },
+  onRelease(){
+    if(this.lockedAxis==="x") flickYaw=this.x*I.flickYaw*0.08;
+    if(this.lockedAxis==="y") flickT=-this.y*I.flickScrub*0.4;
+    gsap.set(dragProxy,{x:0,y:0});
+    drag=null; if(!paused) resumeAt=performance.now()+I.resumeMs;
+    stage.classList.remove("is-grabbing");
+  }
+});
+stage.addEventListener("wheel",e=>{
+  const raw=e.deltaMode===1?e.deltaY*16:e.deltaY;
+  const d=raw*I.wheelGain;
+  if((tl.progress()<=0&&d<0)||(tl.progress()>=1&&d>0)) return;
+  e.preventDefault(); bump(); tl.progress(Math.min(1,Math.max(0,tl.progress()+d*1.8))); tl.pause();
+},{passive:false});
+addEventListener("keydown",e=>{
+  if(e.code==="Space"){e.preventDefault(); paused=!paused; auto=!paused; playBtn.textContent=paused?"Смотреть":"Пауза";}
+  if(e.code==="ArrowRight"||e.code==="ArrowDown"){bump(); cam.t=Math.min(1,cam.t+0.03)}
+  if(e.code==="ArrowLeft"||e.code==="ArrowUp"){bump(); cam.t=Math.max(0,cam.t-0.03)}
+  if(e.code==="Home") goTo(0);
+  if(e.code==="End") goTo(1);
+});
+</script>
+</body>
+</html>

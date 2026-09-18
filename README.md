@@ -1,7 +1,18 @@
 # SHERWOOD
 
-Премиальный сайт **SHERWOOD**: дома под ключ, ремонт и все коммуникации.
+Сайт и 3D-тур загородного дома: облёт, залёт в окно, комнаты.
 
-Скролл — пролёт через дом. Кнопка — 3D-тур.
+## Ссылки
 
-https://s5hyhbpftv-alt.github.io/atrium-house/
+- [3D-тур](https://s5hyhbpftv-alt.github.io/atrium-house/tour.html)
+- [Сайт](https://s5hyhbpftv-alt.github.io/atrium-house/)
+
+## Запуск
+
+```bash
+npm install
+npm run dev
+```
+
+Картинки — `public/images`, видео — `public/videos`.
+Живой статический тур — ветка `gh-pages`.
