@@ -21,9 +21,12 @@ body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-s
 .stage{touch-action:none;overscroll-behavior:none}
 .tour-scrub{height:14px;padding-top:12px;cursor:ew-resize;background:linear-gradient(to top,rgba(11,11,12,.45),transparent)}
 .tour-scrub i{display:block;height:2px;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
-.tour-hots{position:absolute;left:50%;bottom:2.4rem;z-index:24;display:flex;gap:.35rem;max-width:min(92vw,52rem);transform:translateX(-50%);overflow-x:auto;pointer-events:auto;padding:0 .5rem}
-.tour-hots button{flex:none;min-height:36px;padding:0 10px;border:0;background:none;color:rgba(244,239,230,.55);letter-spacing:.12em;text-transform:uppercase;font-size:10px;cursor:pointer;white-space:nowrap;font-family:var(--sans)}
-.tour-hots button.is-on{color:var(--accent)}
+.tour-hlr{position:absolute;left:50%;bottom:2.1rem;z-index:24;display:flex;gap:.4rem;max-width:min(94vw,56rem);transform:translateX(-50%);overflow-x:auto;pointer-events:auto;padding:0 .25rem .2rem}
+.tour-hlr button{position:relative;flex:none;width:4.6rem;height:3.1rem;overflow:hidden;border:1px solid rgba(244,239,230,.18);padding:0;background:#111;cursor:pointer}
+.tour-hlr button img{width:100%;height:100%;object-fit:cover;opacity:.72}
+.tour-hlr button span{position:absolute;inset:auto 0 0;padding:.15rem .2rem;background:rgba(11,11,12,.55);color:rgba(244,239,230,.8);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.tour-hlr button.is-on{border-color:var(--accent)}
+.tour-hlr button.is-on img{opacity:1}
 .tour-scrub i{display:block;height:100%;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--accent)}
 .stage{position:sticky;top:0;height:100dvh;width:100%;overflow:hidden;background:#0b0b0c;cursor:grab}
 .stage.is-grabbing{cursor:grabbing}
@@ -82,7 +85,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
     </div>
     <p class="tour-hint" id="hint">Идёт само · тяните, чтобы вести</p>
     <button class="tour-play" type="button" id="playBtn">Пауза</button>
-    <nav class="tour-hots" id="hots"></nav>
+    <nav class="tour-hlr" id="hots"></nav>
     <div class="tour-scrub" id="scrubHit"><i id="scrub"></i></div>
     <div class="dots" id="dots"></div>
   </div>
@@ -126,7 +129,7 @@ function sampleTour(t,n){
   else if(x<=0.22){const u=smootherstep((x-0.18)/0.04); yaw=360-u*90; dolly=0.04+u*0.1; scale=1.03+u*0.04; layer=0;}
   else if(x<=0.32){const u=smootherstep((x-0.22)/0.1); yaw=270; dolly=0.14+u*0.72; scale=1.07+u*0.1; layer=u;}
   else if(x<=0.40){const u=smootherstep((x-0.32)/0.08); yaw=270; dolly=0.86+u*0.14; scale=1.17-u*0.12; layer=1+u;}
-  else { yaw=270; dolly=1; const pair=shotPair((x-0.40)/0.6,n,0.7); layer=2+pair.a+pair.mix; scale=1.04+pair.mix*0.04; }
+  else { yaw=270; dolly=1; const pair=shotPair((x-0.40)/0.6,n,0.78); layer=2+pair.a+pair.mix; scale=1.04+pair.mix*0.04; }
   const living=Math.max(0,Math.min(1,1-Math.abs(layer-2)));
   const orbit=layer<1.2?Math.max(0,Math.min(1,1-layer*0.72))*(1-living*0.9):0;
   const dive=layer<1?Math.max(0,Math.min(1,layer*1.15)):Math.max(0,Math.min(1,2.05-layer));
@@ -163,7 +166,7 @@ function sizeTrack(){track.style.height=innerHeight+"px"}
 sizeTrack(); addEventListener("resize",sizeTrack);
 const loaded=new Set([0,1]);
 let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,holdUntil=0,paused=false,flickT=0,flickYaw=0;
-const I={duration:38,resumeMs:5000,endHoldMs:2800,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:0.26,insideStart:0.42};
+const I={duration:48,resumeMs:5000,endHoldMs:3500,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:0.26,insideStart:0.42,panAngle:28,panMs:5200};
 function roomPlayhead(i,n){if(n<=1)return I.insideStart; return I.insideStart+(i/Math.max(1,n-1))*(1-I.insideStart)*0.92}
 function axisOf(dx,dy){
   const ax=Math.abs(dx), ay=Math.abs(dy);
@@ -301,8 +304,10 @@ function tick(now){
     }
   }
   const shot=sampleTour(cam.t,rooms.length);
-  if(!drag && shot.layer>0.2) yawOff*=0.92;
-  const spin=wrap360(shot.yaw+(shot.layer<0.35?yawOff:0));
+  if(!drag && shot.layer>0.2 && shot.label!=="inside") yawOff*=0.92;
+  let look=shot.layer<0.35?yawOff:0;
+  if(!drag && shot.label==="inside" && auto) look=Math.sin(now/I.panMs)*I.panAngle;
+  const spin=wrap360(shot.yaw+look);
   cam.yaw=smoothDampAngle(cam.yaw,spin,"yaw",drag?0.04:0.2,dt);
   draw(cam.t,cam.yaw);
   requestAnimationFrame(tick);
@@ -311,7 +316,7 @@ requestAnimationFrame(tick);
 document.getElementById("intoWindow").onclick=()=>goTo(I.windowAt);
 document.getElementById("around").onclick=()=>goTo(0);
 const hots=document.getElementById("hots");
-hots.innerHTML=`<button type="button" data-t="0">Дом</button>`+rooms.map((r,i)=>`<button type="button" data-t="${roomPlayhead(i,rooms.length)}">${r.p}</button>`).join("");
+hots.innerHTML=`<button type="button" data-t="0"><img src="images/orbit-0.webp" alt=""/><span>Дом</span></button>`+rooms.map((r,i)=>`<button type="button" data-t="${roomPlayhead(i,rooms.length)}"><img src="${r.lq||r.img}" alt=""/><span>${r.p}</span></button>`).join("");
 hots.onclick=e=>{const b=e.target.closest("button"); if(b) goTo(+b.dataset.t)};
 const playBtn=document.getElementById("playBtn");
 playBtn.onclick=()=>{
