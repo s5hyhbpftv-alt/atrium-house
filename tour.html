@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SHERWOOD · 3D-тур</title>
-<meta name="theme-color" content="#0B0B0C"/>
-<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-<link rel="preload" as="image" href="images/orbit-0.webp"/>
-<link rel="preload" as="image" href="images/orbit-6.webp"/>
-<link rel="preload" as="video" href="videos/window.mp4"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<meta charset="UTF-8"/atrium-house/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/atrium-house/>
+<title>SHEERWOOD · 3D-тур</title>
+<meta name="theme-color" content="#0B0B0C"/atrium-house/>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/atrium-house/>
+<link rel="preload" as="image" href="images/orbit-0.webp"/atrium-house/>
+<link rel="preload" as="image" href="images/orbit-6.webp"/atrium-house/>
+<link rel="preload" as="video" href="videos/window.mp4"/atrium-house/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/atrium-house/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/atrium-house/>
 <style>
 :root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -63,24 +63,24 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
 .stage:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(11,11,12,.32) 100%)}
 @media(max-width:700px){.dots{display:none}.track{height:1480vh}}
 </style>
-</head>
+<link rel="stylesheet" href="refinements.css"><link rel="stylesheet" href="/atrium-house/assets/film-player.css"></head>
 <body>
 <section class="track" id="track">
   <div class="stage" id="stage">
     <div class="top">
-      <span>SHERWOOD · 3D-тур</span>
+      <span>SHEERWOOD · 3D-тур</span>
       <div>
         <button type="button" id="around">Вокруг дома</button>
         <a href="index.html">На сайт</a>
       </div>
     </div>
     <div class="orbit-stage" id="orbit"></div>
-    <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/orbit-6.webp"><source src="videos/window.mp4" type="video/mp4"/></video>
+    <video class="dive-film" id="dive" muted playsinline preload="auto" poster="images/orbit-6.webp"><source src="videos/window.mp4" type="video/mp4"/atrium-house/></video>
     <div id="rooms"></div>
     <div class="orbit-copy" id="orbitCopy">
-      <span class="eyebrow" id="orbitEye">Облёт дома</span>
-      <h3 id="orbitTitle">Весь дом</h3>
-      <p>Камера ведёт сама. Тяните в сторону — крутить, вверх-вниз — листать пролёт.</p>
+      <span class="eyebrow" id="orbitEye">Восемь причин</span>
+      <h3 id="orbitTitle">Одни руки на всё</h3>
+      <p id="orbitNote">Чертежи, сети и отделка — одна команда, и перекладывать вину ей не на кого.</p>
       <button class="window-hit" type="button" id="intoWindow">Залететь в окно</button>
     </div>
     <p class="tour-hint" id="hint">Идёт само · тяните, чтобы вести</p>
@@ -105,6 +105,16 @@ const rooms=[
   {p:"Ванная",t:"Камень греет",c:"Ступни на тёплом камне, душ как дождь.",img:"images/bath.webp",lq:"images/bath.lq.webp"},
   {p:"Спа",t:"Жар и вода",c:"Сауна, вода, лес в окошке. Не отель — свой ритуал.",img:"images/spa.webp",lq:"images/spa.lq.webp"},
   {p:"Туалет",t:"Отдельно",c:"Своя комната, не совмещённая с ванной.",img:"images/toilet.webp",lq:"images/toilet.lq.webp"}
+];
+const ADV=[
+  {l:"Одни руки на всё",n:"Чертежи, сети и отделка — одна команда, и перекладывать вину ей не на кого."},
+  {l:"Стены помнят всё",n:"Воду, тепло и ток мы прячем в стены до того, как их закроет камень."},
+  {l:"Свет диктует план",n:"Сначала смотрим, откуда утром свет и где шумит дорога, потом рисуем стены."},
+  {l:"Цена до котлована",n:"Называем стоимость до того, как экскаватор тронет грунт, и держим её до ключей."},
+  {l:"Ум в щите, не в облаке",n:"Сценарии живут в проводном щите: закроется сервер — свет всё равно зажжётся."},
+  {l:"Двадцать лет одними руками",n:"Дома строят те же мастера, что и первый: субподряд у нас не ночует."},
+  {l:"Ремонт, в котором живут",n:"Идём очередями по комнатам: дом остаётся домом, пока меняются стены."},
+  {l:"Мы возвращаемся сами",n:"Десять лет гарантии и сезонный обход: после ключей мы не исчезаем."}
 ];
 const cam={t:0,yaw:0,playing:false};
 const vel={t:0,yaw:0};
@@ -155,8 +165,8 @@ function orbitWeights(yaw,count){
 const orbit=document.getElementById("orbit");
 const roomsEl=document.getElementById("rooms");
 const dotsEl=document.getElementById("dots");
-orbit.innerHTML=facades.map((f)=>`<div class="orbit-still"><img src="${f.img}" alt="" width="1600" height="900"/><span class="orbit-spec"></span><span class="orbit-mat"></span></div>`).join("")+'<div class="light-rig" id="rig"><span class="light-hdri"></span><span class="light-sun"></span><span class="light-rim"></span><span class="light-windows"></span><span class="light-ao"></span></div>';
-roomsEl.innerHTML=rooms.map((r,n)=>`<article class="fly-plane"><img src="${n===0?r.img:r.lq}" alt="" width="1600" height="900"/><div class="shade"></div><div class="copy"><span class="eyebrow">0${n+2} — ${r.p}</span><h3>${r.t}</h3><p>${r.c}</p></div></article>`).join("");
+orbit.innerHTML=facades.map((f)=>`<div class="orbit-still"><img src="${f.img}" alt="" width="1600" height="900"/atrium-house/><span class="orbit-spec"></span><span class="orbit-mat"></span></div>`).join("")+'<div class="light-rig" id="rig"><span class="light-hdri"></span><span class="light-sun"></span><span class="light-rim"></span><span class="light-windows"></span><span class="light-ao"></span></div>';
+roomsEl.innerHTML=rooms.map((r,n)=>`<article class="fly-plane"><img src="${n===0?r.img:r.lq}" alt="" width="1600" height="900"/atrium-house/><div class="shade"></div><div class="copy"><span class="eyebrow">0${n+2} — ${r.p}</span><h3>${r.t}</h3><p>${r.c}</p></div></article>`).join("");
 dotsEl.innerHTML=`<i class="on"></i>`+rooms.map(()=>`<i></i>`).join("");
 const faces=[...orbit.querySelectorAll(".orbit-still")];
 const els=[...roomsEl.querySelectorAll(".fly-plane")];
@@ -169,8 +179,8 @@ const track=document.getElementById("track");
 function sizeTrack(){track.style.height=innerHeight+"px"}
 sizeTrack(); addEventListener("resize",sizeTrack);
 const loaded=new Set([0,1]);
-let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,paused=false,flickT=0,flickYaw=0;
-const GT={walk:1.85,orbit:8.6,stop:3.5,loop:false,panOn:true,panAngle:32,panSec:2.8,resumeMs:5000,windowAt:0.26,insideStart:0.42};
+let yawOff=0,drag=null,phase="orbit",auto=true,resumeAt=0,paused=false,flickT=0,flickYaw=0,videoOn=false,handoff=0;
+const GT={walk:1.85,orbit:19.2,stop:3.5,loop:false,panOn:true,panAngle:32,panSec:2.8,resumeMs:5000,windowAt:0.26,insideStart:0.42,diveSec:2.8,diveHoldMin:1,diveHoldMax:9,diveOverlap:0.7,diveClipLead:0.67,diveHandoffLead:0.5,diveHandoffSec:0.9};
 const CA={yawOrbit:0.34,yawDrag:0.045,yawDive:0.12,yawInside:0.22,maxYaw:86,panOut:0.55,breathe:0.03};
 const I={duration:52,resumeMs:GT.resumeMs,endHoldMs:GT.stop*1000,wheelGain:0.00036,dragYaw:0.4,dragScrub:0.00095,deadzone:8,axisLock:14,flickScrub:0.00055,flickYaw:0.22,inertia:4.2,loop:false,windowAt:GT.windowAt,insideStart:GT.insideStart};
 function roomPlayhead(i,n){if(n<=1)return I.insideStart; return I.insideStart+(i/Math.max(1,n-1))*(1-I.insideStart)*0.92}
@@ -184,19 +194,42 @@ function labelFor(t){
   const i=Math.min(rooms.length-1,Math.max(0,Math.round(((t-0.42)/0.58)*(rooms.length-1))));
   return "room-"+i;
 }
-const tl=gsap.timeline({paused:true,defaults:{ease:"power2.inOut",overwrite:"auto"},onComplete:()=>{paused=true;auto=false;playBtn.textContent="Ещё раз"}});
-tl.addLabel("start").to(proxy,{t:0,duration:0.35,ease:"none"}).to({}, {duration:0.4})
-  .addLabel("orbit").to(proxy,{t:0.18,duration:GT.orbit,ease:"none"}).to(proxy,{pan:22,duration:1.1}).to(proxy,{pan:0,duration:CA.panOut})
-  .addLabel("window").to(proxy,{t:0.22,duration:1.2}).to({}, {duration:1.1})
-  .addLabel("dive").to(proxy,{t:0.32,duration:1.9}).to({}, {duration:1.5});
-rooms.forEach((_,i)=>{
-  const dir=i%2?-1:1;
-  tl.addLabel("room-"+i)
-    .to(proxy,{t:roomPlayhead(i,rooms.length),duration:GT.walk})
-    .to(proxy,{pan:dir*GT.panAngle,duration:GT.panSec})
-    .to(proxy,{pan:0,duration:CA.panOut},"-=0.12")
-    .to({}, {duration:0.25});
-});
+/* Пауза «в стекле» подтягивается под длину клипа, но короче него: последние
+   секунды клип доигрывает уже в переходе, поэтому замершего кадра не бывает. */
+let diveHold=GT.diveHoldMin;
+function buildTl(hold){
+  const t=gsap.timeline({paused:true,defaults:{ease:"power2.inOut",overwrite:"auto"},onComplete:()=>{paused=true;auto=false;playBtn.textContent="Ещё раз"}});
+  t.addLabel("start").to(proxy,{t:0,duration:0.35,ease:"none"}).to({}, {duration:0.4})
+    .addLabel("orbit").to(proxy,{t:0.18,duration:GT.orbit,ease:"none"}).to(proxy,{pan:22,duration:1.1}).to(proxy,{pan:0,duration:CA.panOut})
+    .addLabel("window").to(proxy,{t:0.22,duration:1.2}).to({}, {duration:1.1})
+    .addLabel("dive").to(proxy,{t:0.32,duration:GT.diveSec}).to({}, {duration:hold});
+  rooms.forEach((_,i)=>{
+    const dir=i%2?-1:1;
+    t.addLabel("room-"+i)
+      .to(proxy,{t:roomPlayhead(i,rooms.length),duration:GT.walk})
+      .to(proxy,{pan:dir*GT.panAngle,duration:GT.panSec})
+      .to(proxy,{pan:0,duration:CA.panOut},"-=0.12")
+      .to({}, {duration:0.25});
+  });
+  return t;
+}
+let tl=buildTl(diveHold);
+function syncDiveHold(){
+  const clip=Number.isFinite(dive.duration)?dive.duration:0;
+  if(clip<=0) return;
+  const needed=clip-GT.diveOverlap-GT.diveSec*GT.diveClipLead;
+  const next=Math.min(GT.diveHoldMax,Math.max(GT.diveHoldMin,needed));
+  if(Math.abs(next-diveHold)<0.05) return;
+  const keep=tl.progress(), wasPaused=tl.paused();
+  diveHold=next;
+  tl.kill();
+  tl=buildTl(diveHold);
+  tl.progress(keep);
+  if(wasPaused) tl.pause();
+}
+dive.addEventListener("loadedmetadata",syncDiveHold);
+dive.addEventListener("durationchange",syncDiveHold);
+if(dive.readyState>=1) syncDiveHold();
 function axisOf(dx,dy){
   const ax=Math.abs(dx), ay=Math.abs(dy);
   if(ax<I.deadzone&&ay<I.deadzone) return "none";
@@ -249,13 +282,21 @@ function goTo(t){
 }
 const scrub=document.getElementById("scrub");
 const hint=document.getElementById("hint");
-function draw(t,yaw){
+function draw(t,yaw,dt){
   const shot=sampleTour(t,rooms.length);
   phase=shot.label;
+  /* Уход из окна в комнату привязан к самому клипу: как только он подходит
+     к концу, кадр растворяется в комнату, а не стоит замершим. */
+  if(dive && shot.dive>0.02){
+    const left=Number.isFinite(dive.duration)?dive.duration-dive.currentTime:Infinity;
+    const ending=dive.ended||(dive.currentTime>0&&left<=GT.diveHandoffLead);
+    handoff=Math.min(1,Math.max(0,handoff+(ending?dt/GT.diveHandoffSec:-dt/GT.diveHandoffSec)));
+  }else if(shot.dive<=0.02) handoff=0;
+  const out=handoff;
   if(scrub) scrub.style.transform=`scaleX(${t})`;
   if(hint) hint.style.opacity=(t<0.14&&!drag)?1:0;
   const orbitEl=document.getElementById("orbit");
-  orbitEl.style.opacity=shot.orbit;
+  orbitEl.style.opacity=shot.orbit*(1-out);
   orbitEl.style.transform=`scale(${shot.scale})`;
   const w=orbitWeights(yaw,faces.length);
   const rig=sceneLights(yaw);
@@ -289,15 +330,17 @@ function draw(t,yaw){
     }
   });
   if(dive){
-    dive.style.opacity=shot.dive;
+    dive.style.opacity=shot.dive*(1-out);
     dive.style.transform=`scale(${1.02+shot.dolly*0.06})`;
-    if(shot.dive>0.08 && dive.paused){cam.playing=true;try{if(dive.readyState<2)dive.load();dive.currentTime=0.01}catch(e){} dive.play().catch(()=>{})}
-    if(shot.dive<0.04 && cam.playing){cam.playing=false;dive.pause()}
+    /* Клип запускается один раз на входе в залёт и играет до конца: раньше
+       проверка `dive.paused` шла каждый кадр и перезапускала видео с нуля. */
+    if(shot.dive>0.08 && !videoOn){videoOn=true;cam.playing=true;try{if(dive.readyState<2)dive.load();dive.currentTime=0.01}catch(e){} dive.play().catch(()=>{})}
+    if(shot.dive<0.04 && videoOn){videoOn=false;cam.playing=false;dive.pause();try{dive.currentTime=0}catch(e){}}
   }
   rooms.forEach((r,i)=>{
     const v=roomVis(shot.layer,i);
     if(v>0.04&&!loaded.has(i)){loaded.add(i);vis[i].src=r.img}
-    els[i].style.opacity=v;
+    els[i].style.opacity=i===0?Math.max(v,out*Math.max(0,Math.min(1,shot.dive*1.25))):v;
     const dir=i%2? -1:1;
     const br=v>0.65&&shot.roomMix<0.12?1+CA.breathe*(1-shot.roomMix):1;
     els[i].style.transform=`scale(${(1.03+v*0.05)*br}) translateX(${dir*(1-v)*2.4}%)`;
@@ -309,8 +352,13 @@ function draw(t,yaw){
   const showBtn=shot.orbit>0.55&&shot.dive<0.12&&t>0.06;
   document.getElementById("intoWindow").style.opacity=showBtn?1:0;
   document.getElementById("intoWindow").style.pointerEvents=showBtn?"auto":"none";
-  document.getElementById("orbitEye").textContent=shot.label==="dive"?"Залёт":"Облёт дома";
-  document.getElementById("orbitTitle").textContent=shot.label==="dive"?"Внутрь":"Весь дом";
+  /* Шаг облёта — преимущество. Кадры идут с ускорением, поэтому берём равные
+     доли облёта, а не сглаженный угол: иначе середина мелькает по полсекунды. */
+  const adv=ADV[Math.min(ADV.length-1,Math.floor(clamp01(t/0.18)*ADV.length))];
+  const inDive=shot.label==="dive";
+  document.getElementById("orbitEye").textContent=inDive?"Залёт":"Восемь причин";
+  document.getElementById("orbitTitle").textContent=inDive?"Внутрь":adv.l;
+  document.getElementById("orbitNote").textContent=inDive?"Скролл ведёт камеру в стекло — и вы уже в доме.":adv.n;
 }
 let last=performance.now();
 function bump(){ if(paused) return; auto=false; tl.pause(); resumeAt=performance.now()+I.resumeMs; }
@@ -333,14 +381,14 @@ function tick(now){
   const spin=wrap360(shot.yaw+look);
   const yawT=drag?CA.yawDrag:shot.label==="dive"?CA.yawDive:shot.label==="inside"?CA.yawInside:CA.yawOrbit;
   cam.yaw=smoothDampAngle(cam.yaw,spin,"yaw",yawT,dt,CA.maxYaw);
-  draw(cam.t,cam.yaw);
+  draw(cam.t,cam.yaw,dt);
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
 document.getElementById("intoWindow").onclick=()=>goTo(I.windowAt);
 document.getElementById("around").onclick=()=>goTo(0);
 const hots=document.getElementById("hots");
-hots.innerHTML=`<button type="button" data-t="0"><img src="images/orbit-0.webp" alt=""/><span>Дом</span></button>`+rooms.map((r,i)=>`<button type="button" data-t="${roomPlayhead(i,rooms.length)}"><img src="${r.lq||r.img}" alt=""/><span>${r.p}</span></button>`).join("");
+hots.innerHTML=`<button type="button" data-t="0"><img src="images/orbit-0.webp" alt=""/atrium-house/><span>Дом</span></button>`+rooms.map((r,i)=>`<button type="button" data-t="${roomPlayhead(i,rooms.length)}"><img src="${r.lq||r.img}" alt=""/atrium-house/><span>${r.p}</span></button>`).join("");
 hots.onclick=e=>{const b=e.target.closest("button"); if(b) goTo(+b.dataset.t)};
 const playBtn=document.getElementById("playBtn");
 playBtn.onclick=()=>{
@@ -394,5 +442,5 @@ addEventListener("keydown",e=>{
   if(e.code==="End") goTo(1);
 });
 </script>
-</body>
+<script src="/atrium-house/assets/film-player.js" defer></script></body>
 </html>
