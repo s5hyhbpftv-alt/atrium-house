@@ -1,0 +1,38 @@
+/* Photographic stories composed for architecture and landscape pages. */
+.life-image{object-position:var(--life-focus,50%) center}
+.life-eyebrow{display:block;font:500 10px/1.5 "Manrope",Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+.life-architecture{margin:0 6.2vw 110px;display:grid;grid-template-columns:1fr 1.8fr;gap:5vw;align-items:center;border-top:1px solid #c9cabe;padding-top:48px}
+.life-architecture>div{max-width:350px}
+.life-architecture h2,.life-garden-journal h2{font:400 clamp(38px,4.2vw,72px)/1.04 "Cormorant Garamond",Georgia,serif;letter-spacing:-.025em;margin:20px 0 26px}
+.life-architecture h2 em,.life-garden-journal h2 em{font-weight:400}
+.life-architecture p,.life-garden-journal header p{font-size:15px;line-height:1.8;max-width:460px}
+.life-architecture figure,.life-garden-journal figure{margin:0;min-width:0}
+.life-architecture figure img{width:100%;height:auto;display:block}
+.life-architecture figcaption,.life-garden-journal figcaption{font-size:11px;line-height:1.6;margin-top:14px;max-width:540px;color:#677065}
+.life-garden-journal{padding:90px 6.2vw 110px;background:#e6e8dd;color:#273b2e}
+.life-garden-journal header{display:grid;grid-template-columns:1.25fr 1fr;column-gap:8vw;align-items:end;margin-bottom:48px}
+.life-garden-journal header .life-eyebrow{grid-column:1/-1}
+.life-garden-journal header h2{margin-bottom:0}
+.life-garden-journal header p{margin:0 0 5px}
+.life-garden-pair{display:grid;grid-template-columns:1.25fr 1fr;gap:4vw;align-items:start}
+.life-garden-pair figure:nth-child(2){margin-top:100px}
+.life-garden-pair img{width:100%;height:auto;display:block}
+img[data-life="sw-life-08"]{--life-focus:68%}
+img[data-life="sw-life-14"]{--life-focus:58%}
+img[data-life="sw-life-16"]{--life-focus:65%}
+@media(max-width:760px){
+ .life-architecture{margin:0 6vw 65px;padding-top:34px;display:flex;flex-direction:column;align-items:stretch;gap:24px}
+ .life-architecture>div{max-width:none}
+ .life-architecture h2,.life-garden-journal h2{font-size:42px}
+ .life-architecture p,.life-garden-journal header p{font-size:14px}
+ .life-garden-journal{padding:60px 6vw 65px}
+ .life-garden-journal header{display:block;margin-bottom:30px}
+ .life-garden-journal header h2{margin:18px 0 23px}
+ .life-garden-pair{display:block}
+ .life-garden-pair figure:nth-child(2){margin:38px 0 0 9vw}
+}
+
+img[data-life="sw-life-09"]{--life-focus:48%}
+img[data-life="sw-life-10"]{--life-focus:82%}
+
+img[data-life="sw-life-27"]{--life-focus:30%}
