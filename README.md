@@ -2,7 +2,7 @@
 
 Полная новая версия сайта находится в **[sheerwood-site](./sheerwood-site/)**. Здесь все страницы, фотографии, видео и фирменный плеер. Инструкция запуска — в README этой папки.
 
-[Открыть сайт](https://sheerwood.mboger777.chatgpt.site/)
+[Открыть сайт на GitHub Pages](https://s5hyhbpftv-alt.github.io/atrium-house/) · [Версия Sites](https://sheerwood.mboger777.chatgpt.site/)
 
 ---
 
