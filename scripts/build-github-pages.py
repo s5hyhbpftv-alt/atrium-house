@@ -6,6 +6,8 @@ from urllib.parse import urlparse, unquote
 import argparse
 import re
 import shutil
+import subprocess
+import sys
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output', type=Path, default=Path('dist/github-pages'))
@@ -18,6 +20,7 @@ if output == source or source in output.parents or output in source.parents:
     raise SystemExit('Output must be separate from the site source.')
 if output.exists():
     raise SystemExit('Output already exists. Choose a new empty output directory.')
+subprocess.run([sys.executable, str(Path(__file__).with_name('update-social-previews.py')), '--check'], check=True)
 shutil.copytree(source, output)
 
 def project_url(match):
