@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 import argparse, csv, hashlib, importlib.util, json, re, shutil, subprocess, sys, zipfile
 import xml.etree.ElementTree as ET
 
+sys.dont_write_bytecode = True
 ROOT=Path(__file__).resolve().parent.parent
 SITE=ROOT/'sheerwood-site'
 PAGES=json.loads((ROOT/'seo/pages.json').read_text())
