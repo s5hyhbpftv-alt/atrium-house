@@ -153,9 +153,14 @@ report={'origin':ORIGIN,'canonical_pages':len(PAGES),'legacy_redirects':len(redi
 report_path=output.parent/(output.name+'-validation.json');report_path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 if args.zip:
     zip_path=args.zip.resolve();zip_path.parent.mkdir(parents=True,exist_ok=True)
+    # Include directories explicitly: hosting extractors must not infer their
+    # traversal permissions from a server-specific umask.
+    output.chmod(0o755)
+    for f in output.rglob('*'):
+        f.chmod(0o755 if f.is_dir() else 0o644)
     with zipfile.ZipFile(zip_path,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:
         for f in sorted(output.rglob('*')):
-            if f.is_file():z.write(f,f.relative_to(output).as_posix())
+            z.write(f,f.relative_to(output).as_posix())
     checksum=hashlib.sha256(zip_path.read_bytes()).hexdigest();zip_path.with_suffix('.sha256').write_text(checksum+'  '+zip_path.name+'\n')
     print('Upload ZIP:',zip_path)
 print(json.dumps(report,ensure_ascii=False,indent=2))
