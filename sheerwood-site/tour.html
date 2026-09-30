@@ -3,15 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SHEERWOOD · 3D-тур</title>
+<title>Виртуальный тур по дому — SHEERWOOD</title>
+<!-- SHEERWOOD search data -->
+<meta name="robots" content="index,follow,max-image-preview:large,max-video-preview:-1,max-snippet:-1">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"HomeAndConstructionBusiness","@id":"https://s5hyhbpftv-alt.github.io/atrium-house/#business","name":"SHEERWOOD","url":"https://s5hyhbpftv-alt.github.io/atrium-house/","logo":"https://s5hyhbpftv-alt.github.io/atrium-house/images/sheerwood-logo.png","telephone":"+79265440074","email":"hello@sheerwood.moscow","address":{"@type":"PostalAddress","streetAddress":"проспект Маршала Жукова, дом 59","addressLocality":"Москва","addressCountry":"RU"},"areaServed":[{"@type":"AdministrativeArea","name":"Москва"},{"@type":"AdministrativeArea","name":"Московская область"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["https://schema.org/Monday","https://schema.org/Tuesday","https://schema.org/Wednesday","https://schema.org/Thursday","https://schema.org/Friday","https://schema.org/Saturday","https://schema.org/Sunday"],"opens":"09:00","closes":"20:00"}]},{"@type":"WebSite","@id":"https://s5hyhbpftv-alt.github.io/atrium-house/#website","url":"https://s5hyhbpftv-alt.github.io/atrium-house/","name":"SHEERWOOD","inLanguage":"ru-RU","publisher":{"@id":"https://s5hyhbpftv-alt.github.io/atrium-house/#business"}},{"@type":"BreadcrumbList","@id":"https://s5hyhbpftv-alt.github.io/atrium-house/tour.html#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://s5hyhbpftv-alt.github.io/atrium-house/"},{"@type":"ListItem","position":2,"name":"Виртуальный тур по дому","item":"https://s5hyhbpftv-alt.github.io/atrium-house/tour.html"}]},{"@type":"WebPage","@id":"https://s5hyhbpftv-alt.github.io/atrium-house/tour.html#webpage","url":"https://s5hyhbpftv-alt.github.io/atrium-house/tour.html","name":"Виртуальный тур по дому — SHEERWOOD","description":"Рассмотрите загородный дом с разных сторон в интерактивном туре SHEERWOOD: архитектуру, объём и связь с окружающим пространством.","inLanguage":"ru-RU","isPartOf":{"@id":"https://s5hyhbpftv-alt.github.io/atrium-house/#website"},"about":{"@id":"https://s5hyhbpftv-alt.github.io/atrium-house/#business"},"breadcrumb":{"@id":"https://s5hyhbpftv-alt.github.io/atrium-house/tour.html#breadcrumbs"}}]}</script>
+<!-- /SHEERWOOD search data -->
+
 <meta name="theme-color" content="#0B0B0C"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="preload" as="image" href="images/orbit-0.webp"/>
 <link rel="preload" as="image" href="images/orbit-6.webp"/>
 <link rel="preload" as="video" href="videos/window.mp4"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=Manrope:wght@400;500&display=swap" rel="stylesheet"/>
+
+
+
 <style>
 :root{--bg:#0b0b0c;--fg:#f4efe6;--muted:#a39a8c;--accent:#c4a574;--line:rgba(244,239,230,.12);--ink:#0b0b0c;--serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,system-ui,sans-serif;--gutter:8vw}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -63,7 +68,8 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
 .stage:after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(11,11,12,.32) 100%)}
 @media(max-width:700px){.dots{display:none}.track{height:1480vh}}
 </style>
-<link rel="stylesheet" href="refinements.css"><link rel="stylesheet" href="/assets/film-player.css"><meta name="description" content="Рассмотрите загородный дом с разных сторон в интерактивном туре SHEERWOOD: архитектуру, объём и связь с окружающим пространством.">
+<link rel="stylesheet" href="refinements.css"><link rel="stylesheet" href="/assets/film-player.css"><meta name="description" content="Рассмотрите загородный дом с разных сторон в интерактивном туре SHEERWOOD: архитектуру, объём и связь с окружающим пространством."><link rel="stylesheet" href="/assets/clear-labels.css">
+<link rel="stylesheet" href="/assets/local-fonts.css"><style>.top h1{font:inherit;margin:0}</style>
 <!-- SHEERWOOD page preview -->
 <link rel="canonical" href="https://s5hyhbpftv-alt.github.io/atrium-house/tour.html">
 <meta property="og:type" content="website">
@@ -89,7 +95,7 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
 <section class="track" id="track">
   <div class="stage" id="stage">
     <div class="top">
-      <span>SHEERWOOD · 3D-тур</span>
+      <h1>SHEERWOOD · Виртуальный тур</h1>
       <div>
         <button type="button" id="around">Вокруг дома</button>
         <a href="index.html">На сайт</a>
@@ -111,8 +117,8 @@ h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,60px);margi
     <div class="dots" id="dots"></div>
   </div>
 </section>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+<script src="/assets/vendor/gsap.min.js"></script>
+<script src="/assets/vendor/Draggable.min.js"></script>
 <script>
 gsap.registerPlugin(Draggable);
 const facades=[0,1,2,3,4,5,6,7].map(i=>({img:`images/orbit-${i}.webp`}));
@@ -131,11 +137,11 @@ const ADV=[
   {l:"Одни руки на всё",n:"Чертежи, сети и отделка — одна команда, и перекладывать вину ей не на кого."},
   {l:"Стены помнят всё",n:"Воду, тепло и ток мы прячем в стены до того, как их закроет камень."},
   {l:"Свет диктует план",n:"Сначала смотрим, откуда утром свет и где шумит дорога, потом рисуем стены."},
-  {l:"Цена до котлована",n:"Называем стоимость до того, как экскаватор тронет грунт, и держим её до ключей."},
-  {l:"Ум в щите, не в облаке",n:"Сценарии живут в проводном щите: закроется сервер — свет всё равно зажжётся."},
-  {l:"Двадцать лет одними руками",n:"Дома строят те же мастера, что и первый: субподряд у нас не ночует."},
-  {l:"Ремонт, в котором живут",n:"Идём очередями по комнатам: дом остаётся домом, пока меняются стены."},
-  {l:"Мы возвращаемся сами",n:"Десять лет гарантии и сезонный обход: после ключей мы не исчезаем."}
+  {l:"Объём работ до старта",n:"Согласуем состав работ и смету. Изменения решений обсуждаем до их выполнения."},
+  {l:"Управление под рукой",n:"Предусматриваем физические выключатели. Работу автоматизации без интернета проверяем для выбранных устройств."},
+  {l:"Общие решения",n:"Архитектуру, конструкцию и инженерные системы увязываем до начала соответствующего этапа работ."},
+  {l:"Ремонт по плану",n:"Последовательность работ и возможность проживания обсуждаем после обследования дома."},
+  {l:"После передачи",n:"Передаём рекомендации по эксплуатации. Условия гарантии и обслуживания фиксируются в договоре."}
 ];
 const cam={t:0,yaw:0,playing:false};
 const vel={t:0,yaw:0};

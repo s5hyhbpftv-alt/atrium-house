@@ -1,0 +1,22 @@
+{
+  "origin": "https://sheerwood.moscow",
+  "canonical_pages": 58,
+  "legacy_redirects": 11,
+  "sitemap_image_entries": 335,
+  "sitemap_video_entries": 43,
+  "html_files": 70,
+  "files": 650,
+  "bytes": 385499806,
+  "checks": "links, fragments, one H1 per canonical page, unique titles/descriptions, canonical URLs, CSS resources, JSON-LD and sitemap passed",
+  "date": "2026-09-30",
+  "decorative_numbers_removed": 487,
+  "pages_with_decoration_removed": 53,
+  "semantic_queries": 250,
+  "apache_responses_checked": 74,
+  "mobile_pages_checked": 8,
+  "zip_crc": "passed",
+  "jino_uploaded": false,
+  "dns_changed": false,
+  "search_console_verified": false,
+  "yandex_webmaster_verified": false
+}

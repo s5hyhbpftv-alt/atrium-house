@@ -1,0 +1,14 @@
+{
+  "name": "SHEERWOOD",
+  "origin": "https://sheerwood.moscow",
+  "telephone": "+79265440074",
+  "telephone_display": "+7 926 544 00 74",
+  "email": "hello@sheerwood.moscow",
+  "address": {"streetAddress": "проспект Маршала Жукова, дом 59", "addressLocality": "Москва", "addressCountry": "RU"},
+  "service_regions": ["Москва", "Московская область"],
+  "hours": {"opens": "09:00", "closes": "20:00", "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]},
+  "facts_confirmed": "2026-09-30",
+  "facts_source": "Контакты, домен, адрес, регион и график подтверждены владельцем сайта в переписке.",
+  "google_site_verification": "",
+  "yandex_verification": ""
+}

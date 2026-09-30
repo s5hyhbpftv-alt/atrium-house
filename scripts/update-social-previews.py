@@ -77,6 +77,12 @@ DESCRIPTIONS = {
 }
 
 
+# Keep social descriptions in sync with the curated search descriptions.
+import json
+for _page in json.loads((SITE.parent / 'seo/pages.json').read_text()):
+    DESCRIPTIONS[_page['file']] = _page['description']
+
+
 class Page(HTMLParser):
     def __init__(self, text):
         super().__init__(convert_charrefs=True)

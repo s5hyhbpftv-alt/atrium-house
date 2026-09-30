@@ -60,3 +60,8 @@ python3 scripts/build-github-pages.py --output dist/github-pages
 На странице `/tipy-domov/kirpichnye/` добавлена история «Кирпич за кирпичом»: четыре взрослые героини в фирменной рабочей одежде, один фильм 20 секунд 1920×1080 без звука и пять фотографий операций. Видео загружается по нажатию и использует общий фирменный плеер.
 
 Страница `/dizayn-intererov/` получила отдельную редакционную композицию и 24 новых фотографии в `images/interiors/`. Галерея позволяет увеличивать снимки, листать кнопками и клавишами, закрывать Escape. Два прежних снимка сохранены в контексте света и комплектации. Это коллекция интерьерных решений, без выдуманных адресов и утверждений о реализованных объектах.
+
+
+## Jino / sheerwood.moscow
+
+Root-domain upload, verified company facts and SEO: see `../docs/JINO-DEPLOYMENT.md`, `../seo/` and `../scripts/build-jino.py`. GitHub Pages remains a separate build until the new domain is live. Decorative section numbering has been removed; operational numbers such as telephone, hours, technical values and video times remain.

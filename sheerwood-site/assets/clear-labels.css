@@ -1,0 +1,23 @@
+/* Layout after removing decorative section numbering. */
+.process-step summary{grid-template-columns:1fr 25px}
+.process-copy{padding-left:0}
+.journey-row{grid-template-columns:1.1fr 1.1fr 35px}
+.repair-scope-row{grid-template-columns:1fr 1fr}
+.arch-work-step{grid-template-columns:.9fr 1.1fr}
+.design-sheet{grid-template-columns:1fr 1.2fr}
+.service-steps article{grid-template-columns:1fr 1.2fr}
+.id-stage,.practice-step,.tech-layer,.type-stages article,.aa-route-list>article,.sx-test-list>li{grid-template-columns:1fr}
+.aa-scene-list>article{grid-template-columns:1fr 1.2fr}
+.id-stage .id-photo{margin-left:0;width:100%}
+@media(max-width:760px){
+.process-step summary{grid-template-columns:1fr 20px}
+.journey-row{grid-template-columns:1fr 24px}
+.journey-row p{grid-column:1;grid-row:2}
+.journey-row .journey-arrow{grid-column:2;grid-row:1}
+.repair-scope-row,.arch-work-step,.design-sheet,.service-steps article,.aa-scene-list>article{grid-template-columns:1fr}
+.repair-scope-row p,.arch-work-step>div,.design-sheet p,.service-steps p{grid-column:1}
+}
+
+.foot-location{font-size:12px!important;line-height:1.8!important;max-width:32ch}
+.page-path{display:flex;gap:12px;flex-wrap:wrap;padding:26px var(--gutter,6vw);font-size:12px;line-height:1.8;background:#e8e9df;color:#345242}
+.page-path a{text-decoration:underline;text-underline-offset:4px}.page-path>span[aria-hidden]{opacity:.4}
