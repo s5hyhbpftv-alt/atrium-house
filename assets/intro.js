@@ -25,7 +25,6 @@
     const progress = Math.min(1, film.currentTime / total);
     dialog.style.setProperty('--film-progress', progress);
     const phase = progress < .29 ? 0 : progress < .7 ? 1 : 2;
-    dialog.querySelector('.cinema-chapter-number').textContent = ['01','02','03'][phase];
     dialog.querySelector('.cinema-chapter-name').textContent = ['Замысел','Архитектура','Ваш дом'][phase];
     if (!ending) title(progress >= .72 || !start.hidden);
   }
