@@ -9,7 +9,7 @@ SITE=ROOT/'sheerwood-site'
 projects=json.loads((ROOT/'seo/portfolio.json').read_text())
 def image(f, size='main', alt=True):
     sizes='(max-width: 600px) 90vw, 68vw' if size=='main' else '(max-width: 600px) 44vw, 23vw'
-    return f'<img src="{f["src"]}" srcset="{f["small"]} {f["smallWidth"]}w, {f["src"]} {f["width"]}w" sizes="{sizes}" width="{f["width"]}" height="{f["height"]}" alt="{escape(f["alt"] if alt else "",quote=True)}" loading="lazy" decoding="async">'
+    return f'<img src="{f["src"]}" srcset="{f["small"]} {f["smallWidth"]}w, {f["src"]} {f["width"]}w" sizes="{sizes}" width="{f["width"]}" height="{f["height"]}" alt="{escape(f["alt"] if alt else "",quote=True)}" loading="eager" decoding="sync">'
 def arrow(direction):
     points='14 5 7 12 14 19' if direction=='previous' else '10 5 17 12 10 19'
     return f'<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="{points}"/></svg>'
