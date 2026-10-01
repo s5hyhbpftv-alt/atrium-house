@@ -16,14 +16,21 @@ BY_ROUTE = {p['route']: p for p in PAGES}
 
 class Media(HTMLParser):
     def __init__(self, text):
-        super().__init__(); self.images=[]; self.videos=[]; self.video=None; self.feed(text)
+        super().__init__(); self.images=[]; self.videos=[]; self.video=None; self.portfolio=False; self.portfolio_text=''; self.feed(text)
     def handle_starttag(self, tag, attrs):
         a=dict(attrs)
+        if tag=='script' and a.get('id')=='portfolio-data': self.portfolio=True; self.portfolio_text=''
         if tag=='img' and a.get('src','').startswith('/') and a.get('alt') and 'logo' not in a['src']:
             self.images.append(a)
         if tag=='video': self.video=a
         if tag=='source' and self.video is not None: self.video['src']=a.get('src')
+    def handle_data(self, text):
+        if self.portfolio: self.portfolio_text+=text
     def handle_endtag(self, tag):
+        if tag=='script' and self.portfolio:
+            for project in json.loads(self.portfolio_text):
+                self.images.extend(frame for frame in project.get('frames',[]) if frame.get('src','').startswith('/') and frame.get('alt'))
+            self.portfolio=False
         if tag=='video':
             if self.video and 'controls' in self.video and self.video.get('src') and self.video.get('poster'):
                 self.videos.append(self.video)
@@ -77,13 +84,13 @@ def main():
         graph.append(webpage)
         block='<!-- SHEERWOOD search data -->\n<meta name="robots" content="index,follow,max-image-preview:large,max-video-preview:-1,max-snippet:-1">\n<script type="application/ld+json">'+json.dumps({'@context':'https://schema.org','@graph':graph},ensure_ascii=False,separators=(',',':'))+'</script>\n<!-- /SHEERWOOD search data -->'
         text=text.replace('</title>', '</title>\n'+block+'\n', 1)
-        if page['route']!='/' and '<footer ' in text:
+        if page['route']!='/' and '<footer class="site-footer"' in text:
             parts=[]
             for p in trail:
                 label='Главная' if p['route']=='/' else p['name']
                 parts.append('<span aria-current="page">'+escape(label)+'</span>' if p==page else '<a href="'+p['route']+'">'+escape(label)+'</a>')
             nav='<!-- SHEERWOOD breadcrumbs --><nav class="page-path" aria-label="Путь по сайту">'+'<span aria-hidden="true">/</span>'.join(parts)+'</nav><!-- /SHEERWOOD breadcrumbs -->'
-            text=text.replace('<footer ',nav+'<footer ',1)
+            text=text.replace('<footer class="site-footer"',nav+'<footer class="site-footer"',1)
         if text!=original:
             changed.append(page['file'])
             if not args.check:path.write_text(text)

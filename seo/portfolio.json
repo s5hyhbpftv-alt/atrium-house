@@ -1,0 +1,889 @@
+[
+  {
+    "id": "sosnovy-dvor",
+    "title": "Между сосен",
+    "facts": "Два этажа · Терраса · Бассейн",
+    "description": "Два объёма объединены открытым двором. Внутри — кухня-гостиная, бассейн и помещения для отдыха; снаружи — террасы среди сосен.",
+    "frames": [
+      {
+        "src": "/images/portfolio/sosnovy-dvor/view-1.webp",
+        "small": "/images/portfolio/sosnovy-dvor/view-1-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/view-1-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Между сосен. Главный фасад",
+        "caption": "Главный фасад"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/view-2.webp",
+        "small": "/images/portfolio/sosnovy-dvor/view-2-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/view-2-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Между сосен. Внутренний двор",
+        "caption": "Внутренний двор"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/view-3.webp",
+        "small": "/images/portfolio/sosnovy-dvor/view-3-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/view-3-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Между сосен. Столовая у окна",
+        "caption": "Столовая у окна"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/view-4.webp",
+        "small": "/images/portfolio/sosnovy-dvor/view-4-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/view-4-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Между сосен. Дом со стороны сада",
+        "caption": "Дом со стороны сада"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/view-5.webp",
+        "small": "/images/portfolio/sosnovy-dvor/view-5-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/view-5-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Между сосен. Терраса с очагом",
+        "caption": "Терраса с очагом"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/view-6.webp",
+        "small": "/images/portfolio/sosnovy-dvor/view-6-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/view-6-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Между сосен. Лаунж-зона на террасе",
+        "caption": "Лаунж-зона на террасе"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/view-7.webp",
+        "small": "/images/portfolio/sosnovy-dvor/view-7-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/view-7-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Между сосен. Въезд и боковой фасад",
+        "caption": "Въезд и боковой фасад"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/interior.webp",
+        "small": "/images/portfolio/sosnovy-dvor/interior-small.webp",
+        "thumb": "/images/portfolio/sosnovy-dvor/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Между сосен. Интерьер: гостиная и столовая",
+        "caption": "Интерьер · гостиная и столовая",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/sosnovy-dvor/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Между сосен. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      },
+      {
+        "src": "/images/portfolio/sosnovy-dvor/plan-2.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Между сосен. План 2-го этажа",
+        "caption": "План 2-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Сначала они выбрали деревья.",
+      "paragraphs": [
+        "В этой истории семья приезжает на участок с длинным списком требований и почти сразу забывает о нём. Между соснами тихо, солнце скользит по коре, а детям уже есть чем заняться. Главное желание появляется на месте: сохранить это ощущение, когда здесь вырастет дом.",
+        "Потом начинается долгий выбор. Один вариант кажется слишком торжественным, другой требует убрать любимые деревья, третий красив с улицы, но почти не обращён к саду. Постепенно вопрос меняется: не как будет выглядеть фасад, а что семья увидит из гостиной и где соберётся вечером.",
+        "Ответом становится дом вокруг открытого двора. Террасы связывают его объёмы, широкие окна впускают лес в комнаты, а бассейн добавляет свой повод остаться дома. «Между сосен» — история о том, как участок оказался важнее первой картинки."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "odin-etazh",
+    "title": "Без спешки",
+    "facts": "Один этаж · Четыре спальни · Кабинет",
+    "description": "Общая зона раскрывается на крытую террасу. Спальни и кабинет собраны вокруг внутреннего коридора.",
+    "frames": [
+      {
+        "src": "/images/portfolio/odin-etazh/view-1.webp",
+        "small": "/images/portfolio/odin-etazh/view-1-small.webp",
+        "thumb": "/images/portfolio/odin-etazh/view-1-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Без спешки. Дом со стороны террасы",
+        "caption": "Дом со стороны террасы"
+      },
+      {
+        "src": "/images/portfolio/odin-etazh/view-2.webp",
+        "small": "/images/portfolio/odin-etazh/view-2-small.webp",
+        "thumb": "/images/portfolio/odin-etazh/view-2-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Без спешки. Крытая терраса",
+        "caption": "Крытая терраса"
+      },
+      {
+        "src": "/images/portfolio/odin-etazh/view-3.webp",
+        "small": "/images/portfolio/odin-etazh/view-3-small.webp",
+        "thumb": "/images/portfolio/odin-etazh/view-3-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Без спешки. Входная группа",
+        "caption": "Входная группа"
+      },
+      {
+        "src": "/images/portfolio/odin-etazh/view-4.webp",
+        "small": "/images/portfolio/odin-etazh/view-4-small.webp",
+        "thumb": "/images/portfolio/odin-etazh/view-4-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Без спешки. Боковой фасад",
+        "caption": "Боковой фасад"
+      },
+      {
+        "src": "/images/portfolio/odin-etazh/view-5.webp",
+        "small": "/images/portfolio/odin-etazh/view-5-small.webp",
+        "thumb": "/images/portfolio/odin-etazh/view-5-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Без спешки. Вечерний фасад",
+        "caption": "Вечерний фасад"
+      },
+      {
+        "src": "/images/portfolio/odin-etazh/interior.webp",
+        "small": "/images/portfolio/odin-etazh/interior-small.webp",
+        "thumb": "/images/portfolio/odin-etazh/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Без спешки. Интерьер: кухня-гостиная",
+        "caption": "Интерьер · кухня-гостиная",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/odin-etazh/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Без спешки. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Дом, в котором всё рядом.",
+      "paragraphs": [
+        "Они долго смотрели двухэтажные дома: лестницы на фотографиях выглядели эффектно, спальни наверху казались правильным решением. Но после каждого обсуждения возвращались к одному и тому же утру — кофе, открытая терраса, короткий путь из спальни в сад.",
+        "В этом сюжете будущие хозяева решают отказаться от привычного образа большого дома и внимательнее посмотреть на свой обычный день. Им нужны четыре спальни для семьи и гостей, кабинет с дверью и общая комната, где можно быть вместе, не мешая друг другу.",
+        "Так появляется «Без спешки». Все помещения собраны на одном уровне; кухня-гостиная продолжается крытой террасой. Выбор заканчивается не самым неожиданным фасадом, а редким ощущением: здесь ничего не нужно преодолевать, чтобы оказаться там, где хочется."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "rezidenciya",
+    "title": "Близкие люди",
+    "facts": "Один этаж · Два мастер-блока · Терраса",
+    "description": "Протяжённый дом с двумя мастер-блоками, отдельной кухней и просторной гостиной-столовой. Общая зона продолжена террасой.",
+    "frames": [
+      {
+        "src": "/images/portfolio/rezidenciya/view-1.webp",
+        "small": "/images/portfolio/rezidenciya/view-1-small.webp",
+        "thumb": "/images/portfolio/rezidenciya/view-1-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Близкие люди. Панорама главного фасада",
+        "caption": "Панорама главного фасада"
+      },
+      {
+        "src": "/images/portfolio/rezidenciya/view-2.webp",
+        "small": "/images/portfolio/rezidenciya/view-2-small.webp",
+        "thumb": "/images/portfolio/rezidenciya/view-2-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Близкие люди. Терраса и остекление",
+        "caption": "Терраса и остекление"
+      },
+      {
+        "src": "/images/portfolio/rezidenciya/view-3.webp",
+        "small": "/images/portfolio/rezidenciya/view-3-small.webp",
+        "thumb": "/images/portfolio/rezidenciya/view-3-thumb.webp",
+        "width": 1920,
+        "height": 1129,
+        "smallWidth": 960,
+        "alt": "Близкие люди. Каминная зона",
+        "caption": "Каминная зона"
+      },
+      {
+        "src": "/images/portfolio/rezidenciya/view-4.webp",
+        "small": "/images/portfolio/rezidenciya/view-4-small.webp",
+        "thumb": "/images/portfolio/rezidenciya/view-4-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Близкие люди. Въезд и навес",
+        "caption": "Въезд и навес"
+      },
+      {
+        "src": "/images/portfolio/rezidenciya/view-5.webp",
+        "small": "/images/portfolio/rezidenciya/view-5-small.webp",
+        "thumb": "/images/portfolio/rezidenciya/view-5-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Близкие люди. Дом со стороны сада",
+        "caption": "Дом со стороны сада"
+      },
+      {
+        "src": "/images/portfolio/rezidenciya/view-6.webp",
+        "small": "/images/portfolio/rezidenciya/view-6-small.webp",
+        "thumb": "/images/portfolio/rezidenciya/view-6-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Близкие люди. Вид на участок сверху",
+        "caption": "Вид на участок сверху"
+      },
+      {
+        "src": "/images/portfolio/rezidenciya/interior.webp",
+        "small": "/images/portfolio/rezidenciya/interior-small.webp",
+        "thumb": "/images/portfolio/rezidenciya/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Близкие люди. Интерьер: гостиная с камином",
+        "caption": "Интерьер · гостиная с камином",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/rezidenciya/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Близкие люди. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Жить вместе. Сохранять своё пространство.",
+      "paragraphs": [
+        "В этой истории дом выбирают сразу несколько взрослых людей. Всем хочется чаще быть рядом, но у каждого есть свой ритм: кто-то встаёт на рассвете, кто-то любит поздние разговоры, а кому-то нужен тихий час с книгой.",
+        "Просмотренные проекты сначала нравятся всем, а потом начинаются вопросы. Почему одна спальня заметно удобнее другой? Можно ли пройти на кухню, никого не разбудив? Останется ли место, где можно закрыть дверь и побыть одному? Именно эти разговоры постепенно определяют планировку.",
+        "Два мастер-блока становятся её основой. Между ними — просторная гостиная-столовая и отдельная кухня, рядом — терраса для общих вечеров. Название «Близкие люди» рождается из простой мысли: хороший семейный дом оставляет место и встречам, и личной жизни."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "semeyny-dom",
+    "title": "Большое воскресенье",
+    "facts": "Два этажа · Кабинет · Терраса",
+    "description": "Кухня-гостиная, кабинет и выход в сад — на первом этаже. Мастер-спальня и две детские — на втором.",
+    "frames": [
+      {
+        "src": "/images/portfolio/semeyny-dom/view-1.webp",
+        "small": "/images/portfolio/semeyny-dom/view-1-small.webp",
+        "thumb": "/images/portfolio/semeyny-dom/view-1-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Большое воскресенье. Вход и главный фасад",
+        "caption": "Вход и главный фасад"
+      },
+      {
+        "src": "/images/portfolio/semeyny-dom/view-2.webp",
+        "small": "/images/portfolio/semeyny-dom/view-2-small.webp",
+        "thumb": "/images/portfolio/semeyny-dom/view-2-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Большое воскресенье. Фасад со стороны сада",
+        "caption": "Фасад со стороны сада"
+      },
+      {
+        "src": "/images/portfolio/semeyny-dom/view-3.webp",
+        "small": "/images/portfolio/semeyny-dom/view-3-small.webp",
+        "thumb": "/images/portfolio/semeyny-dom/view-3-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Большое воскресенье. Угловой ракурс",
+        "caption": "Угловой ракурс"
+      },
+      {
+        "src": "/images/portfolio/semeyny-dom/view-4.webp",
+        "small": "/images/portfolio/semeyny-dom/view-4-small.webp",
+        "thumb": "/images/portfolio/semeyny-dom/view-4-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "Большое воскресенье. Терраса и балкон",
+        "caption": "Терраса и балкон"
+      },
+      {
+        "src": "/images/portfolio/semeyny-dom/interior.webp",
+        "small": "/images/portfolio/semeyny-dom/interior-small.webp",
+        "thumb": "/images/portfolio/semeyny-dom/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Большое воскресенье. Интерьер: семейная гостиная",
+        "caption": "Интерьер · семейная гостиная",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/semeyny-dom/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Большое воскресенье. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      },
+      {
+        "src": "/images/portfolio/semeyny-dom/plan-2.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Большое воскресенье. План 2-го этажа",
+        "caption": "План 2-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Обычный выходной оказался лучшим заданием.",
+      "paragraphs": [
+        "Будущие хозяева начинают с подборки фасадов. В ней соседствуют строгие каменные дома, лёгкие павильоны и уютные дачи. Выбрать один образ трудно: в каждой картинке есть что-то своё, но ни одна не рассказывает о жизни целиком.",
+        "В этой истории всё сдвигается с места после разговора о воскресенье. Кто-то готовит завтрак, дети бегают в сад, на столе остаётся настольная игра, а вечером приезжают друзья. Иногда нужно уйти в кабинет и поработать, не заставляя весь дом говорить шёпотом.",
+        "Первый этаж становится местом встреч: кухня-гостиная, кабинет, терраса. Наверху — мастер-спальня и две детские. «Большое воскресенье» не требует праздничного повода. Это дом для выходных, которые хочется проживать медленно, и будней, в которых им тоже найдётся место."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "gorizont",
+    "title": "До заката",
+    "facts": "Один этаж · Два мастер-блока · Гостиная",
+    "description": "Низкая линия кровли объединяет общие и приватные пространства. Терраса проходит вдоль гостиной-столовой.",
+    "frames": [
+      {
+        "src": "/images/portfolio/gorizont/view-1.webp",
+        "small": "/images/portfolio/gorizont/view-1-small.webp",
+        "thumb": "/images/portfolio/gorizont/view-1-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "До заката. Общий вид дома",
+        "caption": "Общий вид дома"
+      },
+      {
+        "src": "/images/portfolio/gorizont/view-2.webp",
+        "small": "/images/portfolio/gorizont/view-2-small.webp",
+        "thumb": "/images/portfolio/gorizont/view-2-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "До заката. Главный фасад в перспективе",
+        "caption": "Главный фасад в перспективе"
+      },
+      {
+        "src": "/images/portfolio/gorizont/view-3.webp",
+        "small": "/images/portfolio/gorizont/view-3-small.webp",
+        "thumb": "/images/portfolio/gorizont/view-3-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "До заката. Въездная часть",
+        "caption": "Въездная часть"
+      },
+      {
+        "src": "/images/portfolio/gorizont/view-4.webp",
+        "small": "/images/portfolio/gorizont/view-4-small.webp",
+        "thumb": "/images/portfolio/gorizont/view-4-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "До заката. Терраса и гостиная",
+        "caption": "Терраса и гостиная"
+      },
+      {
+        "src": "/images/portfolio/gorizont/view-5.webp",
+        "small": "/images/portfolio/gorizont/view-5-small.webp",
+        "thumb": "/images/portfolio/gorizont/view-5-thumb.webp",
+        "width": 1920,
+        "height": 1067,
+        "smallWidth": 960,
+        "alt": "До заката. Деталь террасы и камина",
+        "caption": "Деталь террасы и камина"
+      },
+      {
+        "src": "/images/portfolio/gorizont/view-6.webp",
+        "small": "/images/portfolio/gorizont/view-6-small.webp",
+        "thumb": "/images/portfolio/gorizont/view-6-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "До заката. Боковой фасад",
+        "caption": "Боковой фасад"
+      },
+      {
+        "src": "/images/portfolio/gorizont/interior.webp",
+        "small": "/images/portfolio/gorizont/interior-small.webp",
+        "thumb": "/images/portfolio/gorizont/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "До заката. Интерьер: столовая и каминная зона",
+        "caption": "Интерьер · столовая и каминная зона",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/gorizont/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "До заката. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Дом выбирали по тому, как в нём заканчивается день.",
+      "paragraphs": [
+        "Герои этой истории часто возвращаются поздно. За городом им хочется не ещё одного впечатляющего пространства, а возможности выдохнуть: пройти через гостиную, открыть дверь на террасу, увидеть длинную полосу неба над садом.",
+        "Они долго выбирают между высоким двухэтажным домом и спокойным одноэтажным объёмом. В конце концов оказывается, что второй этаж им не нужен. Важнее просторная общая комната, два самостоятельных мастер-блока и ясное разделение шумной и тихой частей дома.",
+        "Низкая кровля и протяжённое остекление определяют его характер. Гостиная-столовая связана с террасой; материалы продолжаются изнутри наружу. «До заката» — название не о расписании, а о желании замечать время, которое раньше проходило мимо."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "vertikal",
+    "title": "Точка притяжения",
+    "facts": "Два этажа · Панорамное остекление",
+    "description": "Высокий входной портал, глубокие свесы и крупные окна. На первом этаже — общие пространства и гостевая комната, наверху — приватные спальни. Эскиз планировки разработан по фасадам дома.",
+    "frames": [
+      {
+        "src": "/images/portfolio/vertikal/view-1.webp",
+        "small": "/images/portfolio/vertikal/view-1-small.webp",
+        "thumb": "/images/portfolio/vertikal/view-1-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Точка притяжения. Главный фасад",
+        "caption": "Главный фасад"
+      },
+      {
+        "src": "/images/portfolio/vertikal/view-2.webp",
+        "small": "/images/portfolio/vertikal/view-2-small.webp",
+        "thumb": "/images/portfolio/vertikal/view-2-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Точка притяжения. Дом со стороны сада",
+        "caption": "Дом со стороны сада"
+      },
+      {
+        "src": "/images/portfolio/vertikal/view-3.webp",
+        "small": "/images/portfolio/vertikal/view-3-small.webp",
+        "thumb": "/images/portfolio/vertikal/view-3-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Точка притяжения. Угловой ракурс",
+        "caption": "Угловой ракурс"
+      },
+      {
+        "src": "/images/portfolio/vertikal/view-4.webp",
+        "small": "/images/portfolio/vertikal/view-4-small.webp",
+        "thumb": "/images/portfolio/vertikal/view-4-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Точка притяжения. Фасад с высоким порталом",
+        "caption": "Фасад с высоким порталом"
+      },
+      {
+        "src": "/images/portfolio/vertikal/view-5.webp",
+        "small": "/images/portfolio/vertikal/view-5-small.webp",
+        "thumb": "/images/portfolio/vertikal/view-5-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Точка притяжения. Вариант отделки: вид сбоку",
+        "caption": "Вариант отделки: вид сбоку"
+      },
+      {
+        "src": "/images/portfolio/vertikal/view-6.webp",
+        "small": "/images/portfolio/vertikal/view-6-small.webp",
+        "thumb": "/images/portfolio/vertikal/view-6-thumb.webp",
+        "width": 1920,
+        "height": 873,
+        "smallWidth": 960,
+        "alt": "Точка притяжения. Вариант отделки: главный фасад",
+        "caption": "Вариант отделки: главный фасад"
+      },
+      {
+        "src": "/images/portfolio/vertikal/interior.webp",
+        "small": "/images/portfolio/vertikal/interior-small.webp",
+        "thumb": "/images/portfolio/vertikal/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Точка притяжения. Интерьер: холл и лестница",
+        "caption": "Интерьер · холл и лестница",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/vertikal/plan-1.webp",
+        "original": "/images/portfolio/vertikal/plan-1.svg",
+        "width": 2200,
+        "height": 1480,
+        "alt": "Точка притяжения. Эскиз планировки 1-го этажа",
+        "caption": "План 1-го этажа · эскиз"
+      },
+      {
+        "src": "/images/portfolio/vertikal/plan-2.webp",
+        "original": "/images/portfolio/vertikal/plan-2.svg",
+        "width": 2200,
+        "height": 1480,
+        "alt": "Точка притяжения. Эскиз планировки 2-го этажа",
+        "caption": "План 2-го этажа · эскиз"
+      }
+    ],
+    "story": {
+      "heading": "Они искали дом, в который будут возвращаться все.",
+      "paragraphs": [
+        "В этой художественной истории будущие хозяева представляют не только свою семью сегодня, но и её жизнь через несколько лет. Дети подрастут, друзья будут оставаться на выходные, родители станут приезжать чаще. Хочется, чтобы дом спокойно принимал эти перемены.",
+        "Выбор затягивается: небольшие варианты кажутся тесными на перспективу, большие — слишком парадными. Постепенно находится нужный характер: выразительный вход, защищённые террасы, место для автомобилей и понятное деление на общий и приватный этажи.",
+        "В эскизе планировки внизу собраны кухня, столовая, гостиная и гостевая комната; наверху — мастер-блок и ещё три спальни. Высокое окно освещает лестницу и связывает этажи. «Точка притяжения» — дом, у которого есть собственное присутствие и достаточно места для разных людей."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "lesnoy-dom",
+    "title": "Лесная пауза",
+    "facts": "Один этаж · Четыре спальни · Терраса",
+    "description": "Общая зона обращена к террасе, приватные комнаты распределены по крыльям. К кухне примыкает отдельная кладовая.",
+    "frames": [
+      {
+        "src": "/images/portfolio/lesnoy-dom/view-1.webp",
+        "small": "/images/portfolio/lesnoy-dom/view-1-small.webp",
+        "thumb": "/images/portfolio/lesnoy-dom/view-1-thumb.webp",
+        "width": 1920,
+        "height": 864,
+        "smallWidth": 960,
+        "alt": "Лесная пауза. Фасад с крытой террасой",
+        "caption": "Фасад с крытой террасой"
+      },
+      {
+        "src": "/images/portfolio/lesnoy-dom/view-2.webp",
+        "small": "/images/portfolio/lesnoy-dom/view-2-small.webp",
+        "thumb": "/images/portfolio/lesnoy-dom/view-2-thumb.webp",
+        "width": 1920,
+        "height": 864,
+        "smallWidth": 960,
+        "alt": "Лесная пауза. Дом среди сосен",
+        "caption": "Дом среди сосен"
+      },
+      {
+        "src": "/images/portfolio/lesnoy-dom/view-3.webp",
+        "small": "/images/portfolio/lesnoy-dom/view-3-small.webp",
+        "thumb": "/images/portfolio/lesnoy-dom/view-3-thumb.webp",
+        "width": 1920,
+        "height": 864,
+        "smallWidth": 960,
+        "alt": "Лесная пауза. Въезд и навес",
+        "caption": "Въезд и навес"
+      },
+      {
+        "src": "/images/portfolio/lesnoy-dom/view-4.webp",
+        "small": "/images/portfolio/lesnoy-dom/view-4-small.webp",
+        "thumb": "/images/portfolio/lesnoy-dom/view-4-thumb.webp",
+        "width": 1920,
+        "height": 864,
+        "smallWidth": 960,
+        "alt": "Лесная пауза. Угловой ракурс",
+        "caption": "Угловой ракурс"
+      },
+      {
+        "src": "/images/portfolio/lesnoy-dom/interior.webp",
+        "small": "/images/portfolio/lesnoy-dom/interior-small.webp",
+        "thumb": "/images/portfolio/lesnoy-dom/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Лесная пауза. Интерьер: спальня с видом на лес",
+        "caption": "Интерьер · спальня с видом на лес",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/lesnoy-dom/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Лесная пауза. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Сначала хотелось тишины. Потом — остаться в ней.",
+      "paragraphs": [
+        "Герои этой истории сначала воспринимают загородный дом как короткую паузу между рабочими неделями. Они смотрят компактные дачи, обсуждают сезонное проживание и стараются не усложнять задачу. Но после прогулки по лесному участку разговор неожиданно становится серьёзнее.",
+        "Появляются новые вопросы: где будут спать гости, можно ли работать отсюда, куда убрать запасы, как собрать семью за одним столом? Выясняется, что им нужен полноценный дом, который сохранит спокойствие дачи.",
+        "Четыре спальни распределены по приватным крыльям, общая зона обращена к террасе, а рядом с кухней предусмотрена кладовая. В спальне лес становится главным видом. «Лесная пауза» — история о месте, куда едут ненадолго, а потом всё чаще откладывают возвращение."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "dom-s-terrasoy",
+    "title": "Длинный ужин",
+    "facts": "Один этаж · Мастер-блок · Столовая",
+    "description": "Кухня, столовая и гостиная образуют общую часть дома. Спальни и мастер-блок расположены в приватном крыле.",
+    "frames": [
+      {
+        "src": "/images/portfolio/dom-s-terrasoy/view-1.webp",
+        "small": "/images/portfolio/dom-s-terrasoy/view-1-small.webp",
+        "thumb": "/images/portfolio/dom-s-terrasoy/view-1-thumb.webp",
+        "width": 1920,
+        "height": 864,
+        "smallWidth": 960,
+        "alt": "Длинный ужин. Панорамный фасад",
+        "caption": "Панорамный фасад"
+      },
+      {
+        "src": "/images/portfolio/dom-s-terrasoy/view-2.webp",
+        "small": "/images/portfolio/dom-s-terrasoy/view-2-small.webp",
+        "thumb": "/images/portfolio/dom-s-terrasoy/view-2-thumb.webp",
+        "width": 1920,
+        "height": 864,
+        "smallWidth": 960,
+        "alt": "Длинный ужин. Гостиная и терраса",
+        "caption": "Гостиная и терраса"
+      },
+      {
+        "src": "/images/portfolio/dom-s-terrasoy/view-3.webp",
+        "small": "/images/portfolio/dom-s-terrasoy/view-3-small.webp",
+        "thumb": "/images/portfolio/dom-s-terrasoy/view-3-thumb.webp",
+        "width": 1920,
+        "height": 864,
+        "smallWidth": 960,
+        "alt": "Длинный ужин. Дом со стороны сада",
+        "caption": "Дом со стороны сада"
+      },
+      {
+        "src": "/images/portfolio/dom-s-terrasoy/interior.webp",
+        "small": "/images/portfolio/dom-s-terrasoy/interior-small.webp",
+        "thumb": "/images/portfolio/dom-s-terrasoy/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Длинный ужин. Интерьер: кухня и столовая",
+        "caption": "Интерьер · кухня и столовая",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/dom-s-terrasoy/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Длинный ужин. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Всё началось с одного стола.",
+      "paragraphs": [
+        "У будущих хозяев уже есть вещь, которую они хотят забрать в новый дом: большой обеденный стол. В этой истории именно он становится отправной точкой. За ним должны помещаться семья, друзья и разговоры, которым никто не смотрит на часы.",
+        "Выбирая проект, они постоянно мысленно расставляют гостей. Где поставить блюда? Можно ли разговаривать с теми, кто готовит? Что произойдёт, если летом все захотят выйти на улицу? Красивые варианты отпадают один за другим, пока кухня, столовая, гостиная и терраса не складываются в понятную последовательность.",
+        "Приватное крыло остаётся в стороне от общих вечеров, а мастер-блок даёт хозяевам собственное пространство. «Длинный ужин» — дом, в котором важна не только площадь комнат, но и возможность задержаться за столом ещё немного."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "dom-s-loftom",
+    "title": "Выше суеты",
+    "facts": "Два уровня · Лофт · Бассейн",
+    "description": "Сауна и бассейн соседствуют с террасой. Над жилой частью расположены спальня, лофт и балкон.",
+    "frames": [
+      {
+        "src": "/images/portfolio/dom-s-loftom/view-1.webp",
+        "small": "/images/portfolio/dom-s-loftom/view-1-small.webp",
+        "thumb": "/images/portfolio/dom-s-loftom/view-1-thumb.webp",
+        "width": 1920,
+        "height": 981,
+        "smallWidth": 960,
+        "alt": "Выше суеты. Дом со стороны сада",
+        "caption": "Дом со стороны сада"
+      },
+      {
+        "src": "/images/portfolio/dom-s-loftom/view-2.webp",
+        "small": "/images/portfolio/dom-s-loftom/view-2-small.webp",
+        "thumb": "/images/portfolio/dom-s-loftom/view-2-thumb.webp",
+        "width": 1920,
+        "height": 981,
+        "smallWidth": 960,
+        "alt": "Выше суеты. Двускатный объём",
+        "caption": "Двускатный объём"
+      },
+      {
+        "src": "/images/portfolio/dom-s-loftom/view-3.webp",
+        "small": "/images/portfolio/dom-s-loftom/view-3-small.webp",
+        "thumb": "/images/portfolio/dom-s-loftom/view-3-thumb.webp",
+        "width": 1920,
+        "height": 981,
+        "smallWidth": 960,
+        "alt": "Выше суеты. Въезд и навес",
+        "caption": "Въезд и навес"
+      },
+      {
+        "src": "/images/portfolio/dom-s-loftom/view-4.webp",
+        "small": "/images/portfolio/dom-s-loftom/view-4-small.webp",
+        "thumb": "/images/portfolio/dom-s-loftom/view-4-thumb.webp",
+        "width": 1920,
+        "height": 981,
+        "smallWidth": 960,
+        "alt": "Выше суеты. Терраса и остекление",
+        "caption": "Терраса и остекление"
+      },
+      {
+        "src": "/images/portfolio/dom-s-loftom/interior.webp",
+        "small": "/images/portfolio/dom-s-loftom/interior-small.webp",
+        "thumb": "/images/portfolio/dom-s-loftom/interior-thumb.webp",
+        "width": 1672,
+        "height": 941,
+        "smallWidth": 960,
+        "alt": "Выше суеты. Интерьер: гостиная в лофте",
+        "caption": "Интерьер · гостиная в лофте",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/dom-s-loftom/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Выше суеты. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      },
+      {
+        "src": "/images/portfolio/dom-s-loftom/plan-2.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Выше суеты. План 2-го этажа",
+        "caption": "План 2-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Самая важная комната нашлась под крышей.",
+      "paragraphs": [
+        "В этой истории пару сначала привлекают вполне практичные вещи: бассейн, сауна, терраса и возможность проводить выходные без поездок за развлечениями. Они сравнивают планировки, считают помещения и спорят, нужен ли второй уровень.",
+        "Решение приходит, когда разговор заходит о личном месте. Не кабинете для работы и не ещё одной спальне, а комнате, в которой можно читать, слушать музыку и смотреть на деревья. Тогда пространство под скатами перестаёт быть остатком от красивой кровли и становится причиной выбрать именно этот дом.",
+        "Внизу остаются общие и водные пространства, наверху — спальня, лофт и балкон. «Выше суеты» держится на этом контрасте: в доме может быть много событий, но всегда есть возможность подняться туда, где никто никуда не торопится."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  },
+  {
+    "id": "vtoroy-svet",
+    "title": "Больше воздуха",
+    "facts": "Два этажа · Второй свет · Гараж",
+    "description": "Лаконичный двускатный объём с гаражом и открытой террасой. Над гостиной оставлено пространство второго света.",
+    "frames": [
+      {
+        "src": "/images/portfolio/vtoroy-svet/view-1.webp",
+        "small": "/images/portfolio/vtoroy-svet/view-1-small.webp",
+        "thumb": "/images/portfolio/vtoroy-svet/view-1-thumb.webp",
+        "width": 1920,
+        "height": 1034,
+        "smallWidth": 960,
+        "alt": "Больше воздуха. Главный фасад",
+        "caption": "Главный фасад"
+      },
+      {
+        "src": "/images/portfolio/vtoroy-svet/view-2.webp",
+        "small": "/images/portfolio/vtoroy-svet/view-2-small.webp",
+        "thumb": "/images/portfolio/vtoroy-svet/view-2-thumb.webp",
+        "width": 1920,
+        "height": 1034,
+        "smallWidth": 960,
+        "alt": "Больше воздуха. Въезд в гараж",
+        "caption": "Въезд в гараж"
+      },
+      {
+        "src": "/images/portfolio/vtoroy-svet/view-3.webp",
+        "small": "/images/portfolio/vtoroy-svet/view-3-small.webp",
+        "thumb": "/images/portfolio/vtoroy-svet/view-3-thumb.webp",
+        "width": 1920,
+        "height": 1034,
+        "smallWidth": 960,
+        "alt": "Больше воздуха. Терраса со стороны сада",
+        "caption": "Терраса со стороны сада"
+      },
+      {
+        "src": "/images/portfolio/vtoroy-svet/interior.webp",
+        "small": "/images/portfolio/vtoroy-svet/interior-small.webp",
+        "thumb": "/images/portfolio/vtoroy-svet/interior-thumb.webp",
+        "width": 1672,
+        "height": 940,
+        "smallWidth": 960,
+        "alt": "Больше воздуха. Интерьер: гостиная со вторым светом",
+        "caption": "Интерьер · гостиная со вторым светом",
+        "kind": "interior"
+      }
+    ],
+    "plans": [
+      {
+        "src": "/images/portfolio/vtoroy-svet/plan-1.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Больше воздуха. План 1-го этажа",
+        "caption": "План 1-го этажа"
+      },
+      {
+        "src": "/images/portfolio/vtoroy-svet/plan-2.webp",
+        "width": 4400,
+        "height": 2960,
+        "alt": "Больше воздуха. План 2-го этажа",
+        "caption": "План 2-го этажа"
+      }
+    ],
+    "story": {
+      "heading": "Они перестали считать только комнаты.",
+      "paragraphs": [
+        "Будущие хозяева приходят с рациональным списком: спальни, кухня, гараж, удобное хранение. В этой истории они внимательно сравнивают площади и почти выбирают вариант, где каждому метру найдено назначение. Но ощущение своего дома всё ещё не появляется.",
+        "Тогда в разговоре всплывает воспоминание о пространстве с высоким потолком: свет менялся в течение дня, а даже простая комната казалась особенной. Возникает сомнение — стоит ли отдавать часть верхнего этажа второму свету? После долгого выбора ответ оказывается положительным.",
+        "Гостиная получает высоту и открывается к верхней галерее. Двускатная форма остаётся лаконичной, гараж и терраса решают повседневные задачи. «Больше воздуха» — история о выборе качества пространства, которое не сводится к числу комнат."
+      ],
+      "note": "Художественная история выбора этого дома."
+    }
+  }
+]
