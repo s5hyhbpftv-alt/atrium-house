@@ -24,14 +24,17 @@
   const exteriorButton = $('[data-view="exterior"]');
   const cards = [...root.querySelectorAll('[data-project]')];
   const dialog = $('.portfolio-dialog');
-  const dialogImage = dialog.querySelector('img');
+  let dialogImage = dialog.querySelector('img');
+  const media = window.SheerwoodGallery;
   const viewport = dialog.querySelector('.portfolio-dialog-viewport');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let projectIndex = 0, frameIndex = 0, wantedPlay = !reduced.matches;
   let visible = false, timer = null, generation = 0, busy = false;
-  let modalItems = [], modalIndex = 0, savedOverflow = '';
+  let modalItems = [], modalIndex = 0, modalGeneration = 0, savedOverflow = '';
+  let prepared = null, pending = null, cleanup = null;
+  const modalCache = new Map();
   const currentProject = () => projects[projectIndex];
-  const canPlay = () => wantedPlay && visible && !document.hidden && !dialog.open && !busy && (!root.matches(':focus-within') || document.activeElement === play);
+  const canPlay = () => wantedPlay && visible && !document.hidden && !dialog.open && !busy;
 
   function syncPlay() {
     clearTimeout(timer);
@@ -42,17 +45,27 @@
   }
   function stop() { wantedPlay = false; syncPlay(); }
   function imageFor(frame, primary = false) {
-    const img = new Image();
-    img.alt = primary ? frame.alt : '';
-    img.width = frame.width;
-    img.height = frame.height;
-    img.decoding = 'async';
-    if (frame.small) {
-      img.srcset = `${frame.small} ${frame.smallWidth}w, ${frame.src} ${frame.width}w`;
-      img.sizes = primary ? '(max-width: 600px) 90vw, 68vw' : '(max-width: 600px) 44vw, 23vw';
-    }
-    img.src = frame.src;
+    const img = media.image(frame, primary ? '(max-width: 600px) 90vw, 68vw' : '(max-width: 600px) 44vw, 23vw');
+    if (!primary) img.alt = '';
     return img;
+  }
+  function positionAfter(direction, from = {project:projectIndex, frame:frameIndex}) {
+    let project = from.project, frame = from.frame + direction;
+    if (frame >= projects[project].frames.length) { project = (project + 1) % projects.length; frame = 0; }
+    if (frame < 0) { project = (project - 1 + projects.length) % projects.length; frame = projects[project].frames.length - 1; }
+    return {project, frame};
+  }
+  function prepare(project, frame) {
+    const scene = makeScene(projects[project], frame);
+    const result = {key:`${project}:${frame}`,scene,failed:false};
+    result.ready = Promise.all([...scene.querySelectorAll('img')].map(img => media.ready(img)))
+      .then(() => true, () => { result.failed = true; return false; });
+    return result;
+  }
+  function prepareNext() {
+    if (!visible || document.hidden || busy || dialog.open || navigator.connection?.saveData) return;
+    const next = positionAfter(1), key = `${next.project}:${next.frame}`;
+    if (!prepared || prepared.key !== key || prepared.failed) prepared = prepare(next.project, next.frame);
   }
   function makeScene(project, index) {
     const scene = document.createElement('div');
@@ -88,19 +101,24 @@
     if (userAction) stop();
     const token = ++generation;
     const project = projects[nextProject];
-    const scene = makeScene(project, nextFrame);
-    busy = true; root.classList.add('is-busy'); status.textContent = ''; syncPlay();
-    const primary = scene.querySelector('img');
-    try {
-      if (primary.decode) await primary.decode();
-      else await new Promise((resolve, reject) => { primary.onload = resolve; primary.onerror = reject; });
-    } catch {
-      if (token !== generation) return;
-      busy = false; root.classList.remove('is-busy'); stop();
-      status.textContent = 'Не удалось загрузить фото. Попробуйте выбрать кадр ещё раз.';
+    const key = `${nextProject}:${nextFrame}`;
+    const loading = prepared?.key === key && !prepared.failed ? prepared : prepare(nextProject, nextFrame);
+    prepared = null;
+    const scene = loading.scene;
+    pending = {project:nextProject,frame:nextFrame};
+    busy = true; root.classList.add('is-busy'); stage.setAttribute('aria-busy','true'); status.textContent = ''; syncPlay();
+    const loadingNotice = setTimeout(() => { if (token === generation) status.textContent = 'Загружаем следующий кадр…'; }, 450);
+    const loaded = await loading.ready;
+    clearTimeout(loadingNotice);
+    if (token !== generation) return;
+    pending = null;
+    busy = false; root.classList.remove('is-busy'); stage.setAttribute('aria-busy','false'); status.textContent = '';
+    if (!loaded) {
+      stop();
+      status.textContent = 'Фото не загрузилось. Попробуйте ещё раз или выберите другой дом.';
       return;
     }
-    if (token !== generation) return;
+    if (cleanup) cleanup();
     projectIndex = nextProject; frameIndex = nextFrame;
     const outgoing = [...stage.children];
     outgoing.forEach(node => { node.setAttribute('data-leaving', ''); node.inert = true; node.setAttribute('aria-hidden', 'true'); });
@@ -122,30 +140,47 @@
     exteriorButton.setAttribute('aria-pressed', String(!isInterior));
     cards.forEach((card, i) => card.setAttribute('aria-current', String(i === projectIndex)));
     if (userAction) live.textContent = `${project.title}. ${project.frames[frameIndex].caption}`;
-    setTimeout(() => { outgoing.forEach(node => node.remove()); scene.removeAttribute('data-entering'); }, reduced.matches ? 0 : 1050);
-    busy = false; root.classList.remove('is-busy'); syncPlay();
+    let cleanupTimer;
+    cleanup = () => { clearTimeout(cleanupTimer); outgoing.forEach(node => node.remove()); scene.removeAttribute('data-entering'); cleanup = null; };
+    cleanupTimer = setTimeout(cleanup, reduced.matches ? 0 : 520);
+    syncPlay(); prepareNext();
   }
   function advance(direction, userAction = true) {
-    if (busy) return;
-    const last = currentProject().frames.length - 1;
-    let nextProject = projectIndex, nextFrame = frameIndex + direction;
-    if (nextFrame > last) { nextProject = (projectIndex + 1) % projects.length; nextFrame = 0; }
-    if (nextFrame < 0) { nextProject = (projectIndex - 1 + projects.length) % projects.length; nextFrame = projects[nextProject].frames.length - 1; }
-    show(nextProject, nextFrame, userAction);
+    const next = positionAfter(direction, pending || undefined);
+    return show(next.project, next.frame, userAction);
   }
-  function renderModal() {
+  function modalPicture(frame) {
+    if (!modalCache.has(frame.src)) {
+      const picture = media.image(frame);
+      const entry = {picture,ready:media.ready(picture).then(() => true, () => { modalCache.delete(frame.src); return false; })};
+      modalCache.set(frame.src,entry);
+      if (modalCache.size > 3) modalCache.delete(modalCache.keys().next().value);
+    }
+    return modalCache.get(frame.src);
+  }
+  async function renderModal() {
+    const token = ++modalGeneration;
     const frame = modalItems[modalIndex];
     viewport.classList.remove('is-zoomed');
     viewport.scrollTo(0, 0);
-    dialogImage.src = frame.src;
-    dialogImage.alt = frame.alt;
-    dialogImage.width = frame.width; dialogImage.height = frame.height;
+    dialog.setAttribute('aria-busy','true');
     dialog.querySelector('.portfolio-dialog-caption').textContent = frame.caption;
     dialog.querySelector('[data-modal-count]').textContent = `${modalIndex + 1} из ${modalItems.length}`;
     dialog.querySelector('[data-modal-download]').href = frame.original || frame.src;
     dialog.querySelector('[data-modal-zoom]').textContent = 'Увеличить';
     dialog.querySelector('[data-modal-zoom]').setAttribute('aria-pressed', 'false');
     dialog.querySelectorAll('[data-modal-prev],[data-modal-next]').forEach(button => { button.disabled = modalItems.length < 2; });
+    const entry = modalPicture(frame);
+    const loaded = await entry.ready;
+    if (token !== modalGeneration || !dialog.open) return;
+    dialog.setAttribute('aria-busy','false');
+    if (!loaded) {
+      dialog.querySelector('.portfolio-dialog-caption').textContent = 'Фото не загрузилось. Перелистните дальше или откройте оригинал.';
+      return;
+    }
+    const nextImage = entry.picture;
+    dialogImage.replaceWith(nextImage); dialogImage = nextImage;
+    if (!navigator.connection?.saveData && modalItems.length > 1) modalPicture(modalItems[(modalIndex + 1) % modalItems.length]);
   }
   function openModal(kind) {
     stop();
@@ -153,13 +188,14 @@
     if (!modalItems.length) return;
     modalIndex = kind === 'frames' ? frameIndex : 0;
     dialog.querySelector('.portfolio-dialog-title').textContent = currentProject().title;
-    renderModal();
     savedOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     dialog.showModal();
+    renderModal();
   }
   function moveModal(delta) { modalIndex = (modalIndex + delta + modalItems.length) % modalItems.length; renderModal(); }
   function zoom() {
+    if (dialog.getAttribute('aria-busy') === 'true') return;
     const enlarged = viewport.classList.toggle('is-zoomed');
     dialog.querySelector('[data-modal-zoom]').textContent = enlarged ? 'Вписать' : 'Увеличить';
     dialog.querySelector('[data-modal-zoom]').setAttribute('aria-pressed', String(enlarged));
@@ -174,7 +210,11 @@
   }));
   $('[data-action="previous"]').addEventListener('click', () => advance(-1));
   $('[data-action="next"]').addEventListener('click', () => advance(1));
-  play.addEventListener('click', () => { wantedPlay = !wantedPlay; syncPlay(); });
+  play.addEventListener('click', () => {
+    wantedPlay = !wantedPlay;
+    if (wantedPlay && !busy) advance(1, false);
+    else syncPlay();
+  });
   plansButton.addEventListener('click', () => openModal('plans'));
   $('[data-action="open"]').addEventListener('click', () => openModal('frames'));
   exteriorButton.addEventListener('click', () => show(projectIndex, 0));
@@ -187,28 +227,22 @@
   dialog.querySelector('[data-modal-prev]').addEventListener('click', () => moveModal(-1));
   dialog.querySelector('[data-modal-next]').addEventListener('click', () => moveModal(1));
   dialog.querySelector('[data-modal-zoom]').addEventListener('click', zoom);
-  dialogImage.addEventListener('click', zoom);
-  dialogImage.addEventListener('error', () => { dialog.querySelector('.portfolio-dialog-caption').textContent = 'Не удалось загрузить изображение. Попробуйте открыть оригинал.'; });
-  dialog.addEventListener('close', () => { document.body.style.overflow = savedOverflow; syncPlay(); });
+  viewport.addEventListener('click', event => { if (event.target.tagName === 'IMG') zoom(); });
+  dialog.addEventListener('close', () => { ++modalGeneration; dialog.setAttribute('aria-busy','false'); document.body.style.overflow = savedOverflow; syncPlay(); prepareNext(); });
   dialog.addEventListener('keydown', event => {
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); moveModal(event.key === 'ArrowRight' ? 1 : -1); }
   });
   stage.addEventListener('keydown', event => {
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); advance(event.key === 'ArrowRight' ? 1 : -1); }
   });
-  let startTouch = null;
-  stage.addEventListener('touchstart', event => { startTouch = event.touches.length === 1 ? {x:event.touches[0].clientX,y:event.touches[0].clientY} : null; }, {passive:true});
-  stage.addEventListener('touchend', event => {
-    if (!startTouch || !event.changedTouches.length) return;
-    const dx = event.changedTouches[0].clientX - startTouch.x;
-    const dy = event.changedTouches[0].clientY - startTouch.y;
-    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) advance(dx < 0 ? 1 : -1);
-    startTouch = null;
-  }, {passive:true});
-  new IntersectionObserver(entries => { visible = entries[0].isIntersecting; syncPlay(); }, {threshold:.2}).observe(stage);
-  document.addEventListener('visibilitychange', syncPlay);
-  root.addEventListener('focusin', syncPlay);
-  root.addEventListener('focusout', () => setTimeout(syncPlay, 0));
+  media.swipe(stage, direction => advance(direction));
+  media.swipe(viewport, moveModal, () => dialog.open && !viewport.classList.contains('is-zoomed'));
+  new IntersectionObserver(entries => { visible = entries[0].isIntersecting; syncPlay(); prepareNext(); }, {threshold:.2}).observe(stage);
+  document.addEventListener('visibilitychange', () => { syncPlay(); prepareNext(); });
+  root.addEventListener('focusin', event => {
+    if (event.target !== play) stop();
+    else syncPlay();
+  });
   reduced.addEventListener('change', () => { if (reduced.matches) stop(); });
   interiorButton.hidden = !currentProject().frames.some(frame => frame.kind === 'interior');
   root.classList.add('is-ready'); syncPlay();
