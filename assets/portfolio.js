@@ -29,12 +29,12 @@
   const viewport = dialog.querySelector('.portfolio-dialog-viewport');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let projectIndex = 0, frameIndex = 0, wantedPlay = !reduced.matches;
-  let visible = false, timer = null, generation = 0, busy = false;
+  let visible = false, timer = null, generation = 0, busy = false, initialReady = false;
   let modalItems = [], modalIndex = 0, modalGeneration = 0, savedOverflow = '';
   let prepared = null, pending = null, cleanup = null;
   const modalCache = new Map();
   const currentProject = () => projects[projectIndex];
-  const canPlay = () => wantedPlay && visible && !document.hidden && !dialog.open && !busy;
+  const canPlay = () => initialReady && wantedPlay && visible && !document.hidden && !dialog.open && !busy;
 
   function syncPlay() {
     clearTimeout(timer);
@@ -63,7 +63,7 @@
     return result;
   }
   function prepareNext() {
-    if (!visible || document.hidden || busy || dialog.open || navigator.connection?.saveData) return;
+    if (!initialReady || !visible || document.hidden || busy || dialog.open || navigator.connection?.saveData) return;
     const next = positionAfter(1), key = `${next.project}:${next.frame}`;
     if (!prepared || prepared.key !== key || prepared.failed) prepared = prepare(next.project, next.frame);
   }
@@ -119,6 +119,7 @@
       return;
     }
     if (cleanup) cleanup();
+    initialReady = true;
     projectIndex = nextProject; frameIndex = nextFrame;
     const outgoing = [...stage.children];
     outgoing.forEach(node => { node.setAttribute('data-leaving', ''); node.inert = true; node.setAttribute('aria-hidden', 'true'); });
@@ -212,7 +213,7 @@
   $('[data-action="next"]').addEventListener('click', () => advance(1));
   play.addEventListener('click', () => {
     wantedPlay = !wantedPlay;
-    if (wantedPlay && !busy) advance(1, false);
+    if (wantedPlay && initialReady && !busy) advance(1, false);
     else syncPlay();
   });
   plansButton.addEventListener('click', () => openModal('plans'));
@@ -246,4 +247,15 @@
   reduced.addEventListener('change', () => { if (reduced.matches) stop(); });
   interiorButton.hidden = !currentProject().frames.some(frame => frame.kind === 'interior');
   root.classList.add('is-ready'); syncPlay();
+  // The static first scene needs the same decode guarantee as later scenes.
+  // Do not spend its viewing time while it is still loading or decoding.
+  Promise.all([...stage.querySelectorAll('img')].map(img => media.ready(img))).then(() => {
+    if (generation) return;
+    initialReady = true;
+    requestAnimationFrame(() => { syncPlay(); prepareNext(); });
+  }, () => {
+    if (generation) return;
+    stop();
+    status.textContent = 'Фото не загрузилось. Попробуйте ещё раз или выберите другой дом.';
+  });
 })();
